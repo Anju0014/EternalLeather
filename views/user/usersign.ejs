@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Inline styles for the background image */
+        body {
+            background-image: url('/Photo/bglogin.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .text-brown {
+            color: #450706; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            color: #9a2121db;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-center min-h-screen bg-cover flex flex-col justify-center bg-opacity-40 items-center">
+<div class="relative inset-0 bg-white w-screen opacity-40"></div>
+<div class="relative mb-2 sevillana-title text-center">Pelle Eterno</div>
+    
+        <!-- Login Container -->
+        <div class="relative bg-white bg-opacity-50 p-8 rounded-lg shadow-lg w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-center mb-6">USER Signup</h2>
+            <form id="form" action="" method="post">
+           
+                <!-- Error Message -->
+                <div id="error" class="text-danger"></div>
+                <% if (message.error) { %>
+                    <h3 class="text-brown text-center mb-4"><%= message.error %></h3>
+                <% } %>
+                <div>
+           
+                    <label for="username" class=" font-bold mb-2">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+            
+                    <label for="Email" class=" font-bold mb-2">Email</label>
+                    <input type="text" id="email" name="email" required class="w-full px-4 py-2 rounded-lg border focus:outline-none mb-4 focus:ring-2 focus:ring-blue-500">
+           
+                    <label for="password" class="font-bold mb-2">Password</label>
+                    <input type="password" id="password" name="password" required class="w-full px-4 py-2 mb-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+              
+                  <label for="phoneno" class="font-bold mb-2">Phone Number</label>
+                  <input type="number" id="phoneno" name="phoneno" required class="w-full px-4 py-2 rounded-lg mb-4 border focus:outline-none focus:ring-2 focus:ring-blue-500">
+           
+                <button type="submit" class="w-full bg-black text-white font-bold py-2 mt-4 px-4 mb-6 rounded-lg">Submit</button>
+               </div> 
+                <br>
+                <div class="flex space-x-2">
+                <div class="w-full bg-white text-black font-normal py-2 px-4 rounded-lg flex items-center space-x-2"><a href="/user/signup/google"><i class="fa-brands fa-google" style="color: #be5427;"></i> Sign up with Google</a></div>
+                <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="/user/signup/facebook"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Sign up with Facebook</a></div>
+                </div>
+            
+              </form>
+        </div>
+        <script>
+            const name = document.getElementById('name');
+            const password = document.getElementById('password');
+            const email = document.getElementById('email');
+            const form = document.getElementById('form');
+            const errorElement = document.getElementById('error');
+          
+            form.addEventListener('submit', (e) => {
+        
+              let messages = [];
+          
+              if (name.value === '' || name.value == null) {
+                messages.push('Name is required');
+              } else if (!name.value.match(/^[A-Za-z]+$/)) {
+                messages.push('Proper name is required');
+              }
+          
+              if (password.value === '' || password.value == null || password.value === "password") {
+                messages.push("Enter a valid password");
+              } else if (password.value.length < 8 || password.value.length > 15) {
+                messages.push('Password must be between 8 and 15 characters');
+              }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
+                messages.push('Valid Password is required')
+              }
+          
+              if (email.value === '' || email.value == null) {
+                messages.push("Email is required");
+              } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+                messages.push("Enter a valid email address");
+              }  
+              if (messages.length > 0) {
+                e.preventDefault();
+                errorElement.innerText = messages.join(', ');
+              }
+            });
+          </script>
+    
+</body>
+</html>

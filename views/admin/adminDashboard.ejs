@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin DashBoard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+
+
+<body>
+    <%- include('adminheader') %>
+  
+    <div class="flex justify-normal">
+        <div class="flex justify-items-start">
+            <%- include('adminsidebar') %>
+        <br>
+        </div>
+
+    <div>
+        <h1>hello</h1>
+    </div>
+</div>
+    <%- include('footer') %>
+</body>
+</html>
+
+
