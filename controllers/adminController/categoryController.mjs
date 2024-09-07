@@ -1,15 +1,13 @@
 
 import Category from "../../model/categoryModel.mjs";
-
-
-// export const admincategory = async (req, res) => {
-//     try {
-//         res.render('adminCategory');
-//     } catch (error) {
-//       console.log(`error from admin category ${error}`);
-//     }
-//   };
   
+
+export const check= async (req,res)=>{
+
+   const category= await Category.find()
+   res.render('trypage',{message: category})
+}
+
   export const admincategory=async(req,res)=>{
     
     try{
@@ -18,7 +16,7 @@ import Category from "../../model/categoryModel.mjs";
            
             return res.redirect('/admin/login');
           }
-          const categories=await Category.find(); 
+          const categories=await Category.find({ isDeleted: false }); 
           //console.log(users);
           res.render('adminCategory',{message: categories});
         
@@ -26,6 +24,7 @@ import Category from "../../model/categoryModel.mjs";
         console.log(`error from admin category ${error}`);
     }
 }
+
 export const admincategoryaddform = async (req, res) => {
     try {
         res.render('adminCategoryAdd', { message: req.flash() });
@@ -55,10 +54,115 @@ export const admincategoryAdd = async (req, res) => {
         const savedCategory= await newCategory.save();
         
         req.flash("success", 'Category added successfully');
-        res.redirect('/admin/category/add')
+        res.redirect('/admin/category')
     }
     } catch (error) {
         console.log(`error from admin category add ${error}`)
     }
 };
 
+
+
+export const admincategoryeditform = async (req, res) => {
+    try {
+        const categoryId = req.query.id;
+        const category = await Category.findById(categoryId);
+        
+        // if (!category) {
+        //     req.flash("error", "Category not found");
+        //     return res.redirect('/admin/category');
+        // }
+
+        res.render('adminCategoryEdit', { category, message: req.flash() }); 
+    } catch (error) {
+        console.log(`Error fetching category for edit: ${error}`);
+        req.flash("error", "An error occurred while fetching the category");
+        return res.redirect('/admin/category');
+    }
+};
+
+
+// Update Category
+export const admincategoryupdate = async (req, res) => {
+    try {
+        const categoryId = req.body.id;  // Extract category ID from the request
+        const { catname, status, adddate } = req.body;
+
+        // Find and update the category
+        const category = await Category.findByIdAndUpdate(categoryId, {
+            categoryName: catname,
+            isActive: status,
+            addDate: adddate
+        }, { new: true });
+
+        if (!category) {
+            req.flash("error", "Category not found");
+            return res.redirect('/admin/category');
+        }
+
+        req.flash("success", "Category updated successfully");
+        return res.redirect('/admin/category');
+        
+    } catch (error) {
+        console.log(`Error updating category: ${error}`);
+        req.flash("error", "An error occurred while updating the category");
+        return res.redirect(`/admin/category/edit/${req.params.id}`);
+    }
+};
+
+export const admincategorysearch=async(req,res)=>{
+    try{
+       
+        
+        const name=req.body.sename;
+        if(name){
+        const user1= await Category.find({categoryName:name });
+        if(user1){
+            console.log("entered");
+            res.render('adminCategory',{message: user1});
+        }else{
+            res.redirect('/admin/category')
+        }
+        } 
+        else{
+            res.redirect('/admin/category')
+        }
+       
+    }catch(error){
+        console.log(error.message)
+    }
+}
+
+// Delete Category
+export const admincategorydelete = async (req, res) => {
+    // try {
+    //     const categoryId = req.query.id;
+    //     console.log(req.query.id);
+
+    //     const category = await Category.findByIdAndDelete(categoryId);
+    //     console.log(category)
+
+    //     // if (!category) {
+    //     //     req.flash("error", "Category not found");
+    //     //     return res.redirect('/admin/category');
+    //     // }
+
+    //     req.flash("success", "Category deleted successfully");
+    //     res.redirect('/admin/category');
+        
+    // } catch (error) {
+    //     console.log(`Error deleting category: ${error}`);
+    //     req.flash("error", "An error occurred while deleting the category");
+    //     res.redirect('/admin/category');
+    // }
+
+    console.log(req.url)
+    const category = await Category.findByIdAndUpdate(req.query.id,{
+        isDeleted: true,
+        deletedAt: new Date(),
+      });
+    res.redirect('/admin/category')
+    // console.log(category)
+
+    // console.log(req.query.id)
+};

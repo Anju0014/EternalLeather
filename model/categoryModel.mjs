@@ -11,7 +11,11 @@ const categorySchema = mongoose.Schema({
     },
     addDate:{
         type:String
-    }
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false, 
+      },
   
     
 },{ timestamps: true })

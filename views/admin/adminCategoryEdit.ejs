@@ -33,8 +33,6 @@
         }
     </style>
 </head>
-
-
 <body>
     <%- include('adminheader') %>
   
@@ -45,32 +43,32 @@
         </div>
 
         <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded-2xl" >
-           <form action="" id="form" method="post" class="mx-56 my-10 w-5/12" enctype="multipart/form-data">
+           <form action="" id="form" method="post" class="mx-56 my-10 w-3/12">
             
             <div id="error" class="text-red-900"></div>
             <% if (message.error) { %>
-                <div class=" text-center bg-red-500 text-white rounded mb-4"><%= message.error %></div>
+                <div class=" text-center bg-red-500 text-white rounded  border-none mb-4"><%= message.error %></div>
             <% } %>
 
             <% if (message.success) { %>
-                <div class=" text-center bg-green-700 text-white rounded mb-4"><%= message.success %></div>
+                <div class=" text-center bg-green-700 text-white border-none rounded mb-4"><%= message.success %></div>
             <% } %>
 
-           
+            <input type="hidden" name="id" value="<%= category._id %>" >
             <div class="mb-4">
                 <label for="username" class="block font-bold mb-2">Category name</label>
-                <input type="text" id="catname" name="catname" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="catname" name="catname" value="<%= category.categoryName %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
-            <div class="mb-4">
+            <!-- <div class="mb-4">
                 <label for="date" class="block font-bold mb-2">Added Date</label>
-                <input type="date" id="adddate" name="adddate" required class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="date" id="adddate" name="adddate" value="<%= category.addDate %>" required class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
+           -->
 
-            
             <div class="mb-4">
                 <label for="status" class="block font-bold mb-2">Status</label>
-                <select type="name" id="status" name="status" required class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select type="name" id="status" name="status" required  value="<%= category.isActive %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="true">True</option>
                     <option value="false">False</option>
                 </select>
@@ -80,33 +78,13 @@
 
             <!-- Submit Button -->
             <button type="submit" class="w-full bg-black text-white mt-4 font-bold py-2 px-4 rounded-lg">
-                Add Category
+               Update Category
             </button>
            </form>
+           
         </div>
 </div>
     <%- include('footer') %>
 
-<script>
-
-    const adddate = document.getElementById('adddate')
-    const catname = document.getElementById('catname');
-    const form = document.getElementById('form');
-    const errorElement = document.getElementById('error');
-          
-    form.addEventListener('submit', (e) => {
-        
-    let messages = [];
-          
-    if (catname.value === '' || catname.value == null|| date.value === '') {
-        messages.push('Please fill in all fields.');}
-
-        if(messages.length>0){
-            e.preventDefault(); // Prevent form submission
-            errorElement.innerText = messages
-        }
-    });
-
-</script>
 </body>
 </html>

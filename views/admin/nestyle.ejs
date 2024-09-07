@@ -1,0 +1,30 @@
+<form action="" method="post">
+    <br>
+    <br>
+    <div class="text-success">
+        <label>Name</label>
+       <input name="edname" type="text" value="<%= user.name  %>"required>
+       <br>
+       
+    </div>
+    <br>
+    <div class="text-success">
+        <label>Email</label>
+        <input type="email" name="edemail" value="<%= user.email %>" required>
+        <br>
+        
+    </div>
+    <br>
+    <div class="text-success">
+        <label>Place</label>
+        <input type="text" name="edplace" value="<%= user.place%>" required >
+        <br>
+        
+    </div>
+    <br>
+    <input type="hidden" name="id" value="<%= user._id %>" >
+    <div>
+        <button class="btn btn-success text-white" type="submit">Update User</button>
+    </div>
+    <br>
+</form>

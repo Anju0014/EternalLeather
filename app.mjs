@@ -4,9 +4,14 @@ import dotenv from "dotenv"
 import flash from "connect-flash"
 import userroute from "./routes/userRouter.mjs"
 import adminroute from "./routes/adminRouter.mjs"
+import productroute from "./routes/productRouter.mjs"
 import session from "express-session"
 import nocache from "nocache"
 import path from "path"
+import passport from "passport"
+import "./config/google.mjs"
+import "./config/cloudinaryConfig.mjs"
+
 
 
 dotenv.config();
@@ -32,6 +37,10 @@ app.use(session({
 }))
 
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/admin/product',productroute)
 app.use('/admin',adminroute); 
 app.use('/', userroute);
 

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        .box-brown {
+            background-image: linear-gradient(to right, #FFE0CA, #964820);
+        }
+        .box-dash {
+            background-image: linear-gradient(#FFE0CA, #bc6438);
+        }
+        .text-brown {
+            color: #250201;
+        }
+        .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot {
+            background-color: #964820;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="bg-black text-black h-3"></div>
+    <div class="container box-brown m-0">
+        <header class="flex justify-between items-center">
+            <div class="relative mb-2 sevillana-title text-center text-brown text-opacity-100">Pelle Eterno</div>
+            <img src="/public/Photo/logo.png" alt="logo" class="h-20 ml-auto">
+            <!-- Hamburger Menu Icon -->
+            <div class="md:hidden text-brown text-3xl pr-4">
+                <i class="fas fa-bars cursor-pointer" id="menu-bars"></i>
+            </div>
+        </header>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="box-dash w-40 hidden md:block">
+        <br>
+        <br>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fas fa-chart-pie" style="color: #421a05;"></i>DashBoard</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="admin/product"><i class="fa-solid fa-list" style="color: #421a05;"></i> Products</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-users" style="color: #421a05;"></i> Customers</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-box-open" style="color: #421a05;"></i> Orders</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-ticket" style="color: #421a05;"></i> Coupons</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-images" style="color: #421a05;"></i> Banner</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-envelope" style="color: #421a05;"></i> Offers</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="/admin/category"><i class="fa-solid fa-layer-group" style="color: #421a05;"></i> Category</a></ul></div>
+        <div class="p-4"><ul class="text-brown"><a href="#"><i class="fa-solid fa-right-from-bracket" style="color: #421a05;"></i> Logout</a></ul></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
+        <form action="/admin/category/search" method="post">
+            <div class="flex justify-center m-10">
+                <input class="bg-white border border-red-900 rounded w-full m-3 py-2 px-3" type="search" placeholder="Search Category" aria-label="Search" name="sename">
+                <button class="text-white rounded bg-red-950 m-3 px-3 py-2" type="submit">Search</button>
+            </div>
+        </form>
+        <table class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
+            <tr style="background-color: rgb(119, 45, 11); color:white;">
+                <th>SL.No</th>
+                <th>Category Name</th>
+                <th>Added Date</th>
+                <th>Status</th>
+                <th colspan="2">Edit</th>
+            </tr>
+            <% if (message && message.length > 0) { %>
+                <% for (let i = 0; i < message.length; i++) { %>
+                    <tr>
+                        <td class="px-8"><%= i + 1 %></td>
+                        <td class="px-8"><%= message[i].categoryName %></td>
+                        <td class="px-14"><%= message[i].addDate %></td>
+                        <td class="px-8"><%= message[i].isActive %></td>
+                        <td class="px-10"><a href="/admin/category/edit?id=<%= message[i]._id %>"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                        <td class="px-8"><a href="/admin/category/delete?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this category?');"><i class="fa-solid fa-trash text-danger"></i></a></td>
+                    </tr>
+                <% } %>
+            <% } %>
+        </table>
+        <button class="bg-red-900 text-white ml-96 mb-4 border-none rounded"><a href="/admin/category/add">Add Category</a></button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container box-foot m-0 text-yellow-500">
+            <div class="flex justify-center">
+                <div>
+                    <br>
+                    <div class="relative mb-2 sevillana-title text-yellow-500">Pelle Eterno</div>
+                    <ul class="text-yellow-500">We make premium hand-crafted genuine </ul>
+                    <ul class="text-yellow-500">leather wallets which you can customize</ul>
+                    <ul class="text-yellow-500">according to your preference</ul>
+                    <br>
+                </div>
+                <div>
+                    <br>
+                    <br>
+                    <h3 class="text-yellow-500"> Get in Touch</h3>
+                    <br>
+                    <li class="text-yellow-500">Via Prenestina 435,Roma, Lazio</li>
+                    <li class="text-yellow-500">+349 9000500099,+349 7000500055</li>
+                    <li class="text-yellow-500">leathereternal@gmail.com hello@pelleeterno.com</li>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle sidebar visibility
+        const menuBars = document.getElementById('menu-bars');
+        const sidebar = document.getElementById('sidebar');
+        menuBars.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

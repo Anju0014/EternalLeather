@@ -1,5 +1,6 @@
 import express from "express";
 import {  passwordchange, passwordnew, useremail, userhome, userlogin, userregister, usersignup, userverify, verifyOtp } from "../controllers/userController/userController.mjs";
+import { googleauth, googleAuthCallback } from "../controllers/userController/userauthController.mjs";
 
 const user_router=express();
 
@@ -20,15 +21,17 @@ user_router.get('/user/forgotpassword',useremail);
 user_router.post('/user/forgotpassword',passwordchange);
 
 user_router.post('/user/renewpassword',passwordnew)
-//user_router.post('/user/forgot-password',passwordchanged);
+
 user_router.get('/user/signup',usersignup);
 user_router.post('/user/signup',userregister);
-//user_router.get('/user/otpverify',usercheckotp);
+
 
 user_router.post('/user/otpverify',verifyOtp)
 
 user_router.get('/user/home',userhome);
-//user_router.get('/user/signup/google',usersigngoogle)
-//user_router.get("/user/home",userhome);
+user_router.get('/auth/google',googleauth);
+user_router.get('/auth/google/callback',googleAuthCallback)
+
+
 
 export default user_router

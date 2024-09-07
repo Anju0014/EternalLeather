@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 const adminEmail = "anjum1495pkr@gmail.com";
 const adminPassword = "anjuanju";
 
+
 export const admin = async (req, res) => {
   try {
     res.redirect("/admin/login");

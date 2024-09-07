@@ -13,7 +13,6 @@ const userSchema=new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
     },
    address:{
         type: [address],
@@ -26,7 +25,8 @@ const userSchema=new mongoose.Schema({
         default:false
     },
     isBlocked:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     phoneno:{
         type:Number
@@ -36,7 +36,12 @@ const userSchema=new mongoose.Schema({
     },
     otpExpires:{
         type:String
+    },
+    googleID:{
+        type:String
+    },
+    facebookID: {
+        type: String
     }
-    
-});
+},{timestamps: true})
 export default mongoose.model('user',userSchema)

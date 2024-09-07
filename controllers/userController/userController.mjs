@@ -68,8 +68,7 @@ export const passwordnew= async(req,res)=>{
         const remail=req.body.email;
         console.log(remail)
         console.log(req.body.password);
-        //const newpassword =req.body.password;
-        const snewpassword= await securePassword(req.body.password)
+      const snewpassword= await securePassword(req.body.password)
         const userExist= await User.findOne({email:remail})
         console.log(userExist)
         if(!userExist){
@@ -219,8 +218,10 @@ export const userhome=async(req,res)=>{
     try{
 
        if (!req.session.isUser) {
+        console.log(333)
            return res.redirect('user/login');
           }
+          console.log(555)
           res.render('userhome');
         
     }catch(error){
