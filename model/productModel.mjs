@@ -4,19 +4,19 @@ import mongoose from 'mongoose'
 const productSchema = new mongoose.Schema({
     productName:{
         type: String,
-        required: true
+        //required: true
     },
     productPrice:{
         type:Number,
-        required: true
+        //required: true
     },
     productDescription:{
         type: String,
-        required:true
+        //required:true
     },
     productQuantity:{
         type: Number,
-        required: true
+        //required: true
     },
     productColour:{
         type:String
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
     },
     productCategory: {
         type: String,
-        required: true
+        //required: true
     },
     productImages: {
         type: Array,

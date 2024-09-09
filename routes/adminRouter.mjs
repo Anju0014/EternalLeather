@@ -31,12 +31,12 @@ admin_router.get("/category/delete",isAdmin, admincategorydelete);
 admin_router.post("/category/search",isAdmin,admincategorysearch);
 
 admin_router.get('/getform',pst)
-admin_router.post('/getform',adminproductadd)
+//admin_router.post('/getform',adminproductadd)
 admin_router.get("/user",adminuserget);
 admin_router.post("/users/:id/toggle-block", adminuserpost);
-// admin_router.get("/product",adminproduct);
-// admin_router.get("/product/add",adminproductaddform);
-// admin_router.post('/product/add', upload.array('images',5), adminproductadd);
+admin_router.get("/product",adminproduct);
+admin_router.get("/product/add",upload.none(),adminproductaddform);
+admin_router.post('/product/add', adminproductadd);
 
 // admin_router.get("/product/edit/",adminproducteditform);
 // admin_router.post("/product/edit",adminproductupdate);

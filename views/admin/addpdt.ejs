@@ -2,7 +2,7 @@
       <hr>
 
       <!-- Add Product Form -->
-      <form action="/admin/addProductPost" method="POST"  enctype="multipart/form-data" id="form">  
+      <!-- <form action="/admin/getform" method="POST"  enctype="multipart/form-data" id="form">  
         
 
         <div class="mb-4">
@@ -36,13 +36,13 @@
           <label class="productImgErr text-red-500"></label>
         </div> 
         <!-- cropping contiainer -->
-      <div id="cropperContainer" style="display: none; max-width: 500px; margin-bottom: 20px;"> 
+      <!-- <div id="cropperContainer" style="display: none; max-width: 500px; margin-bottom: 20px;"> 
         <img id="image" src="" alt="Image for cropping" style="max-width: 100%;">  
       </div>
-      <!--cropping container--> 
+      cropping container  -->
 
        <!-- Cropped images preview container -->
-       <div id="croppedImagesContainer" class="mb-4">
+       <!-- <div id="croppedImagesContainer" class="mb-4">
        <h3 class="text-sm font-medium text-gray-700">Cropped Images</h3>
        <div id="croppedImages" class="flex flex-wrap"></div>
        </div>
@@ -140,9 +140,146 @@
                 console.error( ' Error : ' , error );
                 alert( ' Failed to add product ' ) ; 
             });
+        }); -->
+
+
+        
+        
+  <!-- </script> --> 
+
+
+  <form action="/admin/getform" method="POST" enctype="multipart/form-data" id="form">  
+    <!-- Form Fields -->
+       <div class="mb-4">
+            <label class="block font-bold mb-2">Product Name</label>
+            <input type="text" id="productname" name="productname" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+        </div>
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Added Date</label>
+            <input type="date" id="adddate" name="adddate" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+        </div>
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Price</label>
+            <input type="number" id="price" name="price" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+        </div>
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Stock</label>
+            <input type="number" id="qty" name="qty" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+        </div>
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Product Category</label>
+            <input type="text" id="category" name="category" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+        </div>
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Product Description</label>
+            <textarea id="description" name="description" rows="4" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+    <div class="mb-4">  
+        <label for="images" class="block text-sm font-medium text-gray-700">Product Images</label>
+        <input type="file" name="productImages" id="productImages" multiple class="mt-1 p-2 border border-gray-300 rounded w-full">
+        <label class="productImgErr text-red-500"></label>
+    </div> 
+
+    <!-- Cropping Container -->
+    <div id="cropperContainer" style="display: none; max-width: 500px; margin-bottom: 20px;"> 
+        <img id="image" src="" alt="Image for cropping" style="max-width: 100%;">  
+    </div>
+
+    <!-- Cropped images preview container -->
+    <div id="croppedImagesContainer" class="mb-4">
+        <h3 class="text-sm font-medium text-gray-700">Cropped Images</h3>
+        <div id="croppedImages" class="flex flex-wrap"></div>
+    </div>
+
+    <button type="button" id="cropButton" style="display: none;" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Crop & Upload</button>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Product</button> 
+</form>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+<script>
+    let cropper;
+    const inputImage = document.getElementById('productImages');
+    const image = document.getElementById('image');
+    const cropButton = document.getElementById('cropButton'); 
+    const cropperContainer = document.getElementById('cropperContainer');
+    const croppedImagesContainer = document.getElementById('croppedImages');
+    let croppedImagesData = [];
+
+    inputImage.addEventListener('change', (event) => {
+        const files = event.target.files; 
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader(); 
+            reader.onload = (e) => {
+                image.src = e.target.result; 
+                cropperContainer.style.display = 'block'; 
+                cropButton.style.display = 'inline-block';
+                if (cropper) {
+                    cropper.destroy();
+                }
+                cropper = new Cropper(image, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    minCropBoxWidth: 50,
+                    minCropBoxHeight: 50,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    cropButton.addEventListener('click', () => {
+        if (!cropper) {
+            alert('Please select an image first.');
+            return;
+        }
+
+        cropper.getCroppedCanvas().toBlob((blob) => {
+            croppedImagesData.push(blob);
+
+            const url = URL.createObjectURL(blob);
+            const imgElement = document.createElement('img');
+            imgElement.src = url;
+            imgElement.style.maxWidth = '100px';
+            imgElement.style.margin = '10px';
+            croppedImagesContainer.appendChild(imgElement);
+
+            cropperContainer.style.display = 'none';
+            cropButton.style.display = 'none'; 
+            inputImage.value = '';
+            inputImage.disabled = false; 
+        }, 'image/png');
+    });
+
+    document.getElementById('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+        formData.delete('productImages');  // Remove the original productImages field
+    
+        croppedImagesData.forEach((blob, index) => {
+            formData.append('productImages', blob, `cropped_${index}.png`);  // Correct variable usage
+        });  
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+        }).then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert('Failed to add product: ' + data.error); 
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Failed to add product'); 
         });
-
-
-        
-        
-  </script>
+    });
+</script>
