@@ -1,5 +1,5 @@
 import express from "express";
-import {  passwordchange, passwordnew, useremail, userhome, userlogin, userregister, usersignup, userverify, verifyOtp } from "../controllers/userController/userController.mjs";
+import {  nouser, passwordchange, passwordnew, useremail, userhome, userlogin, userregister, usersignup, userverify, verifyOtp } from "../controllers/userController/userController.mjs";
 import { googleauth, googleAuthCallback } from "../controllers/userController/userauthController.mjs";
 
 const user_router=express();
@@ -13,7 +13,7 @@ user_router.set('views','./views/user');
 user_router.use(express.static('public'));
 
 
-//user_router.get('/',nouser)
+user_router.get('/',nouser)
 
 user_router.get('/user/login',userlogin);
 user_router.post('/user/login',userverify);

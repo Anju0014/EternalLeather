@@ -4,19 +4,22 @@ import mongoose from 'mongoose'
 const productSchema = new mongoose.Schema({
     productName:{
         type: String,
-        //required: true
+        required: true
     },
     productPrice:{
         type:Number,
-        //required: true
+        required: true
     },
     productDescription:{
         type: String,
-        //required:true
+        required:true
+    },
+    productAdddate:{
+        type:String
     },
     productQuantity:{
         type: Number,
-        //required: true
+        required: true
     },
     productColour:{
         type:String
@@ -35,6 +38,13 @@ const productSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    },
+    deletedAt:{
+        type:Date
     }
 },{ timestamps:true });
 

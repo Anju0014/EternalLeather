@@ -21,7 +21,8 @@ passport.use(
                user = new User({
                name: profile.displayName,
                email : profile.emails[0].value,
-               googleID: profile.id
+               googleID: profile.id,
+               isVerified:true
            })
                await user.save()
            }

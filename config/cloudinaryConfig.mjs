@@ -49,7 +49,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary.v2,
   params: {
     folder: 'products', // Folder in Cloudinary
-    allowed_formats: ['jpg', 'png'], // Allowed file formats
+    allowed_formats: ['jpg', 'png','jpeg', 'webp'], // Allowed file formats
     public_id: (req, file) => `product_${Date.now()}_${file.originalname.split('.')[0]}`, // Custom public ID
   },
 });

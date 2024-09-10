@@ -3,9 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin DashBoard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Hello</h1>
+<%- include('headertry') %> 
+
+<!-- Container for the boxes -->
+<div class="container mx-auto my-10 px-5">
+  <div class="flex flex-wrap justify-between">
+    <!-- Each product box -->
+    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
+      <img src="https://via.placeholder.com/150" alt="Product 1" class="w-full h-48 object-cover rounded-lg">
+      <h3 class="text-lg font-semibold mt-2">Product 1</h3>
+    </div>
+
+    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
+      <img src="https://via.placeholder.com/150" alt="Product 2" class="w-full h-48 object-cover rounded-lg">
+      <h3 class="text-lg font-semibold mt-2">Product 2</h3>
+    </div>
+
+    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
+      <img src="https://via.placeholder.com/150" alt="Product 3" class="w-full h-48 object-cover rounded-lg">
+      <h3 class="text-lg font-semibold mt-2">Product 3</h3>
+    </div>
+
+    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
+      <img src="https://via.placeholder.com/150" alt="Product 4" class="w-full h-48 object-cover rounded-lg">
+      <h3 class="text-lg font-semibold mt-2">Product 4</h3>
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>

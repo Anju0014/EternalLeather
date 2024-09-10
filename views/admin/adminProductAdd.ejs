@@ -18,18 +18,39 @@
             max-width: 100px;
             margin: 10px;
         }
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
     </style>
 </head>
 <body>
     <%- include('adminheader') %> 
     <div class="flex justify-normal">
-        <div class="flex justify-items-start">
+        <div class="flex justify-normal">
             <%- include('adminsidebar') %> 
             <br>
         </div> 
 
-        <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded-2xl">
-            <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="mx-56 my-10 w-5/12">
+        <div class="flex-grow bg-red-100 lg:m-24 sm:m-5 border-2 border-red-950 rounded-2xl w-full">
+            <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="lg:mx-56 lg:my-10 sm:mx-6 sm:my-2">
                 <div id="error" class="text-red-900"></div>
                 
                 <% if (message.error) { %>

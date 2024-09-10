@@ -25,6 +25,15 @@ const securePassword = async(password)=>{
     }
 }
 
+export const nouser=async(req,res)=>{
+    if(!req.session.isUser){
+    res.render('landingpage')}
+    else{
+        res.redirect('/user/home')
+    }
+}
+
+
 export const user=async(req,res)=>{
     try{  
         res.redirect('/user/login')

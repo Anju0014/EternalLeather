@@ -1,10 +1,10 @@
 import express from "express";
 const admin_router=express();
 
-import { admin, adminhome, adminlogin, adminverify } from "../controllers/adminController/adminController.mjs";
+import { admin, adminhome, adminlogin, adminlogout, adminverify } from "../controllers/adminController/adminController.mjs";
 import isAdmin from "../middleware/adminsession.mjs";
 import { admincategory, admincategoryAdd, admincategoryaddform, admincategorydelete, admincategoryeditform, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
-import { adminproduct, adminproductadd, adminproductaddform, adminproducteditform, pst } from "../controllers/adminController/productController.mjs";
+import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete, adminproducteditform, adminproductsearch, adminproductupdate, pst } from "../controllers/adminController/productController.mjs";
 import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost } from "../controllers/adminController/userController.mjs";
 
@@ -35,17 +35,20 @@ admin_router.get('/getform',pst)
 admin_router.get("/user",adminuserget);
 admin_router.post("/users/:id/toggle-block", adminuserpost);
 admin_router.get("/product",adminproduct);
+admin_router.get('/products', adminproduct);
+
 admin_router.get("/product/add",upload.none(),adminproductaddform);
 admin_router.post('/product/add', adminproductadd);
 
-// admin_router.get("/product/edit/",adminproducteditform);
-// admin_router.post("/product/edit",adminproductupdate);
-// admin_router.get("/product/delete",adminproductdelete);
-// admin_router.post("/product/search",adminproductsearch);
+admin_router.get("/product/edit",adminproducteditform);
+admin_router.post("/product/edit",adminproductupdate);
+admin_router.get("/product/delete",adminproductdelete);
+admin_router.post("/product/search",adminproductsearch);
 
 
 // admin_router.post("/category/add",admincategoryAdd);
 
+admin_router.get("/logout",adminlogout);
 
 
 export default  admin_router
