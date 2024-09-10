@@ -35,6 +35,10 @@ const productSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
+    ratings:{
+        type:Number,
+        default:5
+    },
     isActive: {
         type: Boolean,
         default: true

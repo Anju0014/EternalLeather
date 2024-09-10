@@ -94,7 +94,7 @@ export const admincategoryupdate = async (req, res) => {
             isActive: status,
             addDate: adddate
         }, { new: true });
-        console.log(product);
+        console.log(category);
         if (!category) {
             req.flash("error", "Category not found");
             return res.redirect('/admin/category');

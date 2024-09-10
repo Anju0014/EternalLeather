@@ -420,7 +420,7 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
 
     try {
         const response = await fetch('/admin/product/edit', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

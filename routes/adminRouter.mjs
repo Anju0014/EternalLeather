@@ -41,7 +41,7 @@ admin_router.get("/product/add",upload.none(),adminproductaddform);
 admin_router.post('/product/add', adminproductadd);
 
 admin_router.get("/product/edit",adminproducteditform);
-admin_router.post("/product/edit",adminproductupdate);
+admin_router.put("/product/edit",adminproductupdate);
 admin_router.get("/product/delete",adminproductdelete);
 admin_router.post("/product/search",adminproductsearch);
 
