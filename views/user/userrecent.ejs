@@ -1,0 +1,15 @@
+
+
+
+<div class="container mx-auto my-10 px-5">
+    <h1 class="text-center  font-serif font-semibold">NEW ARRIVALS</h1>
+  <div class="flex flex-wrap justify-between m-5">
+    <% recentproduct.forEach(product=>{  %>
+      <div class="w-full md:w-1/5 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
+        <a href="/productDetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-full h-48 object-cover rounded-lg"></a>
+        <h6 class="text-sm font-serif font-semibold mt-2"><%= product.productName %></h6>
+        <h6 class="text-sm font-serif mt-2"> Rs.<%= product.productPrice %></h6>
+      </div>
+    <% }); %>
+  </div>
+</div>

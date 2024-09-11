@@ -2,6 +2,8 @@ import User from "../../model/userModel.mjs";
 import bcrypt from "bcrypt"
 import nodemailer from "nodemailer"
 import crypto from 'crypto'
+import Product from "../../model/productModel.mjs"
+import Category from"../../model/categoryModel.mjs"
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -226,12 +228,19 @@ export const userhome=async(req,res)=>{
     
     try{
 
-       if (!req.session.isUser) {
-        console.log(333)
-           return res.redirect('user/login');
-          }
-          console.log(555)
-          res.render('userhome');
+    //    if (!req.session.isUser) {
+    
+    //        return res.redirect('user/login');
+    //       }
+          const viewproduct= await Product.find({isDeleted:false}).limit(4);
+          console.log(viewproduct);
+          const recentproduct = await Product.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(4);
+          console.log(recentproduct);
+          const productgreen= await Product.findOne({productName:'Spencer-Green'});
+          console.log(productgreen);
+          const productcase= await Product.findOne({productName:'CARDO'})
+;
+          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase});
         
     }catch(error){
         console.log(`error from user home ${error}`);

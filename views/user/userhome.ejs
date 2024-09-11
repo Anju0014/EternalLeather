@@ -37,32 +37,21 @@
 <body>
 <%- include('headertry') %> 
 
-<!-- Container for the boxes -->
-<div class="container mx-auto my-10 px-5">
-  <div class="flex flex-wrap justify-between">
-    <!-- Each product box -->
-    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
-      <img src="https://via.placeholder.com/150" alt="Product 1" class="w-full h-48 object-cover rounded-lg">
-      <h3 class="text-lg font-semibold mt-2">Product 1</h3>
-    </div>
 
-    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
-      <img src="https://via.placeholder.com/150" alt="Product 2" class="w-full h-48 object-cover rounded-lg">
-      <h3 class="text-lg font-semibold mt-2">Product 2</h3>
-    </div>
+<%- include('userBanner') %>
 
-    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
-      <img src="https://via.placeholder.com/150" alt="Product 3" class="w-full h-48 object-cover rounded-lg">
-      <h3 class="text-lg font-semibold mt-2">Product 3</h3>
-    </div>
+<%- include('userrecent') %>
 
-    <div class="w-full md:w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
-      <img src="https://via.placeholder.com/150" alt="Product 4" class="w-full h-48 object-cover rounded-lg">
-      <h3 class="text-lg font-semibold mt-2">Product 4</h3>
-    </div>
-  </div>
-</div>
+<%- include('usercompare') %>
 
+<%- include('usergreen') %>
+
+<%- include('userproduct') %>
+
+<%- include('usercollection') %>
+
+
+<%- include('userfooter') %>
 
 </body>
 </html>
