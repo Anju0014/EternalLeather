@@ -6,6 +6,9 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    
     <style>
         /* Inline styles for the background image */
         body {
@@ -28,7 +31,7 @@
 
 <body class="bg-center min-h-screen bg-cover flex flex-col justify-center items-center">
 
-<div class="absolute inset-0 bg-white opacity-40"></div>
+<!-- <div class="absolute inset-0 bg-white opacity-40"></div> -->
     
         
 <div class="relative mb-2 sevillana-title text-center">Pelle Eterno</div>
@@ -60,7 +63,12 @@
                 <!-- Submit Button -->
                 <button type="submit" class="w-full bg-black text-white font-bold py-2 px-4 rounded-lg">Submit</button>
                 <h4>Don't have an account? <a href="/user/signup">Sign Up</a></h4>
-            </form>
+                <br>
+                <div class="flex space-x-2">
+                <div class="w-full bg-white text-black font-normal py-2 px-4 rounded-lg flex items-center space-x-2"><a href="/auth/google"><i class="fa-brands fa-google" style="color: #be5427;"></i> Login with Google</a></div>
+                <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="#"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Login with Facebook</a></div>
+                </div>
+                </form>
         </div>
 
     <script>

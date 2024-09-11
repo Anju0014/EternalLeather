@@ -11,7 +11,7 @@
   <div class="flex flex-wrap justify-around m-5">
     <% viewproduct.forEach(product => { %>
       <div class="w-full md:w-40 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
-        <a href="/productDetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-52 h-40 object-cover rounded-lg"></a> <!-- Changed width and height -->
+        <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-52 h-40 object-cover rounded-lg"></a> <!-- Changed width and height -->
         <h6 class="text-sm font-serif font-semibold mt-2"><%= product.productName %></h6>
         <h6 class="text-sm font-serif mt-2">Rs.<%= product.productPrice %></h6>
       </div>

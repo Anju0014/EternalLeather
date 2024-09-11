@@ -196,7 +196,6 @@ export const verifyOtp = async (req, res) => {
     
 };
 
-
 export const userverify=async(req,res)=>{
     try{
           const email=req.body.email;
@@ -227,11 +226,7 @@ export const userverify=async(req,res)=>{
 export const userhome=async(req,res)=>{
     
     try{
-
-    //    if (!req.session.isUser) {
-    
-    //        return res.redirect('user/login');
-    //       }
+          const sessionuser=req.session.isUser
           const viewproduct= await Product.find({isDeleted:false}).limit(4);
           console.log(viewproduct);
           const recentproduct = await Product.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(4);
@@ -240,7 +235,7 @@ export const userhome=async(req,res)=>{
           console.log(productgreen);
           const productcase= await Product.findOne({productName:'CARDO'})
 ;
-          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase});
+          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser});
         
     }catch(error){
         console.log(`error from user home ${error}`);
