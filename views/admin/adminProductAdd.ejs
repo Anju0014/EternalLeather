@@ -49,8 +49,8 @@
             <br>
         </div> 
 
-        <div class="flex-grow bg-red-100 lg:m-24 sm:m-5 border-2 border-red-950 rounded-2xl w-full">
-            <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="lg:mx-56 lg:my-10 sm:mx-6 sm:my-2">
+        <!-- <div class="flex-grow bg-red-100 lg:m-24 sm:m-5 border-2 border-red-950 rounded-2xl w-full"> -->
+            <!-- <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="lg:mx-56 lg:my-10 sm:mx-6 sm:my-2">
                 <div id="error" class="text-red-900"></div>
                 
                 <% if (message.error) { %>
@@ -62,7 +62,7 @@
                 <% } %> 
 
                 <!-- Product Fields -->
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <label class="block font-bold mb-2">Product Name</label>
                     <input type="text" id="productname" name="productname" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
@@ -79,8 +79,28 @@
                     <input type="number" id="qty" name="qty" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
+                    <label class="block font-bold mb-2">Type</label>
+                    <input type="text" id="variety" name="variety" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Color</label>
+                    <input type="text" id="color" name="color" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Discount</label>
+                    <input type="number" id="discount" name="discount" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
                     <label class="block font-bold mb-2">Product Category</label>
-                    <input type="text" id="category" name="category" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <!-- <input type="text" id="category" name="category" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required> -->
+                    <!-- <select name="category" id="category" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="" selected disabled>Select a category</option>
+                        <% productCollection.forEach((category)=> { %>
+                            <option value="<%= category._id %>">
+                                <%= category.categoryName %>
+                            </option>
+                            <% }) %>
+                    </select>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Product Description</label>
@@ -96,16 +116,107 @@
                 <div id="croppedImagesContainer" class="mb-4">
                     <h3 class="text-sm font-medium text-gray-700">Cropped Images</h3>
                     <div id="croppedImages" class="flex flex-wrap"></div>
-                </div>
+                </div> -->
                 <!-- <input type="hidden" name="croppedImages" value="url"> -->
-                <button type="button" id="cropButton" style="display: none;" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Crop & Upload</button>
+                <!-- <button type="button" id="cropButton" style="display: none;" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Crop & Upload</button>
 
                 <button type="submit" id="submitButton" class="w-full bg-black text-white mt-4 font-bold py-2 px-4 rounded-lg">
                     Add Product
-                </button>
+                </button> 
             </form>
         </div>
-    </div>
+    </div> --> 
+
+    <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="lg:mx-56 lg:my-10 sm:mx-6 sm:my-2">
+        <div id="error" class="text-red-900"></div>
+    
+        <% if (message.error) { %>
+            <div class="text-center bg-red-500 text-white rounded mb-4"><%= message.error %></div>
+        <% } %>
+    
+        <% if (message.success) { %>
+            <div class="text-center bg-green-700 text-white rounded mb-4"><%= message.success %></div>
+        <% } %> 
+    
+        <!-- Start of the 3-column grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <!-- Product Fields -->
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Product Name</label>
+                <input type="text" id="productname" name="productname" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Added Date</label>
+                <input type="date" id="adddate" name="adddate" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Price</label>
+                <input type="number" id="price" name="price" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Stock</label>
+                <input type="number" id="qty" name="qty" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Type</label>
+                <input type="text" id="variety" name="variety" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Color</label>
+                <input type="text" id="color" name="color" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Discount</label>
+                <input type="number" id="discount" name="discount" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+    
+            <div class="mb-4">
+                <label class="block font-bold mb-2">Product Category</label>
+                <select name="category" id="category" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="" selected disabled>Select a category</option>
+                    <% productCollection.forEach((category)=> { %>
+                        <option value="<%= category._id %>">
+                            <%= category.categoryName %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+    
+            <div class="mb-4 col-span-3">
+                <label class="block font-bold mb-2">Product Description</label>
+                <textarea id="description" name="description" rows="4" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+            </div>
+        </div>
+        <!-- End of the 3-column grid -->
+    
+        <!-- Product Images Section -->
+        <div class="mb-4">
+            <label class="block font-bold mb-2">Product Images</label>
+            <input type="file" id="images" name="images" multiple class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+    
+        <div id="cropperContainer" style="display: none; margin-bottom: 20px;">
+            <img id="image" src="" alt="Image for cropping">
+        </div>
+    
+        <div id="croppedImagesContainer" class="mb-4">
+            <h3 class="text-sm font-medium text-gray-700">Cropped Images</h3>
+            <div id="croppedImages" class="flex flex-wrap"></div>
+        </div>
+    
+        <button type="button" id="cropButton" style="display: none;" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Crop & Upload</button>
+    
+        <button type="submit" id="submitButton" class="w-full bg-black text-white mt-4 font-bold py-2 px-4 rounded-lg">
+            Add Product
+        </button>
+    </form>
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
@@ -218,6 +329,9 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
         price: formData.get('price'),
         description: formData.get('description'),
         qty: formData.get('qty'),
+        variety:formData.get('variety'),
+        discount:formData.get('discount'),
+        color:formData.get('color'),
         category: formData.get('category'),
         croppedImages, // Include the array of cropped image URLs
     };

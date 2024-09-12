@@ -82,9 +82,42 @@
                     <input type="number" id="qty" name="qty" value="<%= product.productQuantity %>"  class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block font-bold mb-2">Product Category</label>
-                    <input type="text" id="category" name="category" value="<%= product.productCategory %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <label class="block font-bold mb-2">Type</label>
+                    <input type="text" id="variety" name="variety" value="<%= product.productType %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Color</label>
+                    <input type="text" id="color" name="color" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Discount</label>
+                    <input type="number" id="discount" name="discount" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+
+                <!-- <div class="mb-4">
+                    <label class="block font-bold mb-2">Product Category</label>
+                     <select name="category" id="category" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value=" " selected disabled>Select a category</option>
+                        <% productCollection.forEach((category)=> { %>
+                            <option value="<%= category._id %>">
+                                <%= category.categoryName %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div> -->
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Product Category</label>
+                    <select name="category" id="category" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="" selected disabled>Select a category</option>
+                        <% productCollection.forEach((category) => { %>
+                            <option value="<%= category._id %>" <%= category._id.equals(selectedCategoryId) ? 'selected' : '' %>>
+                                <%= category.categoryName %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+               
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Product Description</label>
                     <textarea id="description" name="description" rows="4"  class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required><%= product.productDescription %></textarea>
@@ -130,159 +163,6 @@
     const cloudinaryPreset = "ml_defaulteternal";  // Replace with your Cloudinary preset
     const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dihyb66hn/image/upload'; // Replace with your Cloudinary URL
 
-
-// let cropper;
-// const inputImage = document.getElementById('images');
-// const image = document.getElementById('image');
-// const cropButton = document.getElementById('cropButton');
-// const cropperContainer = document.getElementById('cropperContainer');
-// const croppedImagesContainer = document.getElementById('croppedImages');
-// const deleteImages=document.getElementById('deleteImages')
-// const form = document.getElementById('form');
-
-// // Array to store the URLs of all cropped images
-// const croppedImageUrls = [];
-
-// inputImage.addEventListener('change', (event) => {
-//     const files = event.target.files;
-//     if (files && files.length > 0) {
-//         // Clear the cropper and reset the UI
-//         cropperContainer.style.display = 'none';
-//         cropButton.style.display = 'none';
-//         croppedImagesContainer.innerHTML = ''; // Clear previous cropped images
-
-//         Array.from(files).forEach((file) => {
-//             const reader = new FileReader();
-//             reader.onload = (e) => {
-//                 image.src = e.target.result;
-//                 cropperContainer.style.display = 'block';
-//                 cropButton.style.display = 'inline-block';
-                
-//                 // Destroy the previous cropper instance if it exists
-//                 if (cropper) cropper.destroy();
-//                 cropper = new Cropper(image, {
-//                     aspectRatio: NaN,
-//                     viewMode: 1,
-//                     dragMode: 'move',
-//                     cropBoxMovable: true,
-//                     cropBoxResizable: true,
-//                 });
-
-//                 // Handle the cropping and uploading process when the button is clicked
-//                 cropButton.onclick = async () => {
-//                     if (!cropper) {
-//                         alert('Please select an image first.');
-//                         return;
-//                     }
-
-//                     cropper.getCroppedCanvas().toBlob(async (blob) => {
-//                         const formData = new FormData();
-//                         formData.append('file', blob);
-//                         formData.append('upload_preset', cloudinaryPreset); // Use your Cloudinary preset
-
-//                         try {
-//                             const response = await fetch(cloudinaryUrl, { method: 'POST', body: formData });
-//                             const data = await response.json();
-//                             if (data.secure_url) {
-//                                 const url = data.secure_url;
-
-//                                 // Store the uploaded image URL in the array
-//                                 croppedImageUrls.push(url);
-
-//                                 // Display the image in the cropped images container
-//                                 const imgElement = document.createElement('img');
-//                                 imgElement.src = url;
-//                                 imgElement.style.maxWidth = '100px';
-//                                 imgElement.style.margin = '10px';
-//                                 croppedImagesContainer.appendChild(imgElement);
-
-//                                 // Add the cropped image URL as a hidden input
-//                                 const hiddenInput = document.createElement('input');
-//                                 hiddenInput.type = 'hidden';
-//                                 hiddenInput.name = 'croppedImages';
-//                                 hiddenInput.value = url;
-//                                 form.appendChild(hiddenInput);
-
-//                                 // Hide the cropper and reset for the next image
-//                                 cropperContainer.style.display = 'none';
-//                                 cropButton.style.display = 'none';
-//                                 inputImage.value = ''; // Clear the file input
-//                                 inputImage.disabled = false;
-//                             } else {
-//                                 alert('Failed to upload image to Cloudinary');
-//                             }
-//                         } catch (error) {
-//                             console.error('Error uploading image:', error);
-//                             alert('Failed to upload image to Cloudinary');
-//                         }
-//                     }, 'image/png');
-//                 };
-//             };
-//             reader.readAsDataURL(file); // Load the image file into the cropper
-//         });
-//     }
-// });
-
-// document.getElementById('submitButton').addEventListener('click', async (e) => {
-//     e.preventDefault();
-    
-
-
-//     const formData = new FormData(form);
-
-//     const checkboxes = document.querySelectorAll('input[name="deleteImages"]:checked');
-//     const deleteImages = Array.from(checkboxes).map(cb => cb.value);
-
-//     if (deleteImages.length > 0) {
-//         console.log("Images to be deleted:", deleteImages);  // For debugging
-
-//         // Optionally, you can manipulate the form data if needed before submission
-//         // For example, adding a hidden input if necessary:
-//         deleteImages.forEach(url => {
-//             const input = document.createElement('input');
-//             input.type = 'hidden';
-//             input.name = 'deleteImages';
-//             input.value = url;
-//             document.getElementById('productForm').appendChild(input);
-//         });
-//     }
-    
-//     // Collect all cropped image URLs that were uploaded
-//     const croppedImages = croppedImageUrls;
-
-//     // Create the payload for the product data and cropped images
-//     const jsonPayload = {
-//         productname: formData.get('productname'),
-//         price: formData.get('price'),
-//         description: formData.get('description'),
-//         qty: formData.get('qty'),
-//         category: formData.get('category'),
-//         id:formData.get('id'),
-//         croppedImages,
-//         deleteImages // Include the array of cropped image URLs
-//     };
-
-//     try {
-//         const response = await fetch('/admin/product/edit', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(jsonPayload),
-//         });
-
-//         const result = await response.json();
-//         console.log(result);
-
-//         if (result.error) {
-//             document.getElementById('error').textContent = result.error;
-//         } else {
-//             window.location.reload();
-//         }
-//     } catch (error) {
-//         console.error('Error submitting form:', error);
-//     }
-// });
 
 
 let cropper;
@@ -414,13 +294,16 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
         qty: formData.get('qty'),
         category: formData.get('category'),
         id: formData.get('id'),
+        variety:formData.get('variety'),
+        discount:formData.get('discount'),
+        color:formData.get('color'),
         croppedImages: croppedImageUrls, // Include the array of cropped image URLs
         deleteImages // Include the array of deleted image URLs
     };
 
     try {
         const response = await fetch('/admin/product/edit', {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
