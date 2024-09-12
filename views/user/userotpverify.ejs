@@ -36,7 +36,9 @@
         <div class="relative bg-white bg-opacity-50 p-8 rounded-lg shadow-lg w-full max-w-sm">
             <form id="otpForm" action="/user/otpverify" method="post">
     
-                <div id="error" class="text-danger"></div>
+                <div id="error" class="text-red-700"></div>
+              
+                
                 <input type="hidden" name="userId" value="<%= user %>" >
     
                 <div class="mb-6">
@@ -47,7 +49,15 @@
                 <!-- Submit Button -->
                 <button type="submit" class="w-full bg-black text-white font-bold py-2 px-4 rounded-lg">Submit</button>
             </form>
-        </div>
+              
+            <!-- <form id="otpresendform" action="/user/resendOtp" method="post">
+                <button type="submit" class="w-full bg-black text-white font-bold py-2 px-4 rounded-lg">Resend OTP</button>
+            </form> -->
+            <form id="otpresendform" action="/user/resendOtp" method="post"class="mt-2">
+                <input type="hidden" name="userId1" value="<%= user %>">
+                <button type="submit" class="btn">Resend OTP</button>
+            </form>
+        </div>`
 
     <script>
             const otp = document.getElementById('otp');

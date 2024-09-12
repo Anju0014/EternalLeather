@@ -23,7 +23,7 @@ export const adminuserpost= async (req, res) => {
     // }
 
     // Update the isBlocked status based on the dropdown value
-    user.isBlocked = blockStatus === 'block';
+    user.isBlocked = blockStatus === 'block' ? true: false;
     await user.save();
 
     res.redirect('/admin/user'); // Redirect back to the user management page

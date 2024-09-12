@@ -13,7 +13,7 @@ export const userproductdetail = async (req, res) => {
         console.log(product);
         const relateproduct= await Product.find({isDeleted:false}).limit(4).skip(4);
         console.log(relateproduct);
-        res.render('userproductdetail', { product,relateproduct });
+        res.render('userproductdetail', { product,relateproduct,sessionuser:req.session.isUser });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');

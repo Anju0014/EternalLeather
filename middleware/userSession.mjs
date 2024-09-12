@@ -1,4 +1,5 @@
-const userSchema = require('../model/userSchema')
+
+import userSchema from '../model/userModel.mjs'
 
 
 // -------------------- check user is login or not  ------------------------
@@ -6,7 +7,7 @@ const userSchema = require('../model/userSchema')
 async function isUser (req, res, next) {
   try {
     if (req.session.isUser) {
-      const userDetails = await userSchema.findById(req.session.isUser)
+      const userDetails = await userSchema.find({email:req.session.isUser})
       if (userDetails && !userDetails.isBlocked) {
         next()
       } else {

@@ -87,11 +87,11 @@
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Color</label>
-                    <input type="text" id="color" name="color" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" id="color" name="color" value="<%= product.productColor %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Discount</label>
-                    <input type="number" id="discount" name="discount" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <input type="number" id="discount" name="discount"  value="<%= product.productDiscount %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
                 <!-- <div class="mb-4">
@@ -105,6 +105,7 @@
                             <% }) %>
                     </select>
                 </div> -->
+           
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Product Category</label>
                     <select name="category" id="category" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -115,8 +116,9 @@
                             </option>
                         <% }) %>
                     </select>
-                </div>
-                
+                </div> 
+                 
+
                
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Product Description</label>
@@ -303,7 +305,7 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
 
     try {
         const response = await fetch('/admin/product/edit', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

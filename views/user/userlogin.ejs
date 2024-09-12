@@ -73,6 +73,7 @@
 
     <script>
             const password = document.getElementById('password');
+          
             const email = document.getElementById('email');
             const form = document.getElementById('loginForm');
             const errorElement = document.getElementById('error');
@@ -81,8 +82,20 @@
         
               let messages = [];
           
-              if (email.value === '') {
-                messages.push('Please fill in all fields.');}
+            
+              if (password.value === '' || password.value == null || password.value === "password") {
+                messages.push("Enter a valid password");
+              } else if (password.value.length < 8 || password.value.length > 15) {
+                messages.push('Password must be between 8 and 15 characters');
+             }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
+               messages.push('Valid Password is required')
+             }
+             
+             if (email.value === '' || email.value == null) {
+                messages.push("Email is required");
+              } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+                messages.push("Enter a valid email address");
+              } 
 
               if(messages.length>0){
                 e.preventDefault(); // Prevent form submission

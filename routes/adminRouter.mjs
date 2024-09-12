@@ -32,18 +32,18 @@ admin_router.post("/category/search",isAdmin,admincategorysearch);
 
 admin_router.get('/getform',pst)
 //admin_router.post('/getform',adminproductadd)
-admin_router.get("/user",adminuserget);
-admin_router.post("/users/:id/toggle-block", adminuserpost);
-admin_router.get("/product",adminproduct);
-admin_router.get('/products', adminproduct);
+admin_router.get("/user",isAdmin,adminuserget);
+admin_router.post("/users/:id/toggle-block",isAdmin, adminuserpost);
+admin_router.get("/product",isAdmin,adminproduct);
+admin_router.get('/products', isAdmin,adminproduct);
 
-admin_router.get("/product/add",upload.none(),adminproductaddform);
-admin_router.post('/product/add', adminproductadd);
+admin_router.get("/product/add",upload.none(),isAdmin,adminproductaddform);
+admin_router.post('/product/add', isAdmin,adminproductadd);
 
-admin_router.get("/product/edit",adminproducteditform);
-admin_router.post("/product/edit",adminproductupdate);
-admin_router.get("/product/delete",adminproductdelete);
-admin_router.post("/product/search",adminproductsearch);
+admin_router.get("/product/edit",isAdmin,adminproducteditform);
+admin_router.put("/product/edit",isAdmin,adminproductupdate);
+admin_router.get("/product/delete",isAdmin,adminproductdelete);
+admin_router.post("/product/search",isAdmin,adminproductsearch);
 
 
 // admin_router.post("/category/add",admincategoryAdd);

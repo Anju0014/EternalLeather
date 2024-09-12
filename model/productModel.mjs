@@ -21,13 +21,17 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     productColor: {
-        type: String  // Changed from Date to String
+        type: String,
+        default:'Brown' // Changed from Date to String
     },
     productDiscount: {
-        type: Number
+        type: Number,
+        default:0,
+        required:true
     },
     productType: {
-        type: String
+        type: String,
+        default:'Wallet'
     },
     productReviews: {
         type: [String]
@@ -35,11 +39,12 @@ const productSchema = new mongoose.Schema({
     productCategory: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Category', 
-        required: true
+        required:true
+    
     },
     productImages: {
         type: Array,  
-        required: true
+        
     },
     ratings: {
         type: Number,

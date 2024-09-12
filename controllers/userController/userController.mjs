@@ -29,7 +29,7 @@ const securePassword = async(password)=>{
 
 export const nouser=async(req,res)=>{
     if(!req.session.isUser){
-    res.render('landingpage')}
+    res.render('userhome')}
     else{
         res.redirect('/user/home')
     }
@@ -66,6 +66,7 @@ export const useremail=async(req,res)=>{
 }
 export const passwordchange=async(req,res)=>{
     try{
+
         const email= req.body.email;
         res.render('forgotpassword',{user:email})
     }
@@ -122,16 +123,13 @@ export const userregister=async(req,res)=>{
             res.redirect('/user/signup')
         }else{
 
-          
-            //user.otpExpires = Date.now() + 3600000; // OTP valid for 1 hour
-
           const user=new User({
             name:req.body.name,
             email:req.body.email,
             password:spassword,
             phoneno:req.body.phoneno
           })
-        
+          user.otpExpires =Date.now() + 10 * 60 * 1000;
           console.log(2)
           const otp = crypto.randomInt(100000, 999999).toString();
           user.otp = otp;
@@ -171,8 +169,6 @@ export const userregister=async(req,res)=>{
 }
 
 
-
-
 export const verifyOtp = async (req, res) => {
     const { userId, otp } = req.body;
     console.log(otp);
@@ -182,32 +178,108 @@ export const verifyOtp = async (req, res) => {
 
     console.log(user.otp)
     console.log(otp)
-    if (user.otp != otp) {
+    if (user.otp != otp && Date.now() < user.otpExpires) {
         req.flash("error", "Invalid or expired OTP");
         res.redirect('/user/signup',);
     }else{
 
     user.isVerified = true;
     user.otp = undefined;
-    //user.otpExpires = undefined;
+    user.otpExpires = undefined;
     await user.save();
     
     res.redirect('/user/login'); }
     
 };
 
+export const resendOtp = async (req, res) => {
+    try {
+        const userId  = req.body.userId1;
+
+        const user = await User.findById(userId);
+
+        if (user) {
+         
+            const newOtp = crypto.randomInt(100000, 999999).toString();
+            user.otp = newOtp;
+            user.otpExpires = Date.now() + 10 * 60 * 1000;  // 10-minute expiration
+
+            await user.save();
+
+         
+            const mailOptions = {
+                from: 'eternalleather09@gmail.com',
+                to: user.email,
+                subject: 'Resend OTP - Email Verification',
+                text: `Your new OTP is ${newOtp}. It will expire in 10 minutes.`,
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log('Error sending email:', error);
+                    return res.status(500).send('Error resending OTP');
+                }
+                console.log('OTP resent:', info.response);
+            });
+
+            req.flash('success', 'OTP has been resent');
+            res.render('userotpverify',{user:user._id, resend:"Otp has been resent"});
+        } else {
+            req.flash('error', 'User not found');
+            res.redirect('/user/signup');
+        }
+    } catch (error) {
+        console.log('Error resending OTP:', error);
+        res.status(500).send('Server error');
+    }
+};
+
+
+// export const verifyOtp = async (req, res) => {
+//     try {
+//         const userId = req.body.userId; // assuming user ID is passed in request
+//         const otp = req.body.otp;       // the OTP entered by the user
+        
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             req.flash('error', 'User not found');
+//             return res.redirect('/user/signup');
+//         }
+
+//         // Check if OTP matches and if it's still valid
+//         if (user.otp === otp && Date.now() < user.otpExpires) {
+//             // OTP is valid
+//             user.isVerified = true; // Optionally, mark the user as verified
+//             user.otp = null;        // Clear OTP after successful verification
+//             user.otpExpires = null; // Clear OTP expiration
+//             await user.save();
+
+//             res.send('OTP verified successfully');
+//         } else {
+//             req.flash('error', 'OTP is invalid or expired');
+//             res.redirect('/user/otpverify'); // Redirect back to the OTP input form
+//         }
+//     } catch (error) {
+//         console.log(`Error from OTP verification: ${error}`);
+//         req.flash('error', 'Something went wrong. Please try again.');
+//         res.redirect('/user/otpverify');
+//     }
+// };
+
+
 export const userverify=async(req,res)=>{
     try{
           const email=req.body.email;
           const password=req.body.password;
           const userExist=await User.findOne({email});
-          if(userExist){
+          if(userExist && !userExist.isBlocked){
            //const passwordHash=await bcrypt.hash(password,10);
            const passwordMatch=await bcrypt.compare(password,userExist.password);
            console.log(passwordMatch)
             if(passwordMatch){
-                    req.session.isUser=true;
-                    req.session.user=req.body.email;
+                    req.session.isUser=req.body.email;
+                    // req.session.user=req.body.email;
+
                     res.redirect('/user/home');
             }
             else{
@@ -233,8 +305,7 @@ export const userhome=async(req,res)=>{
           console.log(recentproduct);
           const productgreen= await Product.findOne({productName:'Spencer-Green'});
           console.log(productgreen);
-          const productcase= await Product.findOne({productName:'CARDO'})
-;
+          const productcase= await Product.findOne({productName:'CARDO'});
           res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser});
         
     }catch(error){
@@ -245,7 +316,7 @@ export const userhome=async(req,res)=>{
 export const userlogout=async(req,res)=>{
     try{
         req.session.destroy();
-        res.redirect('user/login')
+        res.redirect('/user/login')
     }catch(error){
         console.log(error.message)
     }

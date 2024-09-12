@@ -1,6 +1,7 @@
 import express from "express";
-import {  nouser, passwordchange, passwordnew, useremail, userhome, userlogin, userregister, usersignup, userverify, verifyOtp } from "../controllers/userController/userController.mjs";
+import {  nouser, passwordchange, passwordnew, resendOtp, useremail, userhome, userlogin, userlogout, userregister, usersignup, userverify, verifyOtp, } from "../controllers/userController/userController.mjs";
 import { googleauth, googleAuthCallback } from "../controllers/userController/userauthController.mjs";
+import isUser from "../middleware/userSession.mjs";
 import { userproductdetail } from "../controllers/userController/productdetail.mjs";
 
 const user_router=express();
@@ -26,13 +27,15 @@ user_router.post('/user/renewpassword',passwordnew)
 user_router.get('/user/signup',usersignup);
 user_router.post('/user/signup',userregister);
 
-user_router.post('/user/otpverify',verifyOtp)
+user_router.post('/user/otpverify',verifyOtp);
+user_router.post('/user/resendOtp',resendOtp);
 
-user_router.get('/user/home',userhome);
-user_router.get('/user/productdetail/:id',userproductdetail)
+user_router.get('/user/home',isUser,userhome);
+user_router.get('/user/productdetail/:id',isUser,userproductdetail)
 user_router.get('/auth/google',googleauth);
 
 user_router.get('/auth/google/callback',googleAuthCallback)
+user_router.get('/user/logout',userlogout)
 
 
 export default user_router
