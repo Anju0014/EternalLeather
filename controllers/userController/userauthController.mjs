@@ -29,7 +29,7 @@ export const googleAuthCallback = (req, res, next) => {
         console.log(`Login error: ${loginErr}`);
         return next(loginErr);
       }
-      req.session.isUser=user.id
+      req.session.isUser=user.email
       return res.redirect('/user/home'); 
     });
   })(req, res, next);

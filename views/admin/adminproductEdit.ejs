@@ -55,11 +55,11 @@
                 <div id="error" class="text-red-900"></div>
                 
                 <% if (message.error) { %>
-                    <div class="text-center bg-red-500 text-white rounded mb-4"><%= message.error %></div>
+                    <div class="text-center bg-red-500 text-white rounded mb-4 mx-10"><%= message.error %></div>
                 <% } %>
                 
                 <% if (message.success) { %>
-                    <div class="text-center bg-green-700 text-white rounded mb-4"><%= message.success %></div>
+                    <div class="text-center bg-green-700 text-white rounded mb-4 mx-10"><%= message.success %></div>
                 <% } %> 
 
                 <!-- Product Fields -->
@@ -69,10 +69,10 @@
                     <label class="block font-bold mb-2">Product Name</label>
                     <input type="text" id="productname" name="productname" value="<%= product.productName %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <label class="block font-bold mb-2">Added Date</label>
                     <input type="date" id="adddate" name="adddate" value="<%= product.addDate %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                </div>
+                </div> -->
                 <div class="mb-4">
                     <label class="block font-bold mb-2">Price</label>
                     <input type="number" id="price" name="price" value="<%= product.productPrice %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -178,6 +178,79 @@ const form = document.getElementById('form');
 // Array to store the URLs of all cropped images
 const croppedImageUrls = [];
 
+
+function validateForm() {
+        let isValid = true;
+        let errorMessages = [];
+
+        // Get form field values
+        const productName = form.productname.value.trim();
+        const price = form.price.value.trim();
+        const qty = form.qty.value.trim();
+        const variety = form.variety.value.trim();
+        const color = form.color.value.trim();
+        const discount = form.discount.value.trim();
+        const category = form.category.value;
+
+        // 2. Add validation checks for each field
+
+        // Validate Product Name
+        if (productName.length < 3) {
+            errorMessages.push('Product name must be at least 3 characters.');
+            isValid = false;
+        }
+
+        // Validate Price
+        if (!price || isNaN(price) || price <= 0) {
+            errorMessages.push('Price must be a positive number.');
+            isValid = false;
+        }
+
+        // Validate Quantity
+        if (!qty || isNaN(qty) || parseInt(qty) <= 0) {
+            errorMessages.push('Stock must be a positive integer.');
+            isValid = false;
+        }
+
+        // Validate Type (Variety)
+        if (variety.length < 1) {
+            errorMessages.push('Product variety is required.');
+            isValid = false;
+        }
+
+        // Validate Color
+        if (color.length < 1) {
+            errorMessages.push('Color is required.');
+            isValid = false;
+        }
+
+        // Validate Discount
+        if (!discount || isNaN(discount) || discount < 0 || discount > 100) {
+            errorMessages.push('Discount must be between 0 and 100.');
+            isValid = false;
+        }
+
+        // Validate Category
+        if (!category) {
+            errorMessages.push('Please select a product category.');
+            isValid = false;
+        }
+
+        // 3. Display error messages if validation fails
+        const errorDiv = document.getElementById('error');
+        errorDiv.innerHTML = ''; // Clear any previous errors
+
+        if (!isValid) {
+            errorMessages.forEach(msg => {
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = msg;
+                errorMessage.classList.add('text-red-500'); // Add styles to errors
+                errorDiv.appendChild(errorMessage);
+            });
+        }
+
+        return isValid;
+    }
 // Handle image file input change
 inputImage.addEventListener('change', (event) => {
     const files = event.target.files;
@@ -260,6 +333,10 @@ inputImage.addEventListener('change', (event) => {
 document.getElementById('submitButton').addEventListener('click', async (e) => {
     e.preventDefault();
 
+    if (!validateForm()) {
+            return; // Stop submission if validation fails
+        }
+        
     const formData = new FormData(form);
 
     // Collect checked checkboxes for deletion

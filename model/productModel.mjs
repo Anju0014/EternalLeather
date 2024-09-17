@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     productAdddate: {
-        type: Date  // Changed from String to Date
+        type: String  // Changed from String to Date
     },
     productQuantity: {
         type: Number,

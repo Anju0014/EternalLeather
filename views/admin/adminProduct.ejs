@@ -52,7 +52,13 @@
                 </div>
             </form>
 
-
+            <% if (light.error) { %>
+                <div class="text-center bg-red-500 text-white rounded mb-4"><%= light.error %></div>
+            <% } %>
+            
+            <% if (light.success) { %>
+                <div class="text-center bg-green-700 text-white rounded mb-4"><%= light.success %></div>
+            <% } %> 
 
 
             <table class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
@@ -113,7 +119,7 @@
                     <a href="/admin/products?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
                 <% } %>
             </div>
-            <button class="bg-red-900 text-white ml-96 mb-4 border-none rounded px-3 py-2"><a href="/admin/product/add">Add Product</a></button>
+            <button class="bg-red-900 text-white ml-96 p-2 mb-4 border-none rounded px-3 py-2"><a href="/admin/product/add">Add Product</a></button>
             </div>
         
 </div>

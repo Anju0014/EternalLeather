@@ -38,15 +38,16 @@ export const admincategoryaddform = async (req, res) => {
 
 export const admincategoryAdd = async (req, res) => {
     try {
+        const categoryname = req.body.catname; 
 
-        const catname = req.body.catname; 
-        const existingCategory = await Category.findOne({ categoryName:catname });
+        console.log(req.body.catname)
+        const existingCategory = await Category.findOne({ categoryName:categoryname });
         if (existingCategory) {
             req.flash("error", "Category already exists");
             res.redirect('/admin/category/add');
         }else{
         const newCategory = new Category({
-            categoryName: req.body.catname,
+            categoryName: categoryname,
             isActive: req.body.status,
             addDate: req.body.adddate
         });
@@ -116,9 +117,11 @@ export const admincategorysearch=async(req,res)=>{
         
         const name=req.body.sename;
         if(name){
-        const user1= await Category.find({categoryName:name });
+            const regex = new RegExp(name, 'i'); // 'i' for case-insensitive
+            const user1= await Category.find({categoryName:{ $regex: regex } });
         if(user1){
             console.log("entered");
+           
             res.render('adminCategory',{message: user1});
         }else{
             res.redirect('/admin/category')
@@ -133,36 +136,13 @@ export const admincategorysearch=async(req,res)=>{
     }
 }
 
-// Delete Category
-export const admincategorydelete = async (req, res) => {
-    // try {
-    //     const categoryId = req.query.id;
-    //     console.log(req.query.id);
 
-    //     const category = await Category.findByIdAndDelete(categoryId);
-    //     console.log(category)
+// export const admincategorydelete = async (req, res) => {
+//     console.log(req.url)
+//     const category = await Category.findByIdAndUpdate(req.query.id,{
+//         isDeleted: true,
+//         deletedAt: new Date(),
+//       });
+//     res.redirect('/admin/category')
 
-    //     // if (!category) {
-    //     //     req.flash("error", "Category not found");
-    //     //     return res.redirect('/admin/category');
-    //     // }
-
-    //     req.flash("success", "Category deleted successfully");
-    //     res.redirect('/admin/category');
-        
-    // } catch (error) {
-    //     console.log(`Error deleting category: ${error}`);
-    //     req.flash("error", "An error occurred while deleting the category");
-    //     res.redirect('/admin/category');
-    // }
-
-    console.log(req.url)
-    const category = await Category.findByIdAndUpdate(req.query.id,{
-        isDeleted: true,
-        deletedAt: new Date(),
-      });
-    res.redirect('/admin/category')
-    // console.log(category)
-
-    // console.log(req.query.id)
-};
+// };

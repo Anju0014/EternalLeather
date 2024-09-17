@@ -1,0 +1,17 @@
+<div class="box-dash">
+    <br>
+    <br>
+   
+           
+            
+
+   <hr class="bg-red-900 h-1 my-4">
+    <div class="px-8 py-5">
+        <% productCollection.forEach((category)=> { %>
+            <a href="/user/allproducts/id=<%=category._id%>"><option value="<%= category._id %>">
+              <%= category.categoryName %>
+            </option></a>
+        <% }) %>
+        </ul>
+    </div>
+    <hr class="bg-red-900 h-1 my-4 ">

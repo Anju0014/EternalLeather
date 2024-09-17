@@ -1,4 +1,5 @@
 import Product from '../../model/productModel.mjs'
+import Category from '../../model/categoryModel.mjs'
 
 
 export const userproductdetail = async (req, res) => {
@@ -19,3 +20,39 @@ export const userproductdetail = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+export const userproductview= async(req,res)=>{
+    try{
+        
+        
+
+
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 12
+        const skip = (page - 1) * pageSize;
+
+        // Fetch the products with pagination
+        const product = await Product.find({ isDeleted: false })
+            .populate('productCategory', 'categoryName')
+            .skip(skip)
+            .limit(pageSize);
+
+        // Debugging: Log the fetched products
+        console.log('Fetched Products:', product);
+
+        const productCollection=await Category.find({isActive:true});
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / pageSize);
+
+        res.render('userAllProducts',
+            {
+            product,
+            currentPage: page,
+            totalPages: totalPages,
+            productCollection,
+            sessionuser:req.session.isUser})
+    }catch(error){
+         console.log(error)
+    }
+}
+

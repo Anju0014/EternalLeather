@@ -35,12 +35,21 @@
 </head>
 
 <body>
+
     <%- include('headertry') %> 
     <%- include('userbreadcrumb') %>
-    <%- include('usersinglepageproduct') %>
-    <%- include('userrelatedproducts') %>
+ 
+    <div class="flex justify-normal"></div>
+        <div class="flex justify-items-start">
+            <%- include('productlisting') %>
+        <br>
+        </div>
+        <%- include('userproductextract') %>
+        
+      
+    </div>
     <%- include('userfooter') %>
-
 
 </body>
 </html>
+

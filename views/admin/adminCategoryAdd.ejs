@@ -45,7 +45,7 @@
         </div>
 
         <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded-2xl" >
-           <form action="" id="form" method="post" class="mx-56 my-10 w-5/12" enctype="multipart/form-data">
+           <form action="" id="form" method="post" class="mx-56 my-10 w-5/12">
             
             <div id="error" class="text-red-900"></div>
             <% if (message.error) { %>
@@ -86,27 +86,38 @@
         </div>
 </div>
     <%- include('footer') %>
+    <script>
+        const adddate = document.getElementById('adddate');
+        const catname = document.getElementById('catname');
+        const form = document.getElementById('form');
+        const errorElement = document.getElementById('error');
+    
+        form.addEventListener('submit', (e) => {
+            let messages = []; // Array to hold error messages
+    
+            // Validation for empty fields
+            if (catname.value === '' || catname.value == null || adddate.value === '') {
+                messages.push('Please fill in all fields.');
+            }
+    
+    
+            if (catname.value.length < 3) {
+                messages.push('Category name must be at least 3 characters long.');
+            } else if (catname.value.length>15){
+                messages.push('category name must be less than 15 characters long.')
+            }else if (!catname.value.match(/^[A-Za-z]+$/)) {
+                 messages.push('Proper Category name is required without spaces and numbers');
+            }
 
-<script>
+            
+            if (messages.length > 0) {
+                e.preventDefault(); // Prevent form submission
+                errorElement.innerText = messages.join(', '); 
+            } 
+        });
+    </script>
+    
 
-    const adddate = document.getElementById('adddate')
-    const catname = document.getElementById('catname');
-    const form = document.getElementById('form');
-    const errorElement = document.getElementById('error');
-          
-    form.addEventListener('submit', (e) => {
-        
-    let messages = [];
-          
-    if (catname.value === '' || catname.value == null|| date.value === '') {
-        messages.push('Please fill in all fields.');}
-
-        if(messages.length>0){
-            e.preventDefault(); // Prevent form submission
-            errorElement.innerText = messages
-        }
-    });
-
-</script>
+  
 </body>
 </html>

@@ -27,11 +27,12 @@ const securePassword = async(password)=>{
     }
 }
 
-export const nouser=async(req,res)=>{
-    if(!req.session.isUser){
-    res.render('userhome')}
-    else{
+export const userlanding=async(req,res)=>{
+    try{
         res.redirect('/user/home')
+    }
+    catch(error){
+        console.log(`error from landing page ${error}`)
     }
 }
 
@@ -103,7 +104,7 @@ export const passwordnew= async(req,res)=>{
 export const usersignup=async(req,res)=>{
     try{
         if(req.session.isUser){
-          redirect('/user/home')
+          res.redirect('/user/home')
         }else{
           res.render('usersign',{ message: req.flash() })
         }
@@ -129,7 +130,7 @@ export const userregister=async(req,res)=>{
             password:spassword,
             phoneno:req.body.phoneno
           })
-          user.otpExpires =Date.now() + 10 * 60 * 1000;
+          user.otpExpires =Date.now() + 1 * 60 * 1000;
           console.log(2)
           const otp = crypto.randomInt(100000, 999999).toString();
           user.otp = otp;
@@ -154,7 +155,7 @@ export const userregister=async(req,res)=>{
             });
         console.log(5)
           
-            res.render('userotpverify',{user:user._id})
+            res.render('userotpverify',{user:user._id,message:req.flash(),otpExpires: user.otpExpires-Date.now()})
 
           
           }
@@ -178,17 +179,28 @@ export const verifyOtp = async (req, res) => {
 
     console.log(user.otp)
     console.log(otp)
-    if (user.otp != otp && Date.now() < user.otpExpires) {
-        req.flash("error", "Invalid or expired OTP");
-        res.redirect('/user/signup',);
-    }else{
-
-    user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    await user.save();
-    
+    if (user.otp == otp && Date.now() < user.otpExpires) {
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+        
     res.redirect('/user/login'); }
+    else{
+        req.flash("error", "Invalid OTP or Expired OTP");
+        res.render('userotpverify',{user:user._id,message:req.flash(), otpExpires: user.otpExpires - Date.now()})
+    }
+
+        
+    // }if(user.otp ==otp && Date.now()>user.otpExpires)
+    // else{
+
+    // user.isVerified = true;
+    // user.otp = undefined;
+    // user.otpExpires = undefined;
+    // await user.save();
+    
+    // res.redirect('/user/login'); }
     
 };
 
@@ -202,7 +214,7 @@ export const resendOtp = async (req, res) => {
          
             const newOtp = crypto.randomInt(100000, 999999).toString();
             user.otp = newOtp;
-            user.otpExpires = Date.now() + 10 * 60 * 1000;  // 10-minute expiration
+            user.otpExpires = Date.now() + 1 * 60 * 1000;  // 2-minute expiration
 
             await user.save();
 
@@ -223,7 +235,7 @@ export const resendOtp = async (req, res) => {
             });
 
             req.flash('success', 'OTP has been resent');
-            res.render('userotpverify',{user:user._id, resend:"Otp has been resent"});
+            res.render('userotpverify',{user:user._id, message:req.flash(),otpExpires: user.otpExpires - Date.now()});
         } else {
             req.flash('error', 'User not found');
             res.redirect('/user/signup');
@@ -306,7 +318,8 @@ export const userhome=async(req,res)=>{
           const productgreen= await Product.findOne({productName:'Spencer-Green'});
           console.log(productgreen);
           const productcase= await Product.findOne({productName:'CARDO'});
-          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser});
+          const productCollection=await Category.find({isActive:true});
+          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection});
         
     }catch(error){
         console.log(`error from user home ${error}`);

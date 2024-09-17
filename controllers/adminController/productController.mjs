@@ -46,6 +46,7 @@ export const adminproduct = async (req, res) => {
             message: products,
             currentPage: page,
             totalPages: totalPages,
+            light:req.flash()
         });
     } catch (error) {
         console.log(`error from admin product ${error}`);
@@ -132,14 +133,14 @@ export const adminproductupdate = async (req, res) => {
         const { productname, price, category, qty, description, deleteImages,variety, color, discount, croppedImages } = req.body;
    
        console.log(deleteImages)
-        // Find the product by ID
+        
         const product = await Product.findById(productId);
         if (!product) {
             req.flash("error", "Product not found");
             return res.redirect('/admin/product');
         }
 
-        // Update basic product fields
+    
         product.productName = productname;
         product.productPrice = price;
         product.productCategory = category;
@@ -149,7 +150,7 @@ export const adminproductupdate = async (req, res) => {
         product.productDiscount=discount;
         product.productColor=color;
 
-        // Handle image deletion
+        
         if (deleteImages && deleteImages.length > 0) {
             product.productImages = product.productImages.filter(imageUrl => !deleteImages.includes(imageUrl));
             // Optionally, delete the images from Cloudinary here using Cloudinary's delete method.
@@ -163,7 +164,7 @@ console.log(product.productImages)
         await product.save();
         console.log(product);
         req.flash("success", "Product updated successfully");
-        return res.redirect('/admin/product');
+        return res.status(200).json({ message: 'Product added successfully' });
     } catch (error) {
         console.log(`Error updating product: ${error}`);
         req.flash("error", "An error occurred while updating the product");
@@ -287,7 +288,8 @@ export const adminproductsearch=async(req,res)=>{
         
         const name=req.body.sename;
         if(name){
-            const user1= await Product.find({productName:name });
+            const regex = new RegExp(name, 'i'); // 'i' for case-insensitive
+            const user1 = await Product.find({ productName: { $regex: regex } });
             console.log(user1)
             if(user1.length>0){
                console.log("entered");
@@ -295,6 +297,7 @@ export const adminproductsearch=async(req,res)=>{
                    message: user1,
                    currentPage: 1,
                    totalPages: 1,
+                   light:req.flash(),
                 });
             }else{
             res.redirect('/admin/product')
@@ -309,33 +312,34 @@ export const adminproductsearch=async(req,res)=>{
 
 // Delete Category
 export const adminproductdelete = async (req, res) => {
-    // try {
-    //     const categoryId = req.query.id;
-    //     console.log(req.query.id);
+    try {
+        // const categoryId = req.query.id;
+        // console.log(req.query.id);
 
-    //     const category = await Category.findByIdAndDelete(categoryId);
-    //     console.log(category)
+        // const category = await Category.findByIdAndDelete(categoryId);
+        // console.log(category)
 
-    //     // if (!category) {
-    //     //     req.flash("error", "Category not found");
-    //     //     return res.redirect('/admin/category');
-    //     // }
+        // // if (!category) {
+        // //     req.flash("error", "Category not found");
+        // //     return res.redirect('/admin/category');
+        // // }
 
-    //     req.flash("success", "Category deleted successfully");
-    //     res.redirect('/admin/category');
-        
-    // } catch (error) {
-    //     console.log(`Error deleting category: ${error}`);
-    //     req.flash("error", "An error occurred while deleting the category");
-    //     res.redirect('/admin/category');
-    // }
-
-    console.log(req.url)
+        // req.flash("success", "Category deleted successfully");
+        // res.redirect('/admin/category');
+        console.log(req.url)
     const category = await Product.findByIdAndUpdate(req.query.id,{
         isDeleted: true,
         deletedAt: new Date(),
       });
     res.redirect('/admin/product')
+
+    } catch (error) {
+        console.log(`Error deleting product: ${error}`);
+        req.flash("error", "An error occurred while deleting the product");
+        res.redirect('/admin/product');
+    }
+
+    
     // console.log(category)
 
     // console.log(req.query.id)
