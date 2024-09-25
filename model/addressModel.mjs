@@ -9,7 +9,7 @@ const addressSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    Building:{
+    building:{
         type:String,
         required:true
     },
@@ -35,7 +35,11 @@ const addressSchema=new mongoose.Schema({
     },
     phoneno:{
         type:Number
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     }
     
-});
+},{timestamps:true});
 export default addressSchema

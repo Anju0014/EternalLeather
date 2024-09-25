@@ -15,9 +15,7 @@
                     <img src="<%= product.productImages[3] %>" alt="Image4" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
                 </div>
             </div>
-                      
-                      
-                    <div class="bg-red-100 px-5 pb-8 sm:text-center lg:text-start rounded">
+                        <div class="bg-red-100 px-5 pb-8 sm:text-center lg:text-start rounded">
                         <h2 class="text-2xl max-sm:text-2xl font-bold font-serif text-black-800 pt-3"><%=product.productName%></h2>
                         <div class="mt-8">
                           <div>
@@ -52,43 +50,58 @@
                                   <% if(i <= product.ratings) { %>
                                       <i class="fa-solid fa-star" style="color: #FFD43B;"></i>
                                   <% } else { %>
-                                      <i class="fa-regular fa-star" style="color: #FFD43B;"></i> <!-- empty star -->
+                                      <i class="fa-regular fa-star" style="color: rgb(247, 245, 242);"></i> <!-- empty star -->
                                   <% } %>
                               <% } %>
                           </div>
-                          
+
                           
                         </div>
 
                         <br>
                         <br>
 
-                      
-                        <div class="mt-10 flex flex-wrap gap-4 font-serif">
-                            <button type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 512 512">
-                                    <path d="M164.96 300.004h.024c.02 0 .04-.004.059-.004H437a15.003 15.003 0 0 0 14.422-10.879l60-210a15.003 15.003 0 0 0-2.445-13.152A15.006 15.006 0 0 0 497 60H130.367l-10.722-48.254A15.003 15.003 0 0 0 105 0H15C6.715 0 0 6.715 0 15s6.715 15 15 15h77.969c1.898 8.55 51.312 230.918 54.156 243.71C131.184 280.64 120 296.536 120 315c0 24.812 20.188 45 45 45h272c8.285 0 15-6.715 15-15s-6.715-15-15-15H165c-8.27 0-15-6.73-15-15 0-8.258 6.707-14.977 14.96-14.996zM477.114 90l-51.43 180H177.032l-40-180zM150 405c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm167 15c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm0 0" data-original="#000000"></path>
-                                </svg>
-                                Add to cart
-                            </button>
-
-                            <button type="button" class="flex items-center justify-center  px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 64 64">
-                                    <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
-                                </svg>
-                                Add to wishlist
-                            </button>
-
-                            <br>
-                            <br>
-                        </div>
-
-                       
-
+                        <div class="flex items-center gap-4">
+                            <!-- Cart and Wishlist Controls -->
+                            <div id="cart-controls" >
+                                <!-- Add to Cart Button -->
+                               
+                                <button id="add-to-cart" type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg"
+                                <% if (product.productQuantity <= 0) { %> cursor-not-allowed opacity-50 <% } %>"
+                                <% if (product.productQuantity <= 0) { %> disabled <% } %>>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 512 512">
+                                        <path  d="M164.96 300.004h.024c.02 0 .04-.004.059-.004H437a15.003 15.003 0 0 0 14.422-10.879l60-210a15.003 15.003 0 0 0-2.445-13.152A15.006 15.006 0 0 0 497 60H130.367l-10.722-48.254A15.003 15.003 0 0 0 105 0H15C6.715 0 0 6.715 0 15s6.715 15 15 15h77.969c1.898 8.55 51.312 230.918 54.156 243.71C131.184 280.64 120 296.536 120 315c0 24.812 20.188 45 45 45h272c8.285 0 15-6.715 15-15s-6.715-15-15-15H165c-8.27 0-15-6.73-15-15 0-8.258 6.707-14.977 14.96-14.996zM477.114 90l-51.43 180H177.032l-40-180zM150 405c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm167 15c0 24.813 20.188 45 45 45s45-20.188 45-45-20.188-45-45-45-45 20.188-45 45zm45-15c8.27 0 15 6.73 15 15s-6.73 15-15 15-15-6.73-15-15 6.73-15 15-15zm0 0"
+                                      data-original="#000000"></path>
+                                    </svg>
+                                    Add to cart
+                                </button>
+                            </div>
+                                <!-- Add to Wishlist Button -->
+                                <button type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 64 64">
+                                        <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
+                                    </svg>
+                                    Add to wishlist
+                                </button>
+                            </div>
+                            
+                            <!-- <div id="cart-modal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 flex hidden">
+                                <div class="bg-white rounded-lg text-center p-6">
+                                    <% if (sessionuser) { %>
+                                        <h2 class="text-xl text-center font-semibold">Product added to cart!</h2>
+                                        <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded">Close</button>
+                                    <% } else { %>
+                                        <h2 class="text-xl text-center font-semibold">Please log in to add items to your cart.</h2>
+                                        <a href="/user/login" class="mt-4 inline-block px-4 py-2 bg-red-400 text-white rounded hover:bg-red-900">Log in</a>
+                                    <% } %>
+                                    <form id="cart-form" action="/user/addtocart/product._id" method="POST" class="hidden">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <input type="hidden" id="quantity-input" name="quantity" value="1">
+                                    </form>
+                                </div>
+                            </div>   -->
                     </div>
-                   
                 </div>
-             
             </div>
             <div>
                 <br>
@@ -102,19 +115,122 @@
                 <ul class="py-2 px-10">"Recently purchased a wallet via online. Well satisfied with the product delivery and the quality"</ul>
                 <ul class="py-2 px-10">"Nice Product"</ul>
             </div>
+            
         </div>
+        <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <p id="cart-message" class="text-lg font-semibold"></p>
+                <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
+            </div>
+        </div>
+        
+
       
+<!--      
+
+            //addToCartBtn.addEventListener('click', function () {
+        // Show modal
+        //cartModal.classList.remove('hidden');
+       // cartform.submit();
+        // Replace Add to Cart button with quantity controls
+       // cartControls.innerHTML = `
+            // <div class="flex items-center gap-3">
+            //     <h2>Qty</h2>
+            //     <button id="decrease-qty" class="px-4 py-2 bg-red-400 text-white rounded">-</button>
+            //     <span id="qty-display" class="font-semibold">1</span>
+            //     <button id="increase-qty" class="px-4 py-2 bg-red-400 text-white rounded">+</button>
+    //         // </div>
+    //     `;
+        
+    //     // Handle Quantity Increase/Decrease
+    //     let quantity = 1;
+    //     const qtyDisplay = document.getElementById('qty-display');
+    //     document.getElementById('increase-qty').addEventListener('click', function () {
+    //         quantity++;
+    //         qtyDisplay.innerText = quantity;
+    //     });
+    //     document.getElementById('decrease-qty').addEventListener('click', function () {
+    //         if (quantity > 1) {
+    //             quantity--;
+    //             qtyDisplay.innerText = quantity;
+    //         }
+    //     });
+    // });
+
+    // // Event listener for Close Modal button
+    // closeModalBtn.addEventListener('click', function () {
+    //     cartModal.classList.add('hidden');
+    //     qtyBox.style.display='inline'
+    // }); -->
+
+
+    <!-- Add to Cart button -->
+
+
+<!-- Modal -->
+
+
+<script>
+    
+document.getElementById('add-to-cart').addEventListener('click', function () {
+    const productId = '<%= product._id %>';
+    // const productPrice= '<%= product.productPrice %>'
+    // const discountPrice='<%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %> ' // Assuming EJS renders this correctly
+    
+    let quantity = 1;  // You can make this dynamic if necessary
+
+    // Send an AJAX request to add the product to the cart
+    fetch('/user/addtocart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId, productCount: quantity })  // Include quantity if needed
+    })
+    .then(response => response.json())  // Parse response as JSON
+    .then(data => {
+        // Show the modal with appropriate message
+        console.log(data)
+        const cartModal = document.getElementById('cart-modal');
+        const cartMessage = document.getElementById('cart-message');
+
+        if (data.message === 'Product added to cart') {
+            console.log("false")
+            cartMessage.textContent = 'Product added to cart!';
+        } else if (data.message == 'Please log in to add products to the cart') {
+            console.log("true")
+            cartMessage.textContent = 'Please log in to continue!';
+            console.log("tru")
+            console.log(cartMessage.textContent)
+        }
+
+        cartModal.style.display = 'block';  // Show the modal
+    })
+    .catch(error => {
+        console.error('Error:', error);  // Handle any errors
+    });
+});
+
+// Close the modal when the close button is clicked
+document.getElementById('close-modal').addEventListener('click', function () {
+    document.getElementById('cart-modal').style.display = 'none';
+});
 
 
 
 
-        <script>
             // Select all thumbnail images
             const thumbnails = document.querySelectorAll('.thumbnail');
             
             // Select the main image
             const mainImage = document.getElementById('mainImage');
             
+            //const addToCartBtn = document.getElementById('add-to-cart-btn');
+            //const cartModal = document.getElementById('cart-modal');
+            //const closeModalBtn = document.getElementById('close-modal');
+            //const cartControls = document.getElementById('cart-controls');
+           
+    //const qtyBox=document.getElementById('qty-box')
             // Loop through each thumbnail and add a click event listener
             thumbnails.forEach(thumbnail => {
               thumbnail.addEventListener('click', function() {
@@ -122,7 +238,21 @@
                 mainImage.src = this.src;
               });
             });
-          </script>
+
+
+            document.getElementById('add-to-cart').addEventListener('click', function () {
+    console.log('Add to cart clicked');
+    // AJAX request...
+});
+
+document.getElementById('close-modal').addEventListener('click', function () {
+    console.log('Close modal clicked');
+    document.getElementById('cart-modal').style.display = 'none';
+});
+
+</script>
+
+        
 
 <style>
     .zoom-container {
@@ -140,18 +270,3 @@
     }
   </style>
 
-<!-- <style>
-    .zoom-container {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .zoom-image {
-      transition: transform 0.5s ease;
-    }
-    
-    .zoom-container.zoomed .zoom-image {
-      transform: scale(2); /* Adjust scale as needed */
-    }
-  </style> -->
-  

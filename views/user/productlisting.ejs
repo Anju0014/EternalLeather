@@ -1,17 +1,28 @@
 <div class="box-dash">
     <br>
     <br>
-   
-           
-            
-
-   <hr class="bg-red-900 h-1 my-4">
-    <div class="px-8 py-5">
-        <% productCollection.forEach((category)=> { %>
-            <a href="/user/allproducts/id=<%=category._id%>"><option value="<%= category._id %>">
-              <%= category.categoryName %>
-            </option></a>
+   <hr class="bg-red-900 h-1 my-2">
+    <div class="px-10 py-5">
+        <ul>
+        <% productCollection.forEach((category) => { %>
+            <li class="text-center py-3">
+                <a href="/user/allproducts?id=<%= category._id %>"><%= category.categoryName %></a>
+            </li>
         <% }) %>
-        </ul>
+    </ul>
     </div>
-    <hr class="bg-red-900 h-1 my-4 ">
+    <hr class="bg-red-900 h-1 my-2 ">
+       
+   <div>
+
+       <!-- Sorting Dropdown -->
+<div class="mb-4 my-2 text-center">
+    <label for="sort" class="block text-sm  text-gray-700">Sort By: Price</label>
+    <select id="sort" class="mt-1 block w-fit pl-3 mx-2 pr-10 py-2 text-base text-center border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+      <option value="lowToHigh">Low to High</option>
+      <option value="highToLow">High to Low</option>
+    </select>
+  </div>
+  
+    
+   </div>

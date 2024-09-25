@@ -50,10 +50,12 @@
         <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
             <form action="/admin/category/search" method="post">
                 <div class="flex justify-center m-10 ">
-                    <input class="bg-white border border-red-900 rounded w-full m-3 py-2 px-3" type="search" placeholder="Search Category" aria-label="Search" name="sename">
-                    <button class=" text-white rounded bg-red-950 m-3 px-3 py-2" type="submit">Search</button>
+                    <input class="bg-white border border-red-900 rounded w-1/2 m-3 py-2 px-3" type="search" placeholder="Search Category" aria-label="Search" name="sename">
+                    <button class=" text-white rounded bg-red-900 m-3 px-3 py-2" type="submit">Search</button>
+                    <button class= "text-white rounded bg-red-900 m-3 px-3 py-2"><a href="/admin/category/add">Add Category</a></button>
                 </div>
             </form>
+           
 
             <table class="w-4/5  m-20 p-2 align-items-center border border-red-900 rounded" >
                 <tr style="background-color: rgb(119, 45, 11); color:white;">
@@ -80,7 +82,7 @@
             <% } %>
 
             </table>
-            <button class="bg-red-900 text-white ml-96 mb-4 border-none rounded"><a href="/admin/category/add">Add Category</a></button>
+           
             </div>
         
 </div>

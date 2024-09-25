@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import address from "./addressModel.mjs";
+import addressSchema from "./addressModel.mjs";
 
 
 const userSchema=new mongoose.Schema({
@@ -14,12 +14,10 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
     },
-   address:{
-        type: [address],
-        default: [],
-        required:false
+   address:[{
+        type: addressSchema,
        
-    },
+    }],
     isVerified:{
         type:Boolean,
         default:false

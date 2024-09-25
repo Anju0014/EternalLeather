@@ -7,6 +7,7 @@ import { admincategory, admincategoryAdd, admincategoryaddform, admincategoryedi
 import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete, adminproducteditform, adminproductsearch, adminproductupdate, pst } from "../controllers/adminController/productController.mjs";
 import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost, adminusersearch } from "../controllers/adminController/userController.mjs";
+import { adminorderCancel, adminorders } from "../controllers/adminController/orderController.mjs";
 
 
 admin_router.use(express.json());
@@ -46,7 +47,8 @@ admin_router.put("/product/edit",isAdmin,adminproductupdate);
 admin_router.get("/product/delete",isAdmin,adminproductdelete);
 admin_router.post("/product/search",isAdmin,adminproductsearch);
 
-
+admin_router.get("/order",isAdmin,adminorders)
+admin_router.get("/order/cancel",isAdmin,adminorderCancel);
 // admin_router.post("/category/add",admincategoryAdd);
 
 admin_router.get("/logout",adminlogout);

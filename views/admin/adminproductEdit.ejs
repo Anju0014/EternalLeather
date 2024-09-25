@@ -78,7 +78,7 @@
                     <input type="number" id="price" name="price" value="<%= product.productPrice %>" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block font-bold mb-2">Product Quantity</label>
+                    <label class="block font-bold mb-2">Product Stock</label>
                     <input type="number" id="qty" name="qty" value="<%= product.productQuantity %>"  class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
@@ -207,7 +207,7 @@ function validateForm() {
         }
 
         // Validate Quantity
-        if (!qty || isNaN(qty) || parseInt(qty) <= 0) {
+        if (!qty || isNaN(qty) || parseInt(qty) < 0) {
             errorMessages.push('Stock must be a positive integer.');
             isValid = false;
         }

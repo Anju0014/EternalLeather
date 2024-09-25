@@ -264,7 +264,7 @@ function validateForm() {
         }
 
         // Validate Quantity
-        if (!qty || isNaN(qty) || parseInt(qty) <= 0) {
+        if (!qty || isNaN(qty) || parseInt(qty) < 0) {
             errorMessages.push('Stock must be a positive integer.');
             isValid = false;
         }

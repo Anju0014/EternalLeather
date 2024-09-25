@@ -44,11 +44,12 @@
         <br>
         </div>
      
-        <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
+         <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
             <form action="/admin/product/search" method="post">
                 <div class="flex justify-center m-10 ">
-                    <input class="bg-white border border-red-900 rounded w-full m-3 py-2 px-3" type="search" placeholder="Search Product" aria-label="Search" name="sename">
-                    <button class=" text-white rounded bg-red-950 m-3 px-3 py-2" type="submit">Search</button>
+                    <input class="bg-white border border-red-900 rounded w-1/2 m-3 py-2 px-3" type="search" placeholder="Search Product" aria-label="Search" name="sename">
+                    <button class=" text-white rounded bg-red-900 m-3 px-3 py-2" type="submit">Search</button>
+                    <button class= "text-white rounded bg-red-900 m-3 px-3 py-2"><a href="/admin/product/add">Add Product</a></button>
                 </div>
             </form>
 
@@ -119,7 +120,7 @@
                     <a href="/admin/products?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
                 <% } %>
             </div>
-            <button class="bg-red-900 text-white ml-96 p-2 mb-4 border-none rounded px-3 py-2"><a href="/admin/product/add">Add Product</a></button>
+            
             </div>
         
 </div>

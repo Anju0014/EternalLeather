@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelle Eterno</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('headertry') %> 
+    <%- include('userbreadcrumb') %>
+ 
+    <div class="flex justify-normal"></div>
+        <div class="flex justify-items-start">
+            <%- include('usersidebar') %>
+        <br>
+        </div>
+       
+        <div class="mb-6">
+          
+          
+          <form id="EditAddressForm" class="space-y-4  bg-white p-3"  action="/user/profile/address/edit" method="post">
+            
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Name</label>
+              <input type="text" id="contactname" value="<%= address.contactname %>" name="contactname"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
+            </div>
+
+            <div class="space-y-2 hidden">
+              <label class="block text-sm font-medium text-gray-700 ">Name</label>
+              <input type="text" id="addressId" value="<%= address._id %>" name="addressId"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
+            </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input type="number" id="phoneNumber" value="<%= address.phoneno %>" name="phoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number">
+              </div>
+    
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Buliding Name/ No.</label>
+              <input type="text" id="building"  name="building" value="<%= address.building %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Buliding Address">
+            </div>
+    
+            
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Street/ Locality</label>
+              <input type="text" id="street" name="street" value="<%= address.street %>"  class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address">
+            </div>
+    
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">City</label>
+              <input type="text" id="city" name="city" value="<%= address.city %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter city">
+            </div>
+    
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Postal Code</label>
+              <input type="number" id="postalCode"  value="<%= address.pincode %>"  name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter postal code">
+            </div>
+    
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">LandMark</label>
+              <input type="text" id="landMark" name="landMark" value="<%= address.landMark %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter LandMark">
+            </div>
+    
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">State</label>
+              <input type="text" id="state"   value="<%= address.state %>" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State">
+            </div>
+    
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Country</label>
+              <input type="text" id="country"  value="<%= address.country %>" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country">
+            </div>
+    
+            <button type="submit" id="editAddressBtn"  name="editAddressBtn" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Edit Address</button>
+          </form>
+        </div>
+    
+       
+      </div>
+      </div>
+      
+    </div>
+    <%- include('userfooter') %>
+
+</body>
+</html>
