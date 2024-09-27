@@ -63,37 +63,131 @@ export const userproductdetail = async (req, res) => {
 //     }
 // }
 
+
+
+// export const userproductview = async (req, res) => {
+//     try {
+//         const catid = req.query.id;
+//         const page = parseInt(req.query.page) || 1;
+//         const pageSize = 12;
+//         const skip = (page - 1) * pageSize;
+//         const { sortstyle } = req.query; // Access sortstyle from query
+
+//         console.log('Category ID:', catid);
+//         console.log('Sort Style:', sortstyle);
+
+//         // Declare variables for product and totalProducts
+//         let product;
+//         let totalProducts;
+
+//         // Define sorting logic
+//         let sortCriteria = {};
+//         if (sortstyle === 'lowToHigh') {
+//             sortCriteria = { productPrice: 1 }; // Sort by price ascending
+//         } else if (sortstyle === 'highToLow') {
+//             sortCriteria = { productPrice: -1 }; // Sort by price descending
+//         }else if (sortstyle === 'aToZ') {
+//             sortCriteria = { productName: 1 }; // Sort by name A to Z
+//         } else if (sortstyle === 'zToA') {
+//             sortCriteria = { productName: -1 }; // Sort by name Z to A
+//         }
+
+//         // Fetch products based on category filter and sorting criteria
+//         if (!catid) {
+//             product = await Product.find({ isDeleted: false })
+//                 .populate('productCategory', 'categoryName')
+//                 .sort(sortCriteria) // Apply sorting
+//                 .skip(skip)
+//                 .limit(pageSize);
+
+//             totalProducts = await Product.countDocuments({ isDeleted: false });
+//         } else {
+//             product = await Product.find({ isDeleted: false, productCategory: catid })
+//                 .populate('productCategory', 'categoryName')
+//                 .sort(sortCriteria) // Apply sorting
+//                 .skip(skip)
+//                 .limit(pageSize);
+
+//             totalProducts = await Product.countDocuments({ isDeleted: false, productCategory: catid });
+//         }
+
+//         // Calculate total pages
+//         const totalPages = Math.ceil(totalProducts / pageSize);
+
+//         // Fetch all active categories
+//         const productCollection = await Category.find({ isActive: true });
+
+//         // Render the view with all the necessary data
+//         res.render('userAllProducts', {
+//             product,
+//             currentPage: page,
+//             totalPages: totalPages,
+//             productCollection,
+//             sessionuser: req.session.isUser,
+//             catid,
+//             query:req.query
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
+
+
+
 export const userproductview = async (req, res) => {
     try {
-        const catid = req.query.id;
-        console.log('Category ID:', catid);
+        const catid = req.query.category || ''; // Get the category from the query
+        const minPrice = parseFloat(req.query.minPrice) || 0; // Get the minimum price
+        const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; // Get the maximum price
+        const type = req.query.type || ''; // Get the product type
+        const sortstyle = req.query.sortstyle || ''; // Get the sort style
 
         const page = parseInt(req.query.page) || 1;
         const pageSize = 12;
         const skip = (page - 1) * pageSize;
 
-        // Declare the 'product' variable and 'totalProducts'
+        // Declare variables for product and totalProducts
         let product;
         let totalProducts;
 
-        // Fetch the products and count based on whether a category is selected
-        if (!catid) {
-            product = await Product.find({ isDeleted: false })
-                .populate('productCategory', 'categoryName')
-                .skip(skip)
-                .limit(pageSize);
-
-            // Total product count without category filter
-            totalProducts = await Product.countDocuments({ isDeleted: false });
-        } else {
-            product = await Product.find({ isDeleted: false, productCategory: catid })
-                .populate('productCategory', 'categoryName')
-                .skip(skip)
-                .limit(pageSize);
-
-            // Total product count for the specific category
-            totalProducts = await Product.countDocuments({ isDeleted: false, productCategory: catid });
+        // Define sorting logic
+        let sortCriteria = {};
+        if (sortstyle === 'lowToHigh') {
+            sortCriteria = { productPrice: 1 }; // Sort by price ascending
+        } else if (sortstyle === 'highToLow') {
+            sortCriteria = { productPrice: -1 }; // Sort by price descending
+        } else if (sortstyle === 'aToZ') {
+            sortCriteria = { productName: 1 }; // Sort by name A to Z
+        } else if (sortstyle === 'zToA') {
+            sortCriteria = { productName: -1 }; // Sort by name Z to A
         }
+
+        // Build the query object for filtering
+        const query = {
+            isDeleted: false,
+            productPrice: { $gte: minPrice, $lte: maxPrice } // Filter by price range
+        };
+
+        // Apply category filter if provided
+        if (catid) {
+            query.productCategory = catid;
+        }
+
+        // Apply type filter if provided
+        if (type) {
+            query.productType = type;
+        }
+
+        // Fetch products based on the query and sorting criteria
+        product = await Product.find(query)
+            .populate('productCategory', 'categoryName')
+            .sort(sortCriteria) // Apply sorting
+            .skip(skip)
+            .limit(pageSize);
+
+        // Total products count for pagination
+        totalProducts = await Product.countDocuments(query);
 
         // Calculate total pages
         const totalPages = Math.ceil(totalProducts / pageSize);
@@ -101,13 +195,16 @@ export const userproductview = async (req, res) => {
         // Fetch all active categories
         const productCollection = await Category.find({ isActive: true });
 
+        // Render the view with all the necessary data
         res.render('userAllProducts', {
             product,
             currentPage: page,
             totalPages: totalPages,
             productCollection,
             sessionuser: req.session.isUser,
-            catid
+            catid,
+            query:req.query
+
         });
     } catch (error) {
         console.log(error);
@@ -146,3 +243,75 @@ export const userproductcategorywise= async(req,res)=>{
          console.log(error)
     }
 }
+
+
+
+// export const userproductview = async (req, res) => {
+//     try {
+//         const catid = req.query.id;
+//         const page = parseInt(req.query.page) || 1;
+//         const pageSize = 12;
+//         const skip = (page - 1) * pageSize;
+
+//         const { sortstyle } = req.query;
+
+//         let sortCriteria = {};
+
+//         // Define sorting criteria
+//         if (sortstyle === 'lowToHigh') {
+//             sortCriteria = { effectivePrice: 1 }; // Sort by effective price ascending
+//         } else if (sortstyle === 'highToLow') {
+//             sortCriteria = { effectivePrice: -1 }; // Sort by effective price descending
+//         }
+
+//         // Base query to find products
+//         let matchCondition = { isDeleted: false };
+//         if (catid) {
+//             matchCondition.productCategory = catid;
+//         }
+
+//         // Use aggregation to calculate effective price based on discount percentage
+//         const product = await Product.aggregate([
+//             { $match: matchCondition }, // Filter products based on category and deleted status
+//             {
+//                 $addFields: {
+//                     effectivePrice: {
+//                         $cond: {
+//                             if: { $gt: ["$discount", 0] },  // Check if there's a discount
+//                             then: {
+//                                 $subtract: [
+//                                     "$productPrice",
+//                                     { $multiply: ["$productPrice", { $divide: ["$discount", 100] }] } // Apply percentage discount
+//                                 ]
+//                             }, // Discounted price formula
+//                             else: "$productPrice"  // No discount, use original price
+//                         }
+//                     }
+//                 }
+//             },
+//             { $sort: sortCriteria },  // Sort by effective price
+//             { $skip: skip },  // Skip for pagination
+//             { $limit: pageSize }  // Limit results per page
+//         ]);
+
+//         // Calculate total products count (without pagination)
+//         const totalProducts = await Product.countDocuments(matchCondition);
+
+//         const totalPages = Math.ceil(totalProducts / pageSize);
+
+//         // Fetch all active categories
+//         const productCollection = await Category.find({ isActive: true });
+
+//         res.render('userAllProducts', {
+//             product,
+//             currentPage: page,
+//             totalPages,
+//             productCollection,
+//             sessionuser: req.session.isUser,
+//             catid,
+//             query: req.query
+//         });
+//     } catch (error) {
+//         console.error(error);
+//     }
+// };

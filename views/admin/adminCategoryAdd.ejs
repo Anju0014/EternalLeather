@@ -62,11 +62,6 @@
                 <input type="text" id="catname" name="catname" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
-            <div class="mb-4">
-                <label for="date" class="block font-bold mb-2">Added Date</label>
-                <input type="date" id="adddate" name="adddate" required class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
             
             <div class="mb-4">
                 <label for="status" class="block font-bold mb-2">Status</label>
@@ -96,7 +91,7 @@
             let messages = []; // Array to hold error messages
     
             // Validation for empty fields
-            if (catname.value === '' || catname.value == null || adddate.value === '') {
+            if (catname.value === '' || catname.value == null) {
                 messages.push('Please fill in all fields.');
             }
     

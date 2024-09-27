@@ -3,11 +3,11 @@ const admin_router=express();
 
 import { admin, adminhome, adminlogin, adminlogout, adminverify } from "../controllers/adminController/adminController.mjs";
 import isAdmin from "../middleware/adminsession.mjs";
-import { admincategory, admincategoryAdd, admincategoryaddform, admincategoryeditform, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
+import { admincategory, admincategoryAdd, admincategoryaddform, admincategoryeditform, admincategorypost, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
 import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete, adminproducteditform, adminproductsearch, adminproductupdate, pst } from "../controllers/adminController/productController.mjs";
 import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost, adminusersearch } from "../controllers/adminController/userController.mjs";
-import { adminorderCancel, adminorders } from "../controllers/adminController/orderController.mjs";
+import { adminorderCancel, adminorders, adminorderupdate } from "../controllers/adminController/orderController.mjs";
 
 
 admin_router.use(express.json());
@@ -30,6 +30,7 @@ admin_router.get("/category/edit/",isAdmin, admincategoryeditform);
 admin_router.post("/category/edit",isAdmin, admincategoryupdate);
 //admin_router.get("/category/delete",isAdmin, admincategorydelete);
 admin_router.post("/category/search",isAdmin,admincategorysearch);
+admin_router.post("/category/:id/toggle-block",isAdmin, admincategorypost);
 
 admin_router.get('/getform',pst)
 //admin_router.post('/getform',adminproductadd)
@@ -49,6 +50,7 @@ admin_router.post("/product/search",isAdmin,adminproductsearch);
 
 admin_router.get("/order",isAdmin,adminorders)
 admin_router.get("/order/cancel",isAdmin,adminorderCancel);
+admin_router.post("/order/:id/toggle-block",isAdmin, adminorderupdate);
 // admin_router.post("/category/add",admincategoryAdd);
 
 admin_router.get("/logout",adminlogout);

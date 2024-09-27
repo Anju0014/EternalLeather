@@ -1,11 +1,14 @@
 import express from "express";
-import {  passwordchange, passwordnew, resendOtp, useremail, userhome, userlanding, userlogin, userlogout, userregister, usersignup, userverify, verifyOtp, } from "../controllers/userController/userController.mjs";
+import {  passwordchange, passwordnew, resendOtp, useremail, userhome, userlanding, userlogin, userlogout, userregister, usersearch, usersignup, userverify, verifyOtp, } from "../controllers/userController/userController.mjs";
 import { googleauth, googleAuthCallback } from "../controllers/userController/userauthController.mjs";
 import isUser from "../middleware/userSession.mjs";
 import { userproductdetail, userproductview } from "../controllers/userController/productdetail.mjs";
 import { cartdata, cartdecrement, cartdelete, cartincrement, cartview, checkout, checkoutpost } from "../controllers/userController/cartController.mjs";
-import { addressAdd, editAddress, useraddressdelete, useraddressedit, userdata } from "../controllers/userController/profileController.mjs";
+import { addressAdd, editAddress, useraddressdelete, useraddressedit, userchangepassword, userdata } from "../controllers/userController/profileController.mjs";
 import { orderconfirm } from "../controllers/userController/orderController.mjs";
+import checkUser from "../middleware/checkuserSession.mjs";
+import nocache from "nocache";
+import { orderList, userorderCancel } from "../controllers/userController/orderListController.mjs";
 
 const user_router=express();
 
@@ -37,20 +40,24 @@ user_router.post('/user/resendOtp',resendOtp);
 user_router.get('/user/home',userhome);
 user_router.get('/user/productdetail/:id',userproductdetail)
 user_router.get('/user/allproducts',userproductview)
-user_router.get('/user/profile',userdata)
-user_router.post('/user/profile/address/add',addressAdd)
-user_router.get('/user/profile/address/edit',useraddressedit)
-user_router.post('/user/profile/address/edit',editAddress)
-user_router.get('/user/profile/address/delete',useraddressdelete)
+user_router.post('/user/search',usersearch)
+user_router.get('/user/profile',checkUser,userdata)
+user_router.post('/user/profile/changepassword',userchangepassword)
+user_router.post('/user/profile/address/add',checkUser,addressAdd)
+user_router.get('/user/profile/address/edit',checkUser,useraddressedit)
+user_router.post('/user/profile/address/edit',checkUser,editAddress)
+user_router.get('/user/profile/address/delete',checkUser,useraddressdelete)
 
-user_router.get('/user/addtocart',cartdata)
-user_router.post('/user/addtocart/',cartview)
-user_router.post('/user/addtocart/delete/:productId',cartdelete)
-user_router.post('/user/cart/increment/:productId',cartincrement)
-user_router.post('/user/cart/decrement/:productId',cartdecrement)
-user_router.get('/user/checkout',checkout)
-user_router.post('/user/checkout',checkoutpost)
-user_router.get('/user/order/summary',orderconfirm)
+user_router.get('/user/addtocart',checkUser,cartdata)
+user_router.post('/user/addtocart/',checkUser,cartview)
+user_router.post('/user/addtocart/delete/:productId',checkUser,cartdelete)
+user_router.post('/user/cart/increment/:productId',checkUser,cartincrement)
+user_router.post('/user/cart/decrement/:productId',checkUser,cartdecrement)
+user_router.get('/user/checkout',checkUser,checkout)
+user_router.post('/user/checkout',checkUser,checkoutpost)
+user_router.get('/user/order/summary',checkUser,orderconfirm)
+user_router.get('/user/profile/order',checkUser,orderList)
+user_router.get('/user/order/cancel',checkUser,userorderCancel)
 
 
 user_router.get('/auth/google',googleauth);

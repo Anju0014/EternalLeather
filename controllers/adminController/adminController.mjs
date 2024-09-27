@@ -33,8 +33,8 @@ export const adminverify = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, passwordHash);
 
       if (passwordMatch) {
-        req.session.isAdmin = true;
-        req.session.user = req.body.ademail;
+        // req.session.isAdmin = true;
+        req.session.isAdmin = req.body.email;
         res.redirect("/admin/home");
       } else {
         req.flash("error", "Invalid Username or Password");
@@ -64,7 +64,7 @@ export const adminhome = async (req, res) => {
 export const adminlogout = async (req, res) => {
   try {
     req.session.destroy();
-    res.redirect("/admin");
+    res.redirect("/admin/login");
   } catch (error) {
     console.log(error.message);
   }

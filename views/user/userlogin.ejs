@@ -43,9 +43,32 @@
     
                 <div id="error" class="text-danger"></div>
                 <!-- Error Message -->
-                <% if (message.error) { %>
+                <!-- <% if (message.error) { %>
                     <h3 class="text-brown text-center mb-4"><%= message.error %></h3>
-                <% } %>
+                <% } %> -->
+                <!-- <% if (message.success) { %>
+                  <div class="alert alert-success">
+                      <%= message.success %>
+                  </div>
+              <% } %>
+              <% if (message.error) { %>
+                  <div class="alert alert-danger">
+                      <%= message.error %>
+                  </div>
+              <% } %> -->
+              <% if (message.success) { %>
+                <script>
+                    alert("<%= message.success %>");
+                </script>
+            <% } %>
+            
+            <% if (message.error) { %>
+                <script>
+                    alert("<%= message.error %>");
+                </script>
+            <% } %>
+            
+              
     
                 <!-- Email Field -->
                 <div class="mb-4">

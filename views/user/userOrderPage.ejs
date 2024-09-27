@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelle Eterno</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+
+<body>
+
+  
+     
+    <div class="bg-black text-black h-3 w-full"></div>
+    <div class=" box-brown  m-0  ">
+      <header class="flex justify-around w-full">
+        <div class="relative mb-2 sevillana-title text-center text-brown text-opacity-100">Pelle Eterno</div>
+        <div>
+        <img src="https://res.cloudinary.com/dihyb66hn/image/upload/v1725854174/products/caehmjvrf6qftxa9la9f.jpg" alt="logo" class=" h-20 w-20 ml-auto "></div>
+      </header>
+    </div>
+    
+    <%- include('userbreadcrumb') %>
+ 
+    <div class="flex justify-normal"></div>
+        <div class="flex justify-items-start">
+            <%- include('usersidebar') %>
+        <br>
+        </div>
+
+         <div class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
+         
+
+
+
+<div class="grid gap-4 mt-8 ">
+    <% if (message && message.length > 0) { %>
+        <% message.forEach((order) => { %>
+            <div class="grid grid-cols-3 gap-4 bg-white p-4 rounded-md shadow-lg">
+                
+                <div class="col-span-1 space-y-2">
+                    <h3 class="text-lg font-semibold">Order ID: <%= order.orderId %></h3>
+                    <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                    <p><strong>Total Price:</strong> $<%= order.totalPayablePrice %></p>
+                    <p class="text-blue-600"><strong>Order Status:</strong> <%= order.orderStatus %></p>
+                </div>
+
+                <!-- Products Section -->
+                <!-- <div class="col-span-1 space-y-4">
+                    <% order.products.forEach((product) => { %>
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20">
+                                <img src="<%= product.productimage %>" alt="<%= product.productname %>" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <p><strong>Product Name:</strong> <%= product.productname %></p>
+                                <p><strong>Quantity:</strong> <%= product.productquantity %></p>
+                                <% if (product.productDiscount > 0) { %>
+                                    <p><strong>Price:</strong> $<%= product.productprice - (product.productprice * (product.productDiscount / 100)) %> 
+                                        <span class="line-through text-sm text-gray-500">$<%= product.productprice %></span></p>
+                                    <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
+                                <% } else { %>
+                                    <p><strong>Price:</strong> ₹<%= product.productprice %></p>
+                                <% } %>
+                                <% if (product.productquantity <= 0) { %>
+                                    <p class="text-red-500">Product is out of stock</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div> -->
+
+                <div class="col-span-1 space-y-4">
+                    <% order.products.forEach((product) => { %>
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20">
+                                <img src="<%= product.productimage %>" alt="<%= product.productname %>" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <p><strong>Product Name:</strong> <%= product.productname %></p>
+                                <p><strong>Quantity:</strong> <%= product.productquantity %></p>
+                                <% if (product.productDiscount > 0) { %>
+                                    <p><strong>Price:</strong> $<%= product.productprice - (product.productprice * (product.productDiscount / 100)) %> 
+                                        <span class="line-through text-sm text-gray-500">₹<%= product.productprice %></span></p>
+                                    <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
+                                <% } else { %>
+                                    <p><strong>Price:</strong> $<%= product.productprice %></p>
+                                <% } %>
+                                <% if (product.productquantity <= 0) { %>
+                                    <p class="text-red-500">Product is out of stock</p>
+                                <% } %>
+                
+                                <!-- Cancel and Return Buttons -->
+                                <!-- <div class="flex gap-2 mt-2">
+                                
+                                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                        onclick="handleCancel('<%= product._id %>')">Cancel</button>
+                                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
+                                        onclick="handleReturn('<%= product._id %>')">Return</button>
+                                </div> -->
+                               
+                                <div class="flex gap-2 mt-2">
+                                  
+                                    <% if(!order.isCancelled){ %>
+                                    <% if (product.productstatus === 'Pending' || product.productstatus === 'Confirmed') { %>
+                                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                            onclick="handleCancel('<%= product._id %>')">Cancel</button>
+                                    <% } %>
+                
+                          
+                                    <% if (product.productstatus === 'Delivered') { %>
+                                        <button class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
+                                            onclick="handleReturn('<%= product._id %>')">Return</button>
+                                    <% } %>
+                                    
+                                    <% } %>
+
+                                   
+                                    <% if (order.orderStatus === 'Cancelled') { %>
+                                        <p class="text-gray-500">This Order has been cancelled</p>
+                                    <% } else if (product.productstatus === 'Cancelled') { %>
+                                        <p class="text-gray-500">This product has been cancelled</p>
+                                    <% } else if (product.productstatus === 'Returned') { %>
+                                        <p class="text-gray-500">This product has been returned</p>
+                                    <% } %>
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+                
+
+               
+                <div class="col-span-1 flex items-center justify-end gap-2">
+                    <% if(!order.isCancelled){ %>
+                    <a href="/user/order/cancel?id=<%= order._id %>" onclick="return confirm('Are you sure you want to cancel this order?');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                        Cancel
+                    </a>
+               <% } %>
+  
+
+                    <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        View
+                    </button>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p class="text-center col-span-3">No Orders found.</p>
+    <% } %>
+</div>
+
+            
+
+ <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
+    <div class="bg-white p-5 rounded-md w-1/2 ">
+        <div class="flex justify-between items-center">
+            <h3 class="text-xl font-semibold">Order Details</h3>
+            <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
+        </div>
+        <hr>
+        <div id="modalContent" class="max-height-[200px]">
+            
+            <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
+            <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
+            <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+            <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+            <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+            <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+             <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+            
+        </div>
+         <div class="mt-4"> 
+        
+            <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                Download
+            </button>
+        </div>
+    </div>
+</div> 
+
+       
+              <div class="flex justify-center mt-4 mb-8">
+                <% if (currentPage > 1) { %>
+                    <a href="/user/profile/order?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded mr-2"><--</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/user/profile/order?page=<%= i %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded <%= currentPage === i ? 'bg-red-500 text-white' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a href="/user/profile/order?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
+                <% } %>
+            </div>
+
+         </div>
+
+
+        
+      
+    </div>
+    <%- include('userfooter') %>
+
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<script>
+ 
+    function openModal(orderData) {
+       
+        const modal = document.getElementById('productModal');
+        const modalOrderId = document.getElementById('modalOrderId');
+        const modalOrderDate = document.getElementById('modalOrderDate');
+        const modalProducts = document.getElementById('modalProducts');
+        const modalCustomerName = document.getElementById('modalCustomerName');
+        const modalPrice = document.getElementById('modalTotalPrice');
+        const modalPayment = document.getElementById('modalPaymentMethod');
+        const orderStatus=document.getElementById('modalOrderStatus');
+       
+        modalOrderId.innerText = orderData.orderId;
+        modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
+        modalCustomerName.innerText = orderData.customerId.name;
+        modalPrice.innerText=orderData.totalPayablePrice;
+        modalPayment.innerText=orderData.paymentMethod;
+        modalOrderStatus.innerText=orderData.orderStatus;
+
+    
+        modalProducts.innerHTML = '';  
+        orderData.products.forEach(product => {
+  
+    const productPrice = product.productprice;
+
+
+    modalProducts.innerHTML += `
+        <div class="product-details border-b py-2">
+            <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
+            <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
+            <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
+            <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+        
+        </div>
+    `;
+});
+
+
+        // Show the modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        const modal = document.getElementById('productModal');
+        modal.classList.add('hidden');
+    }
+</script>
+
+
+<script>
+document.getElementById('downloadButton').addEventListener('click', async function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Fetching order details from modal
+    const orderId = document.getElementById('modalOrderId').innerText;
+    const orderDate = document.getElementById('modalOrderDate').innerText;
+    const customerName = document.getElementById('modalCustomerName').innerText;
+    const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+    const totalPrice = document.getElementById('modalTotalPrice').innerText;
+    const orderStatus=document.getElementById('modalOrderStatus').innerText;
+
+    // Adding text content to the PDF
+    doc.text(`Order ID: ${orderId}`, 10, 10);
+    doc.text(`Order Date: ${orderDate}`, 10, 20);
+    doc.text(`Customer Name: ${customerName}`, 10, 30);
+    doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
+    doc.text(`Total Price: ${totalPrice}`, 10, 50);
+    doc.text(`Order Status: ${orderStatus}`, 10, 60);
+
+    // Fetch product details from modalProducts div
+    const productElements = document.querySelectorAll('#modalProducts .product-details');
+
+    let yOffset = 70; // Initial Y position for product details and images
+    for (const productElement of productElements) {
+        const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+        const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+        const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+        const productImage = productElement.querySelector('img').src;
+
+        // Add product details (name, price, quantity) to PDF
+        doc.text(`Product Name: ${productName}`, 90, yOffset);
+        doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
+        doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+
+        try {
+            // Convert image URL to base64 and add to PDF
+            const base64Img = await getBase64ImageFromURL(productImage);
+            // Adding image to PDF at (x, y, width, height)
+            doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+        } catch (error) {
+            console.error('Error loading image', error);
+        }
+
+        yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+    }
+
+    // Save the generated PDF
+    doc.save('order-details.pdf');
+});
+
+// Function to convert image URL to base64
+async function getBase64ImageFromURL(url) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
+function closeModal() {
+    document.getElementById('productModal').classList.add('hidden');
+}
+
+function handleCancel(productId) {
+    // Example of sending an AJAX request to cancel the product
+    fetch(`/order/cancel/${productId}`, {
+        method: 'POST'
+    }).then(response => {
+        if (response.ok) {
+            alert('Product canceled successfully');
+            // Optionally, reload the page or update the UI
+        }
+    }).catch(error => {
+        console.error('Error canceling product:', error);
+    });
+}
+
+function handleReturn(productId) {
+    // Example of sending an AJAX request to return the product
+    fetch(`/order/return/${productId}`, {
+        method: 'POST'
+    }).then(response => {
+        if (response.ok) {
+            alert('Product returned successfully');
+            // Optionally, reload the page or update the UI
+        }
+    }).catch(error => {
+        console.error('Error returning product:', error);
+    });
+}
+</script>
+
+<!-- // Example route to handle cancellation
+app.post('/order/cancel/:productId', (req, res) => {
+    const { productId } = req.params;
+    // Find the product in the order and update its status to "Cancelled"
+    Order.updateOne({ 'products._id': productId }, { 'products.$.productstatus': 'Cancelled' }, (err, result) => {
+        if (err) return res.status(500).send('Error canceling product');
+        res.send('Product cancelled successfully');
+    });
+});
+
+// Example route to handle return
+app.post('/order/return/:productId', (req, res) => {
+    const { productId } = req.params;
+    // Find the product in the order and update its status to "Returned"
+    Order.updateOne({ 'products._id': productId }, { 'products.$.productstatus': 'Returned' }, (err, result) => {
+        if (err) return res.status(500).send('Error returning product');
+        res.send('Product returned successfully');
+    });
+}); -->

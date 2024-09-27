@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
     <style>
         /* Inline styles for the background image */
         .box-brown {
@@ -44,14 +46,14 @@
         <br>
         </div>
      
-        <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
-            <form action="/admin/order/search" method="post">
+        <div class="flex-grow  p-6 ">
+            <!-- <form action="/admin/order/search" method="post">
                 <div class="flex justify-center m-10 ">
                     <input class="bg-white border border-red-900 rounded w-1/2 m-3 py-2 px-3" type="search" placeholder="Search Order" aria-label="Search" name="sename">
                     <button class=" text-white rounded bg-red-900 m-3 px-3 py-2" type="submit">Search</button>
-                    <!-- <button class= "text-white rounded bg-red-900 m-3 px-3 py-2"><a href="/admin/product/add">Add Product</a></button> -->
-                </div>
-            </form>
+                     <button class= "text-white rounded bg-red-900 m-3 px-3 py-2"><a href="/admin/product/add">Add Product</a></button> -->
+                <!-- </div>
+            </form> --> 
 
             <% if (light.error) { %>
                 <div class="text-center bg-red-500 text-white rounded mb-4"><%= light.error %></div>
@@ -61,55 +63,8 @@
             <% } %> 
 
 
+          
             <!-- <table class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
-                <thead style="background-color: rgb(119, 45, 11); color: white;">
-                    <tr>
-                        <th>Order Id</th>
-                        <th>Name</th>
-                        <th>Payment</th>
-                        <th>Status</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                        <th>View</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (message && message.length > 0) { %>
-                        <% for (let i = 0; i < message.length; i++) { %>
-                            <tr>
-                                <td class="px-2"><%= message[i].orderId %></td>
-                                <td class="px-8"><%= message[i].address.customerName %></td>
-                                <td class="px-20"><%= message[i].paymentMethod %></td>
-                                <td class="px-8">
-                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
-                                        <select name="paymentStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
-                                            <option value="Pending" <%= message[i].isBlocked ? 'selected' : '' %>>Pending</option>
-                                            <option value="Confirmed" <%= !message[i].isBlocked ? 'selected' : '' %>>Confirmed</option>
-                                            <option value="Delivered" <%= message[i].isBlocked ? 'selected' : '' %>>Delivered</option>
-                                            <option value="Returned" <%= message[i].isBlocked ? 'selected' : '' %>>Returned</option>
-                                            <option value="Cancelled" <%= message[i].isBlocked ? 'selected' : '' %>>Cancelled</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
-                                <td class="px-8">
-                                    <a href="/admin/order/delete?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this product?');">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </a>
-                                </td>
-                                <td class="px-8"><button>View</button></td>
-                             
-                            </tr>
-                        <% } %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="7" class="text-center">No Orders found.</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table> -->
-
-            <table class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
                 <thead style="background-color: rgb(119, 45, 11); color: white;">
                     <tr>
                         <th>Order Id</th>
@@ -157,16 +112,97 @@
                         </tr>
                     <% } %>
                 </tbody>
+            </table> -->
+
+            <!-- <table id="ordersTable" class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded"> -->
+                <table id="ordersTable" class=" m-10 p-5 align-items-center border border-red-900 rounded">
+                
+                  
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8">
+                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <a href="/admin/order/cancel?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this product?');">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </a>
+                                </td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
             </table>
             
+            <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
+                <div class="bg-white p-5 rounded-md w-1/2 ">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">Order Details</h3>
+                        <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
+                    </div>
+                    <hr>
+                    <div id="modalContent" class="max-height-[200px]">
+                        
+                        <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
+                        <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
+                        <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                        <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+                        <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+                         <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+                        
+                    </div>
+                     <div class="mt-4"> 
+                    
+                        <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div> 
+            
             <!-- Modal Structure -->
-            <div id="orderModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+            <!-- <div id="orderModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
                 <div class="flex items-center justify-center min-h-screen px-4 text-center">
                     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
                     <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-1/2">
                         <div class="bg-red-900 px-4 py-3">
                             <h2 class="text-lg font-medium text-white">Order Details</h2>
                         </div>
+                        
                         <div class="px-4 py-5 bg-white">
                             <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
                             <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
@@ -181,10 +217,10 @@
                     </div>
                 </div>
             </div>
-            
+             -->
 
 
-            <div class="flex justify-center mt-4 mb-8">
+            <!-- <div class="flex justify-center mt-4 mb-8">
                 <% if (currentPage > 1) { %>
                     <a href="/admin/products?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded mr-2"><--</a>
                 <% } %>
@@ -197,41 +233,192 @@
             
                 <% if (currentPage < totalPages) { %>
                     <a href="/admin/products?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
-                <% } %>
-            </div>
+                <!-- <% } %>
+            </div> -->
             
             </div>
         
 </div>
-    <%- include('footer') %>
 </body>
 </html>
+
+<!-- jQuery (required by DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-    function openModal(order) {
-    document.getElementById('modalOrderId').innerText = order.orderId;
-    document.getElementById('modalCustomerName').innerText = order.address.customerName;
-    document.getElementById('modalPaymentMethod').innerText = order.paymentMethod;
-    // document.getElementById('modalTotalPayablePrice').innerText = order.totalPayablePrice;
-    document.getElementById('modalTotalPrice').innerText= order.totalPayablePrice;
-    // document.getElementById('modalTotalQuantity').innerText=order.totalQuantity;
-
-
-    // Populate product list
-    const productList = document.getElementById('modalProducts');
-    productList.innerHTML = ''; // Clear existing content
-    order.products.forEach(product => {
-        const listItem = document.createElement('li');
-        listItem.innerText = `${product.productname} - Quantity: ${product.productquantity}`;
-        productList.appendChild(listItem);
+      $(document).ready(function() {
+      $('#ordersTable').DataTable({
+        "paging": true,       // Enable pagination
+        "ordering": true,     // Enable column sorting
+        "info": true,         // Display table information
+        "searching": true,    // Enable search box
+        "autoWidth": false,   // Disable automatic column width calculation
+        "order": [[ 0, "desc" ]],  // Default sorting on the first column (Order ID), in descending order
+        "columnDefs": [
+          { "orderable": false, "targets": [5, 6] }  // Disable sorting for Action and View columns
+        ]
+      });
     });
+//     function openModal(order) {
 
-    // Show modal
-    document.getElementById('orderModal').classList.remove('hidden');
-}
+//     document.getElementById('modalOrderId').innerText = order.orderId;
+//     document.getElementById('modalCustomerName').innerText = orderData.customerId.name;
+//     document.getElementById('modalPaymentMethod').innerText = order.paymentMethod;
+//     // document.getElementById('modalTotalPayablePrice').innerText = order.totalPayablePrice;
+//     document.getElementById('modalTotalPrice').innerText= order.totalPayablePrice;
+//     // document.getElementById('modalTotalQuantity').innerText=order.totalQuantity;
+//     document.getElementById('')
 
-function closeModal() {
-    // Hide modal
-    document.getElementById('orderModal').classList.add('hidden');
-}
 
+//     //const modal = document.getElementById('orderModal');
+//     const modalOrderId = document.getElementById('modalOrderId');
+//     const modalOrderDate = document.getElementById('modalOrderDate');
+//     const modalProducts = document.getElementById('modalProducts');
+//     const modalCustomerName = document.getElementById('modalCustomerName');
+//     const modalPrice = document.getElementById('modalTotalPrice');
+//     const modalPayment = document.getElementById('modalPaymentMethod');
+//     const orderStatus=document.getElementById('modalOrderStatus');
+//     // Populate product list
+//     const productList = document.getElementById('modalProducts');
+//     productList.innerHTML = ''; // Clear existing content
+//     order.products.forEach(product => {
+//         const listItem = document.createElement('li');
+//         listItem.innerText = `${product.productname} - Quantity: ${product.productquantity}`;
+//         productList.appendChild(listItem);
+//     });
+
+//     // Show modal
+//     document.getElementById('orderModal').classList.remove('hidden');
+// }
+
+// function closeModal() {
+//     // Hide modal
+//     document.getElementById('orderModal').classList.add('hidden');
+// }
+function openModal(orderData) {
+       
+       const modal = document.getElementById('orderModal');
+       const modalOrderId = document.getElementById('modalOrderId');
+       const modalOrderDate = document.getElementById('modalOrderDate');
+       const modalProducts = document.getElementById('modalProducts');
+       const modalCustomerName = document.getElementById('modalCustomerName');
+       const modalPrice = document.getElementById('modalTotalPrice');
+       const modalPayment = document.getElementById('modalPaymentMethod');
+       const orderStatus=document.getElementById('modalOrderStatus');
+      
+       modalOrderId.innerText = orderData.orderId;
+       modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
+       modalCustomerName.innerText = orderData.customerId.name;
+       modalPrice.innerText=orderData.totalPayablePrice;
+       modalPayment.innerText=orderData.paymentMethod;
+       modalOrderStatus.innerText=orderData.orderStatus;
+
+   
+       modalProducts.innerHTML = '';  
+       orderData.products.forEach(product => {
+ 
+   const productPrice = product.productprice;
+
+
+   modalProducts.innerHTML += `
+       <div class="product-details border-b py-2">
+           <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
+           <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
+           <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
+           <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+       
+       </div>
+   `;
+});
+
+
+       // Show the modal
+       modal.classList.remove('hidden');
+       modal.classList.add('flex');
+   }
+
+   // Function to close the modal
+   function closeModal() {
+       const modal = document.getElementById('orderModal');
+       modal.classList.add('hidden');
+   }
 </script>
+
+<script>
+    document.getElementById('downloadButton').addEventListener('click', async function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+    
+        // Fetching order details from modal
+        const orderId = document.getElementById('modalOrderId').innerText;
+        const orderDate = document.getElementById('modalOrderDate').innerText;
+        const customerName = document.getElementById('modalCustomerName').innerText;
+        const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+        const totalPrice = document.getElementById('modalTotalPrice').innerText;
+        const orderStatus=document.getElementById('modalOrderStatus').innerText;
+    
+        // Adding text content to the PDF
+        doc.text(`Order ID: ${orderId}`, 10, 10);
+        doc.text(`Order Date: ${orderDate}`, 10, 20);
+        doc.text(`Customer Name: ${customerName}`, 10, 30);
+        doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
+        doc.text(`Total Price: ${totalPrice}`, 10, 50);
+        doc.text(`Order Status: ${orderStatus}`, 10, 60);
+    
+        // Fetch product details from modalProducts div
+        const productElements = document.querySelectorAll('#modalProducts .product-details');
+    
+        let yOffset = 70; // Initial Y position for product details and images
+        for (const productElement of productElements) {
+            const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+            const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+            const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+            const productImage = productElement.querySelector('img').src;
+    
+            // Add product details (name, price, quantity) to PDF
+            doc.text(`Product Name: ${productName}`, 90, yOffset);
+            doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
+            doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+    
+            try {
+                // Convert image URL to base64 and add to PDF
+                const base64Img = await getBase64ImageFromURL(productImage);
+                // Adding image to PDF at (x, y, width, height)
+                doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+            } catch (error) {
+                console.error('Error loading image', error);
+            }
+    
+            yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+        }
+    
+        // Save the generated PDF
+        doc.save('adminorder-details.pdf');
+    });
+    
+    // Function to convert image URL to base64
+    async function getBase64ImageFromURL(url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+    
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.add('hidden');
+    }
+    
+ 
+    
+   
+    </script>
+  

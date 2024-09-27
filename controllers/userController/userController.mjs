@@ -170,39 +170,117 @@ export const userregister=async(req,res)=>{
 }
 
 
+// export const verifyOtp = async (req, res) => {
+//     const { userId, otp } = req.body;
+//     console.log(otp);
+//     const user = await User.findById(userId);
+//     console.log(user)
+
+
+//     console.log(user.otp)
+//     console.log(otp)
+//     if (user.otp == otp && Date.now() < user.otpExpires) {
+//         user.isVerified = true;
+//         user.otp = undefined;
+//         user.otpExpires = undefined;
+//         await user.save();
+        
+//     res.redirect('/user/login'); }
+//     else{
+//         req.flash("error", "Invalid OTP or Expired OTP");
+//         res.render('userotpverify',{user:user._id,message:req.flash(), otpExpires: user.otpExpires - Date.now()})
+//     }
+
+        
+//     // }if(user.otp ==otp && Date.now()>user.otpExpires)
+//     // else{
+
+//     // user.isVerified = true;
+//     // user.otp = undefined;
+//     // user.otpExpires = undefined;
+//     // await user.save();
+    
+//     // res.redirect('/user/login'); }
+    
+// };
+
+// export const verifyOtp = async (req, res) => {
+//     const { userId, otp } = req.body;
+
+//     try {
+//         const user = await User.findById(userId);
+
+//         if (!user) {
+//             req.flash("error", "User not found.");
+//             return res.redirect('/user/otpverify'); // Redirect to the OTP verification page
+//         }
+
+//         // Check if the OTP is valid and not expired
+//         if (user.otp === otp && Date.now() < user.otpExpires) {
+//             user.isVerified = true;
+//             user.otp = undefined;
+//             user.otpExpires = undefined;
+//             await user.save();
+
+//             req.flash("success", "Registration successful! You can now log in.");
+//             return res.redirect('/user/login');
+//         } else {
+//             req.flash("error", "Invalid OTP or Expired OTP");
+//             return res.render('userotpverify', {
+//                 user: user._id,
+//                 message: req.flash(),
+//                 otpExpires: user.otpExpires - Date.now()
+//             });
+//         }
+//     } catch (error) {
+//         console.error("Error verifying OTP:", error);
+//         req.flash("error", "An error occurred while verifying the OTP. Please try again.");
+//         return res.redirect('/user/otpverify'); // Redirect to the OTP verification page
+//     }
+// };
+
+
 export const verifyOtp = async (req, res) => {
     const { userId, otp } = req.body;
-    console.log(otp);
-    const user = await User.findById(userId);
-    console.log(user)
 
+    try {
+        const user = await User.findById(userId);
 
-    console.log(user.otp)
-    console.log(otp)
-    if (user.otp == otp && Date.now() < user.otpExpires) {
-        user.isVerified = true;
-        user.otp = undefined;
-        user.otpExpires = undefined;
-        await user.save();
-        
-    res.redirect('/user/login'); }
-    else{
-        req.flash("error", "Invalid OTP or Expired OTP");
-        res.render('userotpverify',{user:user._id,message:req.flash(), otpExpires: user.otpExpires - Date.now()})
+        if (!user) {
+            req.flash("error", "User not found.");
+            return res.redirect('/user/otpverify');
+        }
+
+        // Debugging logs
+        console.log("Received OTP from user:", otp);
+        console.log("Stored OTP in DB:", user.otp);
+        console.log("OTP Expiration Time:", user.otpExpires);
+        console.log("Current Time:", Date.now());
+
+        // Check if the OTP is valid and not expired
+        if (user.otp.toString() === otp.toString() && Date.now() < user.otpExpires) {
+            user.isVerified = true;
+            user.otp = undefined;
+            user.otpExpires = undefined;
+            await user.save();
+
+            req.flash("success", "Registration successful! You can now log in.");
+            return res.redirect('/user/login');
+        } else {
+            req.flash("error", "Invalid OTP or Expired OTP");
+            return res.render('userotpverify', {
+                user: user._id,
+                message: req.flash(),
+                otpExpires: user.otpExpires - Date.now()
+            });
+        }
+    } catch (error) {
+        console.error("Error verifying OTP:", error);
+        req.flash("error", "An error occurred while verifying the OTP. Please try again.");
+        return res.redirect('/user/otpverify');
     }
-
-        
-    // }if(user.otp ==otp && Date.now()>user.otpExpires)
-    // else{
-
-    // user.isVerified = true;
-    // user.otp = undefined;
-    // user.otpExpires = undefined;
-    // await user.save();
-    
-    // res.redirect('/user/login'); }
-    
 };
+
 
 export const resendOtp = async (req, res) => {
     try {
@@ -319,17 +397,249 @@ export const userhome=async(req,res)=>{
           console.log(productgreen);
           const productcase= await Product.findOne({productName:'CARDO'});
           const productCollection=await Category.find({isActive:true});
-          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection});
+          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash()});
         
     }catch(error){
         console.log(`error from user home ${error}`);
     }
 }
 
+// export const usersearch=async(req,res)=>{
+//     try{
+       
+//         const catid = req.query.id;
+//         const page = parseInt(req.query.page) || 1;
+//         const pageSize = 12;
+//         const skip = (page - 1) * pageSize;
+//         const { sortstyle } = req.query; 
+
+//         console.log('Category ID:', catid);
+//         console.log('Sort Style:', sortstyle);
+
+    
+//         let product;
+//         let totalProducts;
+//         const searchname=req.body.sename;
+//         if(searchname){
+//             const regex = new RegExp(searchname, 'i'); 
+//             const productcheck= await Product.find({productName:{ $regex: regex } });
+//         if(productcheck){  
+//         let sortCriteria = {};
+//         if (sortstyle === 'lowToHigh') {
+//             sortCriteria = { productPrice: 1 };
+//         } else if (sortstyle === 'highToLow') {
+//             sortCriteria = { productPrice: -1 }; 
+//         }else if (sortstyle === 'aToZ') {
+//             sortCriteria = { productName: 1 }; 
+//         } else if (sortstyle === 'zToA') {
+//             sortCriteria = { productName: -1 }; 
+//         }
+       
+//         if (!catid) {
+//             product = await Product.find({ isDeleted: false , productName:{ $regex: regex }} )
+//                 .populate('productCategory', 'categoryName')
+//                 .sort(sortCriteria) 
+//                 .skip(skip)
+//                 .limit(pageSize);
+
+//             totalProducts = await Product.countDocuments({ isDeleted: false ,productName:{ $regex: regex } });
+//         } else {
+//             product = await Product.find({ isDeleted: false, productCategory: catid, productName:{ $regex: regex }  })
+//                 .populate('productCategory', 'categoryName')
+//                 .sort(sortCriteria) 
+//                 .skip(skip)
+//                 .limit(pageSize);
+
+//             totalProducts = await Product.countDocuments({ isDeleted: false, productCategory: catid,productName:{ $regex: regex }  });
+//         }
+
+     
+//         const totalPages = Math.ceil(totalProducts / pageSize);
+
+      
+//         const productCollection = await Category.find({ isActive: true });
+
+       
+//         res.render('userAllProducts', {
+//             product,
+//             currentPage: page,
+//             totalPages: totalPages,
+//             productCollection,
+//             sessionuser: req.session.isUser,
+//             catid,
+//             query:req.query
+//         });
+//     }else{
+//         res.redirect('/user/allproducts')
+//     }
+// }
+//         else{
+//             res.redirect('/user/allproducts')
+//         }
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
+// export const usersearch = async (req, res) => {
+//     try {
+//         const catid = req.query.id;
+//         const page = parseInt(req.query.page) || 1;
+//         const pageSize = 12;
+//         const skip = (page - 1) * pageSize;
+//         const { sortstyle } = req.query; 
+//         const searchname = req.body.sename;
+
+//         console.log('Category ID:', catid);
+//         console.log('Sort Style:', sortstyle);
+//         console.log('Search Name:', searchname);
+
+//         let product;
+//         let totalProducts;
+
+//         if (searchname) {
+//             const regex = new RegExp(searchname, 'i'); 
+//             const productcheck = await Product.find({ productName: { $regex: regex } });
+
+//             if (productcheck.length > 0) {  // Check if products were found
+//                 let sortCriteria = {};
+//                 if (sortstyle === 'lowToHigh') {
+//                     sortCriteria = { productPrice: 1 };
+//                 } else if (sortstyle === 'highToLow') {
+//                     sortCriteria = { productPrice: -1 }; 
+//                 } else if (sortstyle === 'aToZ') {
+//                     sortCriteria = { productName: 1 }; 
+//                 } else if (sortstyle === 'zToA') {
+//                     sortCriteria = { productName: -1 }; 
+//                 }
+
+//                 if (!catid) {
+//                     product = await Product.find({ isDeleted: false, productName: { $regex: regex } })
+//                         .populate('productCategory', 'categoryName')
+//                         .sort(sortCriteria)
+//                         .skip(skip)
+//                         .limit(pageSize);
+
+//                     totalProducts = await Product.countDocuments({ isDeleted: false, productName: { $regex: regex } });
+//                 } else {
+//                     product = await Product.find({ isDeleted: false, productCategory: catid, productName: { $regex: regex } })
+//                         .populate('productCategory', 'categoryName')
+//                         .sort(sortCriteria)
+//                         .skip(skip)
+//                         .limit(pageSize);
+
+//                     totalProducts = await Product.countDocuments({ isDeleted: false, productCategory: catid, productName: { $regex: regex } });
+//                 }
+
+//                 const totalPages = Math.ceil(totalProducts / pageSize);
+//                 const productCollection = await Category.find({ isActive: true });
+
+//                 // Render the search result page
+//                 res.render('userAllProducts', {
+//                     product,
+//                     currentPage: page,
+//                     totalPages: totalPages,
+//                     productCollection,
+//                     sessionuser: req.session.isUser,
+//                     catid,
+//                     query: req.query
+//                 });
+//             } else {
+//                 // No products found, redirect to all products page
+//                 res.redirect('/user/allproducts');
+//             }
+//         } else {
+//             // If no search term, redirect to all products
+//             res.redirect('/user/allproducts');
+//         }
+//     } catch (error) {
+//         console.error('Error in search functionality:', error);
+//         res.status(500).send('An error occurred while searching for products');
+//     }
+// }
+
+export const usersearch = async (req, res) => {
+    try {
+        const catid = req.query.id;
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 12;
+        const skip = (page - 1) * pageSize;
+        const { sortstyle } = req.query; 
+        const searchname = req.body.searchvalue;
+
+        console.log('Category ID:', catid);
+        console.log('Sort Style:', sortstyle);
+        console.log('Search Name:', searchname);
+
+        let product;
+        let totalProducts;
+
+        if (searchname) {
+            const regex = new RegExp(searchname, 'i'); 
+            const productcheck = await Product.find({ productName: { $regex: regex } });
+
+            if (productcheck.length > 0) {  // Check if products were found
+                let sortCriteria = {};
+                if (sortstyle === 'lowToHigh') {
+                    sortCriteria = { productPrice: 1 };
+                } else if (sortstyle === 'highToLow') {
+                    sortCriteria = { productPrice: -1 }; 
+                } else if (sortstyle === 'aToZ') {
+                    sortCriteria = { productName: 1 }; 
+                } else if (sortstyle === 'zToA') {
+                    sortCriteria = { productName: -1 }; 
+                }
+
+                if (!catid) {
+                    product = await Product.find({ isDeleted: false, productName: { $regex: regex } })
+                        .populate('productCategory', 'categoryName')
+                        .sort(sortCriteria)
+                        .skip(skip)
+                        .limit(pageSize);
+
+                    totalProducts = await Product.countDocuments({ isDeleted: false, productName: { $regex: regex } });
+                } else {
+                    product = await Product.find({ isDeleted: false, productCategory: catid, productName: { $regex: regex } })
+                        .populate('productCategory', 'categoryName')
+                        .sort(sortCriteria)
+                        .skip(skip)
+                        .limit(pageSize);
+
+                    totalProducts = await Product.countDocuments({ isDeleted: false, productCategory: catid, productName: { $regex: regex } });
+                }
+
+                const totalPages = Math.ceil(totalProducts / pageSize);
+                const productCollection = await Category.find({ isActive: true });
+
+                // Render the search result page
+                res.render('userAllProducts', {
+                    product,
+                    currentPage: page,
+                    totalPages: totalPages,
+                    productCollection,
+                    sessionuser: req.session.isUser,
+                    catid,
+                    query: req.query
+                });
+            } else {
+                // No products found, redirect to all products page
+                res.redirect('/user/allproducts');
+            }
+        } else {
+            // If no search term, redirect to all products
+            res.redirect('/user/allproducts');
+        }
+    } catch (error) {
+        console.error('Error in search functionality:', error);
+        res.status(500).send('An error occurred while searching for products');
+    }
+}
+
+
 export const userlogout=async(req,res)=>{
     try{
         req.session.destroy();
-        res.redirect('/user/login')
+        res.redirect('/user/home')
     }catch(error){
         console.log(error.message)
     }

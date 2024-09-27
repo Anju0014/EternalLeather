@@ -1,5 +1,6 @@
 import User from "../../model/userModel.mjs"
 import Category from "../../model/categoryModel.mjs"
+import bcrypt from "bcrypt"
 import addressSchema from "../../model/addressModel.mjs"
 
 // export const userdata=async (req,res)=>{
@@ -15,6 +16,19 @@ import addressSchema from "../../model/addressModel.mjs"
 //     }
 
 // }
+
+const securePassword = async(password)=>{
+    try{
+
+        const passwordHash=await bcrypt.hash(password,10);
+        return passwordHash;
+
+    }catch(error){
+        console.log(error.message)
+
+    }
+}
+
 export const userdata = async (req, res) => {
     try {
         console.log(req.session.isUser)
@@ -44,6 +58,45 @@ export const userdata = async (req, res) => {
 };
 
 
+export const userchangepassword= async (req,res)=>{
+    try{
+         const{newPassword,currentPassword}= req.body
+    //      console.log(req.body)
+    //      console.log("hello")
+         const user = await User.findOne({ email: req.session.isUser });
+
+    console.log(user);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Compare plain text currentPassword with stored hashed password
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password); 
+    console.log('Password match:', passwordMatch);
+
+    if (!passwordMatch) {
+        return res.status(400).json({ error: 'Current password is incorrect' });
+    }
+
+    // Hash the new password before storing
+    const snewpassword = await securePassword(newPassword);
+    console.log('New hashed password:', snewpassword);
+
+    user.password = snewpassword;
+    console.log("Updated password", user.password);
+
+    // Save the updated user information
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Password updated successfully' });
+
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+}
+    // }
+}
 export const addressAdd = async (req, res) => {
     try {
          // Getting user ID from query parameter

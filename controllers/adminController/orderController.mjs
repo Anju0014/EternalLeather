@@ -1,6 +1,6 @@
 import Order from '../../model/orderModel.mjs'
 
-
+import User from '../../model/userModel.mjs'
 
 
 export const adminorders= async (req, res) => {
@@ -22,6 +22,7 @@ export const adminorders= async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
+        console.log(error)
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
@@ -57,4 +58,28 @@ export const adminorderCancel = async (req, res) => {
 
     
    
+};
+export const adminorderupdate= async (req, res) => {
+    try{
+    const { id } = req.params;
+    const { orderStatus } = req.body; // Get the selected value from the dropdown
+    const order = await Order.findById(id);
+
+    if (!order) {
+    //     return res.status(404).send('User not found');
+    res.redirect('/admin/order')
+    }
+
+    // Update the isBlocked status based on the dropdown value
+    order.orderStatus = orderStatus
+    if(orderStatus=="Cancelled"){
+       order.isCancelled=true
+    }
+    await order.save();
+
+    res.redirect('/admin/order'); // Redirect back to the user management page
+}catch (error) {
+    console.error('Error toggling block status:', error);
+    res.status(500).send('Internal Server Error');
+}
 };

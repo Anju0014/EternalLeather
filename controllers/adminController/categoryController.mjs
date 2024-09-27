@@ -49,7 +49,7 @@ export const admincategoryAdd = async (req, res) => {
         const newCategory = new Category({
             categoryName: categoryname,
             isActive: req.body.status,
-            addDate: req.body.adddate
+          
         });
 
         const savedCategory= await newCategory.save();
@@ -93,7 +93,6 @@ export const admincategoryupdate = async (req, res) => {
         const category = await Category.findByIdAndUpdate(categoryId, {
             categoryName: catname,
             isActive: status,
-            addDate: adddate
         }, { new: true });
         console.log(category);
         if (!category) {
@@ -146,3 +145,25 @@ export const admincategorysearch=async(req,res)=>{
 //     res.redirect('/admin/category')
 
 // };
+export const admincategorypost= async (req, res) => {
+    try{
+    const { id } = req.params;
+    const { isActive } = req.body; // Get the selected value from the dropdown
+    const category = await Category.findById(id);
+    
+    console.log(category)
+    // if (!user) {
+    //     return res.status(404).send('User not found');
+    // }
+
+    // Update the isBlocked status based on the dropdown value
+    category.isActive = isActive 
+    console.log(isActive)
+    await category.save();
+
+    res.redirect('/admin/category'); // Redirect back to the user management page
+}catch (error) {
+    console.error('Error toggling toggling category:', error);
+    res.redirect('/admin/category')
+}
+};

@@ -3,7 +3,9 @@ import mongoose from "mongoose"
 
 const orderSchema = new mongoose.Schema({
     customerId: {
-        type: String
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+            required: true,
     },
     orderId: {
         type: String,
@@ -36,6 +38,10 @@ const orderSchema = new mongoose.Schema({
             type: String,
             enum:['Confirmed', 'Pending', 'Delivered', 'Returned', 'Cancelled'],
             default:'Pending'
+        },
+        isproductCancelled:{
+            type: Boolean,
+            default: false
         }
     }],
     totalQuantity: {

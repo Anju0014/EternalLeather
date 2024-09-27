@@ -20,40 +20,38 @@ import cloudinary from 'cloudinary';
 //     }
 // }
 
-export const adminproduct = async (req, res) => {
-    try {
-        if (!req.session.isAdmin) {
-            return res.redirect('/admin/login');
-        }
+// export const adminproduct = async (req, res) => {
+//     try {
+//         if (!req.session.isAdmin) {
+//             return res.redirect('/admin/login');
+//         }
 
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = 10;
-        const skip = (page - 1) * pageSize;
+//         const page = parseInt(req.query.page) || 1;
+//         // const pageSize = 10;
+//         // const skip = (page - 1) * pageSize;
 
-        // Fetch the products with pagination
-        const products = await Product.find({ isDeleted: false })
-            .populate('productCategory', 'categoryName')
-            .skip(skip)
-            .limit(pageSize);
+//         // Fetch the products with pagination
+//         const products = await Product.find({ isDeleted: false })
+//             .populate('productCategory', 'categoryName')
+//             // .skip(skip)
+//             // .limit(pageSize);
 
-        // Debugging: Log the fetched products
-        console.log('Fetched Products:', products);
+//         // Debugging: Log the fetched products
+//         console.log('Fetched Products:', products);
 
-        const totalProducts = await Product.countDocuments();
-        const totalPages = Math.ceil(totalProducts / pageSize);
+//         const totalProducts = await Product.countDocuments();
+//         // const totalPages = Math.ceil(totalProducts / pageSize);
 
-        res.render('adminProduct', {
-            message: products,
-            currentPage: page,
-            totalPages: totalPages,
-            light:req.flash()
-        });
-    } catch (error) {
-        console.log(`error from admin product ${error}`);
-    }
-};
-
-
+//         res.render('adminProduct', {
+//             message: products,
+//             // currentPage: page,
+//             // totalPages: totalPages,
+//             light:req.flash()
+//         });
+//     } catch (error) {
+//         console.log(`error from admin product ${error}`);
+//     }
+// };
 
 // export const adminproduct = async (req, res) => {
 //     try {
@@ -61,35 +59,34 @@ export const adminproduct = async (req, res) => {
 //             return res.redirect('/admin/login');
 //         }
 
-//         const page = parseInt(req.query.page) || 1;  // Get the current page, default to 1
-//         const pageSize = 10;  // Number of products to display per page
+//         const page = parseInt(req.query.page) || 1;
+//         // const pageSize = 10;
+//         // const skip = (page - 1) * pageSize;
 
-//         // Skip calculation to determine how many documents to skip based on current page
-//         const skip = (page - 1) * pageSize;
-        
-//         const productCollection = await Category.find({ isActive: true });
-//         console.log('Product Collection:', productCollection);
 //         // Fetch the products with pagination
-//         const products = await Product.find({isDeleted:false})
+//         const products = await Product.find({ isDeleted: false })
 //             .populate('productCategory', 'categoryName')
-//             .skip(skip)
-//             .limit(pageSize);
+//             // .skip(skip)
+//             // .limit(pageSize);
 
-//         // Get total number of products for pagination controls
+//         // Debugging: Log the fetched products
+//         console.log('Fetched Products:', products);
+
 //         const totalProducts = await Product.countDocuments();
-
-//         // Calculate total pages based on total number of products and pageSize
-//         const totalPages = Math.ceil(totalProducts / pageSize);
+//         // const totalPages = Math.ceil(totalProducts / pageSize);
 
 //         res.render('adminProduct', {
 //             message: products,
-//             currentPage: page,
-//             totalPages: totalPages,
+//             // currentPage: page,
+//             // totalPages: totalPages,
+//             light:req.flash()
 //         });
 //     } catch (error) {
 //         console.log(`error from admin product ${error}`);
 //     }
 // };
+
+//
 
 export const adminproductaddform = async (req, res) => {
     try {
@@ -265,7 +262,6 @@ export const adminproductadd = async (req, res) => {
             productType:variety,
             productDiscount:discount,
             productColor:color,
-    
             productImages: croppedImages, // Save all URLs
         });
 
@@ -343,4 +339,88 @@ export const adminproductdelete = async (req, res) => {
     // console.log(category)
 
     // console.log(req.query.id)
+};
+
+
+
+
+
+
+
+
+export const adminproduct = async (req, res) => {
+    try {
+        const catid = req.query.category || ''; // Get the category from the query
+        const minPrice = parseFloat(req.query.minPrice) || 0; // Get the minimum price
+        const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; // Get the maximum price
+        const type = req.query.type || ''; // Get the product type
+        const sortstyle = req.query.sortstyle || ''; // Get the sort style
+
+        //const page = parseInt(req.query.page) || 1;
+        //const pageSize = 12;
+       // const skip = (page - 1) * pageSize;
+
+        // Declare variables for product and totalProducts
+        let product;
+        let totalProducts;
+
+        // Define sorting logic
+        let sortCriteria = {};
+        if (sortstyle === 'lowToHigh') {
+            sortCriteria = { productPrice: 1 }; // Sort by price ascending
+        } else if (sortstyle === 'highToLow') {
+            sortCriteria = { productPrice: -1 }; // Sort by price descending
+        } else if (sortstyle === 'aToZ') {
+            sortCriteria = { productName: 1 }; // Sort by name A to Z
+        } else if (sortstyle === 'zToA') {
+            sortCriteria = { productName: -1 }; // Sort by name Z to A
+        }
+
+        // Build the query object for filtering
+        const query = {
+            isDeleted: false,
+            productPrice: { $gte: minPrice, $lte: maxPrice } // Filter by price range
+        };
+
+        // Apply category filter if provided
+        if (catid) {
+            query.productCategory = catid;
+        }
+
+        // Apply type filter if provided
+        if (type) {
+            query.productType = type;
+        }
+
+        // Fetch products based on the query and sorting criteria
+        product = await Product.find(query)
+            .populate('productCategory', 'categoryName')
+            .sort(sortCriteria) // Apply sorting
+            //.skip(skip)
+            //.limit(pageSize);
+
+        // Total products count for pagination
+        totalProducts = await Product.countDocuments(query);
+
+        // Calculate total pages
+        //const totalPages = Math.ceil(totalProducts / pageSize);
+
+        // Fetch all active categories
+        const productCollection = await Category.find({ isActive: true });
+
+        // Render the view with all the necessary data
+        res.render('adminProduct', {
+            message:product,
+            // currentPage: page,
+            // totalPages: totalPages,
+            productCollection,
+            // sessionuser: req.session.isUser,
+            catid,
+            query:req.query,
+            light:req.flash()
+
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };

@@ -676,8 +676,7 @@ export const checkout= async (req,res)=>{
     const productCollection = await Category.find({ isActive: true });
     
     if (!req.session.isUser) {
-        console.log("User session is missing");
-        return res.status(400).send("User is not logged in.");
+        return res.redirect('/user/home')
     }
     
     const user = await User.findOne({ email: req.session.isUser });
@@ -688,7 +687,13 @@ export const checkout= async (req,res)=>{
         console.log("User not found");
         return res.status(404).send("User not found");
     }
+    const itemsOutOfStock = cart.items.some(item => {
+      return item.productId.productQuantity< item.productCount; // Assuming productId has a stock field
+  });
 
+  if (itemsOutOfStock) {
+      return res.redirect('/user/addtocart'); // Redirect to cart if any item is out of stock
+  }
     // //const addresses = user.address({isDeleted:false});
     const addresses = user.address.filter(address => !address.isDeleted);
 
@@ -815,7 +820,7 @@ export const checkoutpost= async (req,res)=>{
               productname: item.productId.productName,
               productquantity: item.productCount,
               productprice: item.discountPrice,
-              productimage: item.productId.productImage,
+              productimage: item.productId.productImages[0],
               productstatus: 'Pending'
           })),
           totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
@@ -846,8 +851,26 @@ export const checkoutpost= async (req,res)=>{
         // You can update the order with this generated code
         newOrder.orderId = orderIdCode;
         await newOrder.save();
-        await Cart.findByIdAndDelete(req.body.cartId);
         
+        for (const item of cart.items) {
+          const product = await Product.findById(item.productId);
+
+          // Check if the product has enough stock
+          if (product.productQuantity < item.productCount) {
+              return res.status(400).json({
+                  success: false,
+                  message: `Insufficient stock for product: ${product.name}`
+              });
+          }
+
+          // Decrement the stock
+          product.productQuantity -= item.productCount;
+
+          // Save the updated product
+          await product.save();
+      }
+
+      await Cart.findByIdAndDelete(req.body.cartId);
 
         // Respond with success
         res.json({ success: true, message: 'Order placed successfully' });

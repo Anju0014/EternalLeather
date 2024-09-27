@@ -9,9 +9,6 @@ const categorySchema = mongoose.Schema({
         type: Boolean,
         default: true
     },
-    addDate:{
-        type:String
-    },
     isDeleted: {
         type: Boolean,
         default: false, 

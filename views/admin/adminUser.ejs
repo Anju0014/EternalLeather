@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
     <style>
         /* Inline styles for the background image */
         .box-brown {
@@ -47,34 +49,31 @@
         <br>
         </div>
      
-        <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded">
-            <form action="/admin/user/search" method="post">
+        <!-- <div class="flex-grow bg-red-100 m-24 border-2 border-red-950 rounded"> -->
+            <!-- <form action="/admin/user/search" method="post">
                 <div class="flex justify-center m-10 ">
                     <input class="bg-white border border-red-900 rounded w-full m-3 py-2 px-3" type="search" placeholder="Search User" aria-label="Search" name="sename">
                     <button class=" text-white rounded bg-red-950 m-3 px-3 py-2" type="submit">Search</button>
                 </div>
-            </form>
+            </form> -->
 
-            <table class="w-4/5  m-20 p-2 align-items-center border border-red-900 rounded" >
+            <!-- <table class="  m-20 p-2 align-items-center border border-red-900 rounded" >
                 <tr style="background-color: rgb(119, 45, 11); color:white;">
                     <th>Sl.No</th>
                     <th>Username</th>
                     <th>Email</th>
-                    <!-- <th>Blocked</th> -->
+                
                     <th colspan="2">Actions</th>
                 </tr>
-         
+          -->
         
-            <% if (message && message.length> 0) { %>
+            <!-- <% if (message && message.length> 0) { %>
                 <% for (let i = 0; i < message.length; i++) { %>
                     <tr>
                         <td class="px-8"><%=   i+1 %></td>
                         <td class="px-8"><%=   message[i].name %></td>
                         <td class="px-14"><%=   message[i].email %></td>
-                        <!-- <td class="px-8">
-                            <span class="status <%= message[i].isBlocked ? 'blocked' : 'active' %>">
-                            <%= message[i].isBlocked ? 'Blocked' : 'Active' %>
-                        </span></td> -->
+                       
                         <td class="px-10">
                             <form action="/admin/users/<%= message[i]._id %>/toggle-block" method="POST">
                                 <select name="blockStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
@@ -87,17 +86,82 @@
         
                     </tr>
                 <% }  %>
-            <% } %>
+            <% } %> -->
 
-            </table>
+            <!-- </table>
           
+            </div> -->
+            <div class="flex-grow p-3"> 
+                <!-- Search form (commented out) -->
+                <!-- <form action="/admin/user/search" method="post">
+                    <div class="flex justify-center m-10 ">
+                        <input class="bg-white border border-red-900 rounded w-full m-3 py-2 px-3" type="search" placeholder="Search User" aria-label="Search" name="sename">
+                        <button class=" text-white rounded bg-red-950 m-3 px-3 py-2" type="submit">Search</button>
+                    </div>
+                </form> -->
+            
+                <table id="usersTable" class="m-20 p-2 align-items-center border border-red-900 rounded w-full">
+                    <thead style="background-color: rgb(119, 45, 11); color:white;">
+                        <tr>
+                            <th>Sl.No</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th colspan="2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (message && message.length > 0) { %>
+                            <% for (let i = 0; i < message.length; i++) { %>
+                                <tr>
+                                    <td class="px-8"><%= i + 1 %></td>
+                                    <td class="px-8"><%= message[i].name %></td>
+                                    <td class="px-14"><%= message[i].email %></td>
+                                    <td class="px-10">
+                                        <form action="/admin/users/<%= message[i]._id %>/toggle-block" method="POST">
+                                            <select name="blockStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                                <option value="unblock" <%= !message[i].isBlocked ? 'selected' : '' %>>Unblock</option>
+                                                <option value="block" <%= message[i].isBlocked ? 'selected' : '' %>>Block</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4" class="text-center">No users found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
             </div>
-        
+            
+            <!-- Include jQuery and DataTables -->
+           
 </div>
-    <%- include('footer') %>
+  
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+
+<!-- DataTable Initialization -->
+<script>
+  $(document).ready(function() {
+    $('#usersTable').DataTable({
+      "paging": true,       // Enable pagination
+      "ordering": true,     // Enable column sorting
+      "info": true,         // Display table information
+      "searching": true,    // Enable search box
+      "autoWidth": false,   // Disable automatic column width calculation
+      "order": [[ 0, "asc" ]],  // Default sorting on the first column (Sl.No)
+      "columnDefs": [
+        { "orderable": false, "targets": [3] }  // Disable sorting for Actions column
+      ]
+    });
+  });
+</script>
 
 
 

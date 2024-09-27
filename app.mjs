@@ -33,7 +33,7 @@ app.use(nocache());
 app.use(session({
     secret:'dream',
     resave:false,
-    saveUnintialized:true,
+    saveUninitialized:true,
 }))
 
 
