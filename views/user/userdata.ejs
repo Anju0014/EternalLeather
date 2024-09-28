@@ -142,7 +142,7 @@
 
   <div class="container mx-auto p-4">
  
-  <div class="mt-4 bg-red-50 p-6 shadow-lg w-full max-w-sm rounded-2xl font-[sans-serif] mx-auto">
+   <div class="mt-4 bg-red-50 p-6 shadow-lg w-full max-w-sm rounded-2xl font-[sans-serif] mx-auto">
     <div class="flex flex-col items-center">
       <div class="min-h-[110px]">
         <img src='https://res.cloudinary.com/dihyb66hn/image/upload/v1726720095/kj7s5mf1qjknbfjad1wt.png' class="w-28 h-28 rounded-full" />
@@ -150,9 +150,41 @@
       <div class="mt-4 text-center">
         <p class="text-lg text-gray-800 font-bold"><%= user.name %></p>
         <p class="text-sm text-gray-500 mt-1"><%= user.email %></p>
+        <p class="text-center" id="profileEdit"><i class="fa-solid fa-pen-to-square"></i></p>
+        <!-- <form id="profileForm" class="hidden"> -->
+           <form id="profileForm" class="hidden" method="POST" action="/user/profile/edit" onsubmit="return validatePhoneNumber()">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input type="number" id="phoneno" name="phoneno" value="<%=user.phoneno %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number" oninput="validatePhoneNumber()">
+            <span id="phonenoError" class="text-red-600 text-sm"></span>
+            <button type="submit" class="bg-red-900 text-white bg-rounded">Save Changes</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
+  </div> 
+  <!-- <div class="mt-4 bg-red-50 p-6 shadow-lg w-full max-w-sm rounded-2xl font-[sans-serif] mx-auto"></div>
+    <div class="flex flex-col items-center">
+        <div class="min-h-[110px]">
+            <img src='https://res.cloudinary.com/dihyb66hn/image/upload/v1726720095/kj7s5mf1qjknbfjad1wt.png' class="w-28 h-28 rounded-full" />
+        </div>
+        <div class="mt-4 text-center">
+            <p class="text-lg text-gray-800 font-bold"><%= user.name %></p>
+            <p class="text-sm text-gray-500 mt-1"><%= user.email %></p>
+            <p class="text-center" id="profileEdit">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </p>
+            <form id="profileForm" class="hidden" method="POST" action="/user/edit" onsubmit="return validatePhoneNumber()">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="number" id="phoneno" name="phoneno" value="<%= user.phoneno %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number" oninput="validatePhoneNumber()">
+                    <span id="phonenoError" class="text-red-600 text-sm"></span>
+                    <button type="submit" class="bg-red-900 text-white px-4 py-2 mt-2 rounded-md hover:bg-red-700">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> -->
 
 
   <div class="bg-red-50 p-6 w-full shadow-md rounded-md my-5 max-w-2xl mx-auto">
@@ -223,10 +255,36 @@
     <div class="bg-white rounded-lg p-6">
       <h2 class="text-lg font-bold mb-4">Success</h2>
       <p id="successMessage" class="mb-4"></p>
-      <button id="closeModal" class="bg-indigo-600 text-white px-4 py-2 rounded">Close</button>
+      <button id="closeModal" class="bg-indigo-600 text-white px-4 py-2 rounded ">Close</button>
     </div>
   </div>
- 
+
+
+
+  <div id="flashMessageModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden ">
+    <div class="bg-white p-6 rounded shadow-lg w-96">
+      <div class="flex justify-between items-center mb-4">
+        <h5 class="text-xl font-semibold">Message</h5>
+        <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+      </div>
+      <div class="mb-4">
+        <% if (message.error) { %>
+          <div class="bg-red-100 text-red-700 p-3 rounded">
+            <%= message.error %>
+          </div>
+        <% } %>
+        <% if (message.success) { %>
+          <div class="bg-green-100 text-green-700 p-3 rounded">
+            <%= message.success %>
+          </div>
+        <% } %>
+      </div>
+      <div class="flex justify-end">
+        <button id="modalCloseBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+      </div>
+    </div>
+  </div>
+  
     <div class="mt-6">
       <button class="mt-4 bg-red-900 text-white px-4 py-2 rounded-lg hover:bg-red-700" id="addressadd">Add New Address</button>
       <form id="addressForm" class="space-y-4 hidden bg-white p-3" action="/user/profile/address/add" method="post">
@@ -236,12 +294,14 @@
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Name</label>
             <input type="text" id="contactname" name="contactname" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
+            <span id="nameError" class="text-red-600 text-sm"></span>
           </div>
         
        
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Phone Number</label>
             <input type="number" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number">
+            <span id="phoneError" class="text-red-600 text-sm"></span>
           </div>
         </div>
         
@@ -249,12 +309,12 @@
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Building Name/ No.</label>
-            <input type="text" id="building" name="building" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Building Address">
+            <input type="text" id="building" name="building" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Building Address" required>
           </div>
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Street /Locality</label>
-            <input type="text" id="street" name="street" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address">
+            <input type="text" id="street" name="street" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address " required>
           </div>
         </div>
         
@@ -262,13 +322,13 @@
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">City</label>
-            <input type="text" id="city" name="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter City">
+            <input type="text" id="city" name="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter City" required>
           </div>
         
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Postal Code</label>
-            <input type="number" id="postalCode" name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Postal Code">
+            <input type="number" id="postalCode" name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Postal Code" required>
           </div>
         </div>
         
@@ -276,13 +336,13 @@
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Landmark</label>
-            <input type="text" id="landMark" name="landMark" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Landmark">
+            <input type="text" id="landMark" name="landMark" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Landmark" required>
           </div>
         
          
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">State</label>
-            <input type="text" id="state" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State">
+            <input type="text" id="state" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State" required>
           </div>
         </div>
         
@@ -290,7 +350,7 @@
         
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Country</label>
-            <input type="text" id="country" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country">
+            <input type="text" id="country" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country" required>
           </div>
         </div>
         
@@ -384,8 +444,8 @@
 // });
 
 
-    // Show success modal on successful response
-    if (response.data.success) {
+    
+    if (response.data.success){
       document.getElementById('successMessage').textContent = 'Password updated successfully!';
       document.getElementById('successModal').classList.remove('hidden');
     }
@@ -397,14 +457,96 @@
   }
 });
 
-// Close Modal on button click
+
 document.getElementById('closeModal').addEventListener('click', function() {
   document.getElementById('successModal').classList.add('hidden');
 });
 
+document.getElementById('addressForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form submission for validation check
+    
+    // Name validation
+    const name = document.getElementById('contactname').value;
+    const nameError = document.getElementById('nameError');
+    const nameRegex = /^[A-Za-z\s]+$/; // Regex to allow letters and spaces
+    nameError.textContent = ''; // Clear previous error message
 
+    if (!name) {
+        nameError.textContent = 'Name is required.';
+        return false; // Stop submission if validation fails
+    } else if (!nameRegex.test(name)) {
+        nameError.textContent = 'Name can only contain letters and spaces.';
+        return false;
+    }
 
+    // Phone number validation
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const phoneError = document.getElementById('phoneError');
+    phoneError.textContent = ''; // Clear previous error message
 
+    if (!phoneNumber) {
+        phoneError.textContent = 'Phone number is required.';
+        return false; // Stop submission if validation fails
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+        phoneError.textContent = 'Phone number must be exactly 10 digits.';
+        return false;
+    }
+
+    // If both validations pass, submit the form
+    e.target.submit(); // Form will be submitted if everything is valid
+});
+document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('flashMessageModal');
+      const closeModalBtn = document.getElementById('modalCloseBtn');
+      const closeX = document.getElementById('closeModal');
+  
+      // Show modal if there's a flash message
+      <% if (message.error || message.success) { %>
+        modal.classList.remove('hidden');
+      <% } %>
+  
+      // Close the modal when "Close" button or "X" is clicked
+      closeModalBtn.addEventListener('click', function() {
+        modal.classList.add('hidden');
+      });
+  
+      closeX.addEventListener('click', function() {
+        modal.classList.add('hidden');
+      });
+    });
+    document.getElementById('profileEdit').addEventListener('click', function() {
+        const profileForm = document.getElementById('profileForm');
+        
+        // Toggle the "hidden" class to show/hide the form
+        if (profileForm.classList.contains('hidden')) {
+            profileForm.classList.remove('hidden');
+        } else {
+            profileForm.classList.add('hidden');
+        }
+    });
+
+    function validatePhoneNumber() {
+        const phonenoInput = document.getElementById('phoneno');
+        const phonenoError = document.getElementById('phonenoError');
+        const phoneno = phonenoInput.value;
+
+        // Reset error message
+        phonenoError.textContent = '';
+
+        // Validate the length of the phone number
+        if (phoneno.length !== 10) {
+            phonenoError.textContent = 'Phone number must be 10 digits long.';
+            return false; // Prevent form submission
+        }
+
+        // Check if the number is numeric
+        if (!/^\d+$/.test(phoneno)) {
+            phonenoError.textContent = 'Phone number must be numeric.';
+            return false; // Prevent form submission
+        }
+
+        return true; // Allow form submission
+    }
   </script>
 
 </body>

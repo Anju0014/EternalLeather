@@ -15,7 +15,7 @@ export const userproductdetail = async (req, res) => {
         const productCollection = await Category.find({ isActive: true });
         const relateproduct= await Product.find({isDeleted:false}).limit(4).skip(4);
         console.log(relateproduct);
-        res.render('userproductdetail', { product,relateproduct,sessionuser:req.session.isUser,productCollection });
+        res.render('userproductdetail', { product,relateproduct,sessionuser:req.session.isUser,productCollection,query:req.query});
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -161,6 +161,10 @@ export const userproductview = async (req, res) => {
             sortCriteria = { productName: 1 }; // Sort by name A to Z
         } else if (sortstyle === 'zToA') {
             sortCriteria = { productName: -1 }; // Sort by name Z to A
+        }else if (sortstyle === 'recent') {
+            sortCriteria = { createdAt: -1 }; // Sort by name Z to A
+        } else if (sortstyle === 'ratings') {
+            sortCriteria = { ratings: -1 }; // Sort by name Z to A
         }
 
         // Build the query object for filtering
@@ -238,7 +242,8 @@ export const userproductcategorywise= async(req,res)=>{
             currentPage: page,
             totalPages: totalPages,
             productCollection,
-            sessionuser:req.session.isUser})
+            sessionuser:req.session.isUser,
+            query:req.query})
     }catch(error){
          console.log(error)
     }

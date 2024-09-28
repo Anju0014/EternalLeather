@@ -48,56 +48,59 @@
         <div class="mb-6">
           
           
-          <form id="EditAddressForm" class="space-y-4  bg-white p-3"  action="/user/profile/address/edit" method="post">
+          <form id="editAddressForm" class="space-y-4  bg-white p-3"  action="/user/profile/address/edit" method="post">
             
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">Name</label>
-              <input type="text" id="contactname" value="<%= address.contactname %>" name="contactname"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
+              <input type="text" id="contactname" value="<%= address.contactname %>" name="contactname"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name" required>
+              <span id="nameError" class="text-red-600 text-sm"></span>
             </div>
 
             <div class="space-y-2 hidden">
-              <label class="block text-sm font-medium text-gray-700 ">Name</label>
+              <label class="block text-sm font-medium text-gray-700 ">Id</label>
               <input type="text" id="addressId" value="<%= address._id %>" name="addressId"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
             </div>
+
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700">Phone Number</label>
                 <input type="number" id="phoneNumber" value="<%= address.phoneno %>" name="phoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number">
+                <span id="phoneError" class="text-red-600 text-sm"></span>
               </div>
     
             <div>
               <label class="block text-sm font-medium text-gray-700">Buliding Name/ No.</label>
-              <input type="text" id="building"  name="building" value="<%= address.building %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Buliding Address">
+              <input type="text" id="building"  name="building" value="<%= address.building %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Buliding Address" required>
             </div>
     
             
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">Street/ Locality</label>
-              <input type="text" id="street" name="street" value="<%= address.street %>"  class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address">
+              <input type="text" id="street" name="street" value="<%= address.street %>"  class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address" required>
             </div>
     
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">City</label>
-              <input type="text" id="city" name="city" value="<%= address.city %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter city">
+              <input type="text" id="city" name="city" value="<%= address.city %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter city" required>
             </div>
     
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">Postal Code</label>
-              <input type="number" id="postalCode"  value="<%= address.pincode %>"  name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter postal code">
+              <input type="number" id="postalCode"  value="<%= address.pincode %>"  name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter postal code" required>
             </div>
     
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">LandMark</label>
-              <input type="text" id="landMark" name="landMark" value="<%= address.landMark %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter LandMark">
+              <input type="text" id="landMark" name="landMark" value="<%= address.landMark %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter LandMark" required>
             </div>
     
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">State</label>
-              <input type="text" id="state"   value="<%= address.state %>" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State">
+              <input type="text" id="state"   value="<%= address.state %>" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State" required>
             </div>
     
             <div class="space-y-2">
               <label class="block text-sm font-medium text-gray-700">Country</label>
-              <input type="text" id="country"  value="<%= address.country %>" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country">
+              <input type="text" id="country"  value="<%= address.country %>" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country" required>
             </div>
     
             <button type="submit" id="editAddressBtn"  name="editAddressBtn" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Edit Address</button>
@@ -113,3 +116,39 @@
 
 </body>
 </html>
+<script>
+  
+document.getElementById('editAddressForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form submission for validation check
+    
+    // Name validation
+    const name = document.getElementById('contactname').value;
+    const nameError = document.getElementById('nameError');
+    const nameRegex = /^[A-Za-z\s]+$/; // Regex to allow letters and spaces
+    nameError.textContent = ''; // Clear previous error message
+
+    if (!name) {
+        nameError.textContent = 'Name is required.';
+        return false; // Stop submission if validation fails
+    } else if (!nameRegex.test(name)) {
+        nameError.textContent = 'Name can only contain letters and spaces.';
+        return false;
+    }
+
+    // Phone number validation
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const phoneError = document.getElementById('phoneError');
+    phoneError.textContent = ''; // Clear previous error message
+
+    if (!phoneNumber) {
+        phoneError.textContent = 'Phone number is required.';
+        return false; // Stop submission if validation fails
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+        phoneError.textContent = 'Phone number must be exactly 10 digits.';
+        return false;
+    }
+
+    // If both validations pass, submit the form
+    e.target.submit(); // Form will be submitted if everything is valid
+});
+</script>

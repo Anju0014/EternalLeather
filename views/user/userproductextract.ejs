@@ -1,11 +1,11 @@
-<div class="flex-grow m-5 lg:m-6   rounded">
+<div class="flex-grow m-5 lg:m-24 lg:border border-y-2 border-b-black rounded">
    
 
     
     <div class="flex flex-wrap justify-between m-5">
         <% product.forEach(product=>{  %>
           <div class="w-40 md:w-1/4 bg-gray-100 p-2 rounded-lg shadow-md mb-5 m-5 sm:w-1/2">
-            <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-full lg:h-48  object-cover rounded-lg"></a>
+            <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-full h-48 sm:h-48 object-cover rounded-lg"></a>
             <h6 class="text-sm font-serif font-semibold mt-2"><%= product.productName %></h6>
             <div>
               <% if(product.productDiscount > 0) { %>

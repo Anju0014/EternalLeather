@@ -37,27 +37,46 @@ export const userdata = async (req, res) => {
         
         if (!req.session.isUser) {
             console.log("User session is missing");
-            return res.status(400).send("User is not logged in.");
+            req.flash("error", "User is not Logged In");
+            return res.redirect('/user/home');
         }
         
         const user = await User.findOne({ email: req.session.isUser });
         
         if (!user) {
             console.log("User not found");
-            return res.status(404).send("User not found");
+            req.flash("error", "User not found");
+            return res.redirect('/user/home');
         }
 
         //const addresses = user.address({isDeleted:false});
         const addresses = user.address.filter(address => !address.isDeleted);
         
-        res.render('userprofile', { sessionuser, productCollection, addresses, user });
+        res.render('userprofile', { sessionuser, productCollection, addresses, user ,message:req.flash(),query:req.query});
     } catch (error) {
         console.log(`Error in userdata function: ${error}`);
-        res.status(500).send("Internal Server Error");
+        return res.redirect('/user/home');
     }
 };
 
 
+export const useredit = async (req, res) => {
+    try{
+        const user = await User.findOne({ email: req.session.isUser });
+        if (!user) {
+            console.log("User not found");
+            return res.redirect('/user/profile'); // Redirect if the user is not found
+        }
+        const {phoneno} = req.body;
+        user.phoneno=phoneno;
+        await user.save();
+        console.log("saved")
+        res.redirect('/user/profile')
+    }catch(error){
+        console.log(error)
+        res.redirect('/user/profile')
+    }
+}
 export const userchangepassword= async (req,res)=>{
     try{
          const{newPassword,currentPassword}= req.body
@@ -104,7 +123,7 @@ export const addressAdd = async (req, res) => {
 
         if (!user) {
             req.flash("error", "User not found");
-            return res.redirect('/user/profile');
+            return res.redirect('/user/home');
         }
 
         // Creating a new address object
@@ -130,11 +149,11 @@ export const addressAdd = async (req, res) => {
         await user.save();
 
         req.flash("success", 'Address added successfully');
-        res.redirect('/user/profile');
+        return res.redirect('/user/profile');
     } catch (error) {
         console.log(`Error from user address add: ${error}`);
         req.flash("error", "An error occurred while adding the address");
-        res.redirect('/user/profile');
+        return res.redirect('/user/profile');
     }
 };
 
@@ -173,14 +192,16 @@ export const useraddressdelete = async (req, res) => {
         
         if (!req.session.isUser) {
             console.log("User session is missing");
-            return res.status(400).send("User is not logged in.");
+            req.flash("error", "User is not logged in.");
+           res.redirect('/user/home')
         }
         
         const user = await User.findOne({ email: req.session.isUser });
         
         if (!user) {
             console.log("User not found");
-            return res.status(404).send("User not found");
+            req.flash("error", "User is not found.");
+            res.redirect('/user/home');
         }
 
         const addressId=req.query.id;
@@ -194,8 +215,10 @@ export const useraddressdelete = async (req, res) => {
        
        res.render('useraddressedit',{sessionuser,productCollection,address})
     } catch (error) {
-      console.error('Error updating address:', error);
-      res.status(500).send('Error updating address');
+      console.error('Error updating address:', error)
+      req.flash("error", "'Error updating address'");
+      res.redirect('/user/profile');
+    //   res.status(500).send('Error updating address');
     }
 };
   
@@ -214,7 +237,9 @@ export const editAddress = async (req, res) => {
       const address = user.address.id(addressId);
   
       if (!address) {
-        return res.status(404).send('Address not found');
+        // return res.status(404).send('Address not found');
+        req.flash("error", "Address not found");
+        res.redirect('/user/profile');
       }
   
       address.contactname = contactname;
@@ -231,8 +256,11 @@ export const editAddress = async (req, res) => {
     
       res.redirect('/user/profile')
     } catch (error) {
-      console.error('Error updating address:', error);
-      res.status(500).send('Error updating address');
+        console.error('Error updating address:', error);
+        req.flash("error", "'Error updating address'");
+        res.redirect('/user/profile');
+     
+    //   res.status(500).send('Error updating address');
     }
   };
   

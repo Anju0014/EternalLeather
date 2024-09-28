@@ -34,7 +34,7 @@ export const orderconfirm= async (req,res)=>{
         // //const addresses = user.address({isDeleted:false});
         const addresses = user.address.filter(address => !address.isDeleted);
         //console.log(orders.totalPayablePrice)
-        res.render('orderSummary', { sessionuser, productCollection,addresses,cart, orders });
+        res.render('orderSummary', { sessionuser, productCollection,addresses,cart, orders,query:req.query });
     
         
       }catch(error){

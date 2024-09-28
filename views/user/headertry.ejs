@@ -83,7 +83,9 @@
                   
                     <% productCollection.forEach((category) => { %>
                         <li class="text-center">
-                            <a href="/user/allproducts?id=<%= category._id %>"><%= category.categoryName %></a>
+                            <!-- <a href="/user/allproducts?id=<%= category._id %>"> -->
+                            <a href="/user/allproducts?category=<%= category._id %>&minPrice=<%= query.minPrice || '' %>&maxPrice=<%= query.maxPrice || '' %>&type=<%= query.type || '' %>&sortstyle=<%= query.sortstyle || '' %>">
+                              <%= category.categoryName %></a>
                         </li>
                     <% }) %>
                 </ul>

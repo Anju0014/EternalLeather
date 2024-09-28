@@ -128,7 +128,8 @@
                                
                                 <div class="flex gap-2 mt-2">
                                   
-                                    <% if(!order.isCancelled){ %>
+                                    <% if (order.orderStatus !=='Cancelled' && order.orderStatus !== 'Returned') { %>
+
                                     <% if (product.productstatus === 'Pending' || product.productstatus === 'Confirmed') { %>
                                         <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
                                             onclick="handleCancel('<%= product._id %>')">Cancel</button>
@@ -136,7 +137,7 @@
                 
                           
                                     <% if (product.productstatus === 'Delivered') { %>
-                                        <button class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
+                                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
                                             onclick="handleReturn('<%= product._id %>')">Return</button>
                                     <% } %>
                                     
@@ -145,7 +146,10 @@
                                    
                                     <% if (order.orderStatus === 'Cancelled') { %>
                                         <p class="text-gray-500">This Order has been cancelled</p>
-                                    <% } else if (product.productstatus === 'Cancelled') { %>
+                                    <% }
+                                    else if (order.orderStatus === 'Returned') { %>
+                                        <p class="text-gray-500">This Order has been returned</p>
+                                    <% }  else if (product.productstatus === 'Cancelled') { %>
                                         <p class="text-gray-500">This product has been cancelled</p>
                                     <% } else if (product.productstatus === 'Returned') { %>
                                         <p class="text-gray-500">This product has been returned</p>
@@ -161,12 +165,17 @@
 
                
                 <div class="col-span-1 flex items-center justify-end gap-2">
-                    <% if(!order.isCancelled){ %>
+                    <% if (order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed') { %>
                     <a href="/user/order/cancel?id=<%= order._id %>" onclick="return confirm('Are you sure you want to cancel this order?');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                         Cancel
                     </a>
                <% } %>
-  
+               
+            <!-- Cancel Button -->
+                  <% if (order.orderStatus === 'Delivered') { %>
+                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                               onclick="opensmallModal('<%= order._id %>')">Return</button>
+                  <% } %>
 
                     <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         View
@@ -177,6 +186,17 @@
     <% } else { %>
         <p class="text-center col-span-3">No Orders found.</p>
     <% } %>
+    <div id="returnModal" class="fixed z-50 inset-0 hidden bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4">Reason for Return</h2>
+            <textarea id="returnReason" class="w-full p-2 border border-gray-300 rounded-lg mb-4" rows="4" placeholder="Enter the reason for return"></textarea>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closesmallModal()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                <button onclick="submitReturn()" class="bg-black text-white px-4 py-2 rounded hover:bg-red-700">Submit</button>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
             
@@ -288,6 +308,59 @@
         const modal = document.getElementById('productModal');
         modal.classList.add('hidden');
     }
+
+
+
+    let currentOrderId = null;
+
+function opensmallModal(orderId) {
+    currentOrderId = orderId;  // Save the order ID for use in submission
+    document.getElementById('returnModal').classList.remove('hidden');
+}
+
+function closesmallModal() {
+    document.getElementById('returnModal').classList.add('hidden');
+}
+
+async function submitReturn() {
+    const reason = document.getElementById('returnReason').value;
+    console.log(reason)
+    
+    if (!reason.trim()) {
+        alert('Please enter a reason for return');
+        return;
+    }
+
+    // Close the modal
+    closesmallModal();
+
+    // Make a POST request to send the reason to the backend
+    try {
+        const response = await fetch('/user/order/return', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId: currentOrderId,
+                reason: reason
+            })
+        });
+
+        if (response.ok) {
+            console.log(response)
+            alert('Return request submitted successfully.');
+            // Optionally refresh the page or update the UI accordingly
+            location.reload();
+        } else {
+            alert('Failed to submit return request.');
+        }
+    } catch (error) {
+        console.log('Error submitting return:', error);
+        alert('An error occurred while submitting the return request.');
+    }
+}
+
 </script>
 
 

@@ -66,7 +66,8 @@
         sessionuser: req.session.isUser, 
         payablePrice:payablePrice, 
         totalPrice, 
-        totalPriceWithoutDiscount 
+        totalPriceWithoutDiscount ,
+        query:req.query
     });
 }
 
@@ -394,19 +395,19 @@ export const cartview = async (req, res) => {
           return res.status(404).json({ message: 'Product is out of stock' });
         }
         const discountPrice= productDetails.productPrice-((productDetails.productDiscount*productDetails.productPrice)/100)
-        // Find the user's cart
+        
         let userCart = await Cart.findOne({ userId: user._id }).populate('items.productId');
 
         if (userCart) {
-          // Check if the product already exists in the cart
+          
           const existingItem = userCart.items.find(item => item.productId.equals(productId));
 
           if (existingItem) {
-            // If the item exists, increase its quantity
+            
             existingItem.productCount += quantity;
 
           } else {
-            // If the item does not exist, add it to the cart
+            
             userCart.items.push({
               productId,
               productCount: quantity,
@@ -697,7 +698,7 @@ export const checkout= async (req,res)=>{
     // //const addresses = user.address({isDeleted:false});
     const addresses = user.address.filter(address => !address.isDeleted);
 
-    res.render('usercheckout', { sessionuser, productCollection,addresses,cart });
+    res.render('usercheckout', { sessionuser, productCollection,addresses,cart,query:req.query });
 
     
   }catch(error){

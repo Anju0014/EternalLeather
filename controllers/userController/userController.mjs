@@ -397,7 +397,7 @@ export const userhome=async(req,res)=>{
           console.log(productgreen);
           const productcase= await Product.findOne({productName:'CARDO'});
           const productCollection=await Category.find({isActive:true});
-          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash()});
+          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash(),query:req.query});
         
     }catch(error){
         console.log(`error from user home ${error}`);

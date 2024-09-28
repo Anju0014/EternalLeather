@@ -78,7 +78,8 @@ export const orderList = async (req, res) => {
             message: orders,
             currentPage: page,
             totalPages: totalPages,
-            light: req.flash()
+            light: req.flash(),
+            query:req.query
         });
     } catch (error) {
         console.log(`error from admin product ${error}`);
@@ -99,7 +100,16 @@ export const userorderCancel = async (req, res) => {
     //   },{new:true});
 
       const id=req.query.id
-      const order = await Order.findById(id);
+    //   const order = await Order.findById(id);
+      const order = await Order.findById(id).populate('products.productId');
+
+      for (let item of order.products) {
+        const product = item.productId; 
+        if (product) {
+            product.productQuantity += item.productquantity; 
+            await product.save(); 
+        }
+    }
       order.isCancelled=true,
       order.orderStatus="Cancelled"
       await order.save();
@@ -111,3 +121,30 @@ export const userorderCancel = async (req, res) => {
         res.redirect('/user/profile/order');
     }
 }
+
+
+
+export const userorderReturn=async(req,res)=>{
+    try {
+        const { orderId, reason } = req.body;   
+        console.log(req.body)
+        // Find the order by ID
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+        console.log(order)
+
+        // Update the order status and save the return reason
+        order.orderStatus = 'Returned';
+        order.returnReason = reason;  // Add return reason to the order
+        console.log(reason)
+        await order.save();
+
+        res.status(200).send({ message: 'Return processed successfully' });
+    } catch (error) {
+        console.log('Error processing return:', error);
+        res.status(500).send({ message: 'An error occurred while processing the return' });
+    }
+};
+

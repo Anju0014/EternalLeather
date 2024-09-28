@@ -43,20 +43,11 @@
     
                 <div id="error" class="text-danger"></div>
                 <!-- Error Message -->
-                <!-- <% if (message.error) { %>
+                <% if (message.error) { %>
                     <h3 class="text-brown text-center mb-4"><%= message.error %></h3>
-                <% } %> -->
-                <!-- <% if (message.success) { %>
-                  <div class="alert alert-success">
-                      <%= message.success %>
-                  </div>
-              <% } %>
-              <% if (message.error) { %>
-                  <div class="alert alert-danger">
-                      <%= message.error %>
-                  </div>
-              <% } %> -->
-              <% if (message.success) { %>
+                <% } %> 
+              
+              <!-- <% if (message.success) { %>
                 <script>
                     alert("<%= message.success %>");
                 </script>
@@ -67,7 +58,7 @@
                     alert("<%= message.error %>");
                 </script>
             <% } %>
-            
+             -->
               
     
                 <!-- Email Field -->
@@ -92,6 +83,26 @@
                 <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="#"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Login with Facebook</a></div>
                 </div>
                 </form>
+
+                <div id="flashMessageModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                  <div class="bg-white p-6 rounded shadow-lg w-96">
+                    <div class="flex justify-between items-center mb-4">
+                      <h5 class="text-xl font-semibold">Success Message</h5>
+                      <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    </div>
+                    <div class="mb-4">
+                      
+                      <% if (message.success) { %>
+                        <div class="bg-green-100 text-green-700 p-3 rounded">
+                          <%= message.success %>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="flex justify-end">
+                      <button id="modalCloseBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+                    </div>
+                  </div>
+                </div>
         </div>
 
     <script>
@@ -125,6 +136,25 @@
                 errorElement.innerText = messages
                }
         });
+        document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('flashMessageModal');
+      const closeModalBtn = document.getElementById('modalCloseBtn');
+      const closeX = document.getElementById('closeModal');
+  
+      // Show modal if there's a flash message
+      <% if (message.success) { %>
+        modal.classList.remove('hidden');
+      <% } %>
+  
+      // Close the modal when "Close" button or "X" is clicked
+      closeModalBtn.addEventListener('click', function() {
+        modal.classList.add('hidden');
+      });
+  
+      closeX.addEventListener('click', function() {
+        modal.classList.add('hidden');
+      });
+    });
     </script>
     
 </body>

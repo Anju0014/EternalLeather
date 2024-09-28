@@ -8,7 +8,7 @@ export const adminorders= async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
-        const orders = await Order.find().populate('customerId', 'name email').populate('products.productId').skip(skip).limit(pageSize);
+        const orders = await Order.find().populate('customerId', 'name email').populate('products.productId');
        
 
         const totalorders = await Order.countDocuments();
@@ -72,8 +72,16 @@ export const adminorderupdate= async (req, res) => {
 
     // Update the isBlocked status based on the dropdown value
     order.orderStatus = orderStatus
-    if(orderStatus=="Cancelled"){
+    if(orderStatus==="Cancelled"){
        order.isCancelled=true
+    }else {
+        order.isCancelled = false;
+    }
+    if(orderStatus==="Delivered"){
+        order.deliveredDate= Date.now();
+    }
+    if(orderStatus==="Returned"){
+        order.returnedDate=Date.now();
     }
     await order.save();
 

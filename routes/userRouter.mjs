@@ -4,11 +4,11 @@ import { googleauth, googleAuthCallback } from "../controllers/userController/us
 import isUser from "../middleware/userSession.mjs";
 import { userproductdetail, userproductview } from "../controllers/userController/productdetail.mjs";
 import { cartdata, cartdecrement, cartdelete, cartincrement, cartview, checkout, checkoutpost } from "../controllers/userController/cartController.mjs";
-import { addressAdd, editAddress, useraddressdelete, useraddressedit, userchangepassword, userdata } from "../controllers/userController/profileController.mjs";
+import { addressAdd, editAddress, useraddressdelete, useraddressedit, userchangepassword, userdata, useredit } from "../controllers/userController/profileController.mjs";
 import { orderconfirm } from "../controllers/userController/orderController.mjs";
 import checkUser from "../middleware/checkuserSession.mjs";
 import nocache from "nocache";
-import { orderList, userorderCancel } from "../controllers/userController/orderListController.mjs";
+import { orderList, userorderCancel, userorderReturn } from "../controllers/userController/orderListController.mjs";
 
 const user_router=express();
 
@@ -42,6 +42,7 @@ user_router.get('/user/productdetail/:id',userproductdetail)
 user_router.get('/user/allproducts',userproductview)
 user_router.post('/user/search',usersearch)
 user_router.get('/user/profile',checkUser,userdata)
+user_router.post('/user/profile/edit',checkUser,useredit)
 user_router.post('/user/profile/changepassword',userchangepassword)
 user_router.post('/user/profile/address/add',checkUser,addressAdd)
 user_router.get('/user/profile/address/edit',checkUser,useraddressedit)
@@ -58,6 +59,8 @@ user_router.post('/user/checkout',checkUser,checkoutpost)
 user_router.get('/user/order/summary',checkUser,orderconfirm)
 user_router.get('/user/profile/order',checkUser,orderList)
 user_router.get('/user/order/cancel',checkUser,userorderCancel)
+user_router.post('/user/order/return',checkUser,userorderReturn)
+
 
 
 user_router.get('/auth/google',googleauth);
