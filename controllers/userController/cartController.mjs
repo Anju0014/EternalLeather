@@ -626,24 +626,24 @@ export const cartdelete= async (req, res) => {
     try {
         const productId = req.params.productId;
 
-        // Check if the user is logged in
+      
         const user = await User.findOne({ email: req.session.isUser });
         if (!user) {
             return res.status(401).json({ message: 'Please log in to delete items from your cart.' });
         }
 
-        // Use $pull to remove the item from the cart
+     
         const cart = await Cart.findOneAndUpdate(
             { userId: user._id },
-            { $pull: { items: { productId: productId } } },  // Removes the item with this productId from the items array
-            { new: true }  // Return the updated cart
-        ).populate('items.productId');  // Optionally, populate the remaining items
+            { $pull: { items: { productId: productId } } },  
+            { new: true }  
+        ).populate('items.productId');  
 
         if (!cart) {
             return res.status(404).json({ message: 'Cart not found or item does not exist' });
         }
 
-        // Recalculate total price if necessary
+        
         let totalPrice = 0;
         let totalPriceWithoutDiscount = 0;
 
@@ -660,7 +660,7 @@ export const cartdelete= async (req, res) => {
         cart.payablePrice = Math.round(totalPrice);
         cart.totalPrice = Math.round(totalPriceWithoutDiscount);
 
-        // Save the updated cart after recalculation
+      
         await cart.save();
 
         res.status(200).json({ message: 'Item deleted successfully', cart });
@@ -689,11 +689,11 @@ export const checkout= async (req,res)=>{
         return res.status(404).send("User not found");
     }
     const itemsOutOfStock = cart.items.some(item => {
-      return item.productId.productQuantity< item.productCount; // Assuming productId has a stock field
+      return item.productId.productQuantity< item.productCount; 
   });
 
   if (itemsOutOfStock) {
-      return res.redirect('/user/addtocart'); // Redirect to cart if any item is out of stock
+      return res.redirect('/user/addtocart'); 
   }
     // //const addresses = user.address({isDeleted:false});
     const addresses = user.address.filter(address => !address.isDeleted);
@@ -845,18 +845,18 @@ export const checkoutpost= async (req,res)=>{
             orderStatus: 'Pending'
         });
 
-        // Save the new order to the database
+     
         await newOrder.save();
         const orderIdCode = newOrder._id.toString().slice(-5); // Last 5 characters of the order id
 
-        // You can update the order with this generated code
+        
         newOrder.orderId = orderIdCode;
         await newOrder.save();
         
         for (const item of cart.items) {
           const product = await Product.findById(item.productId);
 
-          // Check if the product has enough stock
+         
           if (product.productQuantity < item.productCount) {
               return res.status(400).json({
                   success: false,
@@ -864,16 +864,16 @@ export const checkoutpost= async (req,res)=>{
               });
           }
 
-          // Decrement the stock
+         
           product.productQuantity -= item.productCount;
 
-          // Save the updated product
+        
           await product.save();
       }
 
       await Cart.findByIdAndDelete(req.body.cartId);
 
-        // Respond with success
+      
         res.json({ success: true, message: 'Order placed successfully' });
     } catch (error) {
         console.error('Error placing order:', error);

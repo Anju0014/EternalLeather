@@ -1,21 +1,21 @@
 
-import User from '../../model/userModel.mjs'; // Import your user model
+import User from '../../model/userModel.mjs'; 
 
 export const adminuserget= async (req, res) => {
     try {
-        const users = await User.find(); // Fetch all users
-        res.render('adminUser', { message:users }); // Render user management page with users
+        const users = await User.find(); 
+        res.render('adminUser', { message:users }); 
     } catch (error) {
         console.error('Error fetching users:', error);
         res.status(500).send('Internal Server Error');
     }
 };
 
-// Route to toggle block status
+
 export const adminuserpost= async (req, res) => {
     try{
     const { id } = req.params;
-    const { blockStatus } = req.body; // Get the selected value from the dropdown
+    const { blockStatus } = req.body; 
     const user = await User.findById(id);
 
     // if (!user) {
@@ -26,7 +26,7 @@ export const adminuserpost= async (req, res) => {
     user.isBlocked = blockStatus === 'block' ? true: false;
     await user.save();
 
-    res.redirect('/admin/user'); // Redirect back to the user management page
+    res.redirect('/admin/user'); 
 }catch (error) {
     console.error('Error toggling block status:', error);
     res.status(500).send('Internal Server Error');

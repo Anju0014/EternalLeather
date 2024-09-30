@@ -61,19 +61,18 @@ export const orderList = async (req, res) => {
         const orders = await Order.find()
     .populate('customerId', 'name email')
     .populate('products.productId')
-    .sort({ createdAt: -1 }) // Sort by creation date, for example
+    .sort({ createdAt: -1 }) 
     .skip(skip)
     .limit(pageSize);
 
 
-        // Debugging: Log the fetched orders
+        
         console.log('Fetched Orders:', orders);
 
-        // Count total number of orders for pagination
+        
         const totalOrders = await Order.countDocuments({ customerId: user._id });
         const totalPages = Math.ceil(totalOrders / pageSize);
 
-        // Render the user order page with data
         res.render('userOrderPage', {
             message: orders,
             currentPage: page,
@@ -128,16 +127,16 @@ export const userorderReturn=async(req,res)=>{
     try {
         const { orderId, reason } = req.body;   
         console.log(req.body)
-        // Find the order by ID
+        
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(404).send('Order not found');
         }
         console.log(order)
 
-        // Update the order status and save the return reason
+        
         order.orderStatus = 'Returned';
-        order.returnReason = reason;  // Add return reason to the order
+        order.returnReason = reason;  
         console.log(reason)
         await order.save();
 

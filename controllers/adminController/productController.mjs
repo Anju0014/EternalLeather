@@ -150,14 +150,14 @@ export const adminproductupdate = async (req, res) => {
         
         if (deleteImages && deleteImages.length > 0) {
             product.productImages = product.productImages.filter(imageUrl => !deleteImages.includes(imageUrl));
-            // Optionally, delete the images from Cloudinary here using Cloudinary's delete method.
+            
         }
 
         if (croppedImages && croppedImages.length > 0) {
             product.productImages.push(...croppedImages);
         }
 console.log(product.productImages)
-        // Save the updated product
+       
         await product.save();
         console.log(product);
         req.flash("success", "Product updated successfully");
@@ -244,7 +244,7 @@ export const adminproductadd = async (req, res) => {
     try {
         const { productname, price, description, variety, discount, qty, color, category, croppedImages } = req.body;
         
-        console.log('Cropped Images:', croppedImages); // Check this output
+        console.log('Cropped Images:', croppedImages); 
 
 
         if (!mongoose.Types.ObjectId.isValid(category)) {
@@ -252,7 +252,6 @@ export const adminproductadd = async (req, res) => {
             return res.redirect('/admin/product');
         }
 
-        // Proceed with saving the product and images
         const newProduct = new Product({
             productName: productname,
             productPrice: price,
@@ -262,7 +261,7 @@ export const adminproductadd = async (req, res) => {
             productType:variety,
             productDiscount:discount,
             productColor:color,
-            productImages: croppedImages, // Save all URLs
+            productImages: croppedImages, 
         });
 
         await newProduct.save();

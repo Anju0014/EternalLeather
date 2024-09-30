@@ -65,7 +65,7 @@ export const useredit = async (req, res) => {
         const user = await User.findOne({ email: req.session.isUser });
         if (!user) {
             console.log("User not found");
-            return res.redirect('/user/profile'); // Redirect if the user is not found
+            return res.redirect('/user/profile'); 
         }
         const {phoneno} = req.body;
         user.phoneno=phoneno;
@@ -98,7 +98,7 @@ export const userchangepassword= async (req,res)=>{
         return res.status(400).json({ error: 'Current password is incorrect' });
     }
 
-    // Hash the new password before storing
+    
     const snewpassword = await securePassword(newPassword);
     console.log('New hashed password:', snewpassword);
 
@@ -128,7 +128,7 @@ export const addressAdd = async (req, res) => {
 
         // Creating a new address object
         const newAddress = {
-            contactname: req.body.contactname,  // Ensure this is coming from req.body
+            contactname: req.body.contactname,  
             country: req.body.country,
             building: req.body.building,
             street: req.body.street,
@@ -141,11 +141,11 @@ export const addressAdd = async (req, res) => {
 
         console.log(newAddress)
 
-        // Adding the new address to the user's address array
+     
         user.address.push(newAddress);
         console.log(newAddress)
 
-        // Saving the updated user with the new address
+      
         await user.save();
 
         req.flash("success", 'Address added successfully');
@@ -213,9 +213,9 @@ export const useraddressdelete = async (req, res) => {
         //const addresses = user.address.filter(address => !address.isDeleted);
         
        
-       res.render('useraddressedit',{sessionuser,productCollection,address})
+       res.render('useraddressedit',{sessionuser,productCollection,address,query:req.query})
     } catch (error) {
-      console.error('Error updating address:', error)
+      console.log('Error updating address:', error)
       req.flash("error", "'Error updating address'");
       res.redirect('/user/profile');
     //   res.status(500).send('Error updating address');

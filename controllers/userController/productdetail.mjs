@@ -5,7 +5,7 @@ import Category from '../../model/categoryModel.mjs'
 export const userproductdetail = async (req, res) => {
     try {
         const id = req.params.id;
-        const product = await Product.findById(id); // Use findById for a single document
+        const product = await Product.findById(id); 
         
         if (!product) {
             return res.status(404).send('Product not found');
@@ -147,11 +147,9 @@ export const userproductview = async (req, res) => {
         const pageSize = 12;
         const skip = (page - 1) * pageSize;
 
-        // Declare variables for product and totalProducts
         let product;
         let totalProducts;
 
-        // Define sorting logic
         let sortCriteria = {};
         if (sortstyle === 'lowToHigh') {
             sortCriteria = { productPrice: 1 }; // Sort by price ascending
@@ -167,39 +165,37 @@ export const userproductview = async (req, res) => {
             sortCriteria = { ratings: -1 }; // Sort by name Z to A
         }
 
-        // Build the query object for filtering
         const query = {
             isDeleted: false,
-            productPrice: { $gte: minPrice, $lte: maxPrice } // Filter by price range
+            productPrice: { $gte: minPrice, $lte: maxPrice } 
         };
 
-        // Apply category filter if provided
+        
         if (catid) {
             query.productCategory = catid;
         }
 
-        // Apply type filter if provided
         if (type) {
             query.productType = type;
         }
 
-        // Fetch products based on the query and sorting criteria
+   
         product = await Product.find(query)
             .populate('productCategory', 'categoryName')
             .sort(sortCriteria) // Apply sorting
             .skip(skip)
             .limit(pageSize);
 
-        // Total products count for pagination
+      
         totalProducts = await Product.countDocuments(query);
 
-        // Calculate total pages
+    
         const totalPages = Math.ceil(totalProducts / pageSize);
 
-        // Fetch all active categories
+      
         const productCollection = await Category.find({ isActive: true });
 
-        // Render the view with all the necessary data
+    
         res.render('userAllProducts', {
             product,
             currentPage: page,
@@ -223,13 +219,13 @@ export const userproductcategorywise= async(req,res)=>{
         const pageSize = 12
         const skip = (page - 1) * pageSize;
 
-        // Fetch the products with pagination
+       
         const product = await Product.find({ isDeleted: false ,productCategory:catid})
             .populate('productCategory', 'categoryName')
             .skip(skip)
             .limit(pageSize);
 
-        // Debugging: Log the fetched products
+       
         console.log('Fetched Products:', product);
 
         const productCollection=await Category.find({isActive:true});

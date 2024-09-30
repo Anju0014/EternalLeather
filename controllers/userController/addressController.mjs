@@ -16,14 +16,13 @@ import addressSchema from "../../model/addressModel.mjs";
 // }
 
 
-  // Adjust the path to your category schema model
+  
 
-// import User from './userModel.mjs';  // Import the User model
-import addressSchema from './addressModel.mjs'; // Import the address schema (optional if embedding)
+import addressSchema from './addressModel.mjs'; 
 
 export const addressAdd2 = async (req, res) => {
     try {
-        const userId = req.query.user;  // Getting user ID from query parameter
+        const userId = req.query.user;  
         const user = await User.findById(userId);
 
         if (!user) {
@@ -31,9 +30,9 @@ export const addressAdd2 = async (req, res) => {
             return res.redirect('/user/profile');
         }
 
-        // Creating a new address object
+      
         const newAddress = {
-            contactname: req.body.contactname,  // Ensure this is coming from req.body
+            contactname: req.body.contactname,  
             country: req.body.country,
             building: req.body.building,
             street: req.body.street,
@@ -44,10 +43,10 @@ export const addressAdd2 = async (req, res) => {
             phoneno: req.body.phoneno
         };
 
-        // Adding the new address to the user's address array
+      
         user.address.push(newAddress);
 
-        // Saving the updated user with the new address
+       
         await user.save();
 
         req.flash("success", 'Address added successfully');

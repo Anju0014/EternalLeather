@@ -251,13 +251,13 @@ export const verifyOtp = async (req, res) => {
             return res.redirect('/user/otpverify');
         }
 
-        // Debugging logs
+        
         console.log("Received OTP from user:", otp);
         console.log("Stored OTP in DB:", user.otp);
         console.log("OTP Expiration Time:", user.otpExpires);
         console.log("Current Time:", Date.now());
 
-        // Check if the OTP is valid and not expired
+   
         if (user.otp.toString() === otp.toString() && Date.now() < user.otpExpires) {
             user.isVerified = true;
             user.otp = undefined;
@@ -622,11 +622,11 @@ export const usersearch = async (req, res) => {
                     query: req.query
                 });
             } else {
-                // No products found, redirect to all products page
+              
                 res.redirect('/user/allproducts');
             }
         } else {
-            // If no search term, redirect to all products
+            
             res.redirect('/user/allproducts');
         }
     } catch (error) {

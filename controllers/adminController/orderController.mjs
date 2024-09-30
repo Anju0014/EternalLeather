@@ -62,7 +62,7 @@ export const adminorderCancel = async (req, res) => {
 export const adminorderupdate= async (req, res) => {
     try{
     const { id } = req.params;
-    const { orderStatus } = req.body; // Get the selected value from the dropdown
+    const { orderStatus } = req.body; 
     const order = await Order.findById(id);
 
     if (!order) {
@@ -70,7 +70,7 @@ export const adminorderupdate= async (req, res) => {
     res.redirect('/admin/order')
     }
 
-    // Update the isBlocked status based on the dropdown value
+    
     order.orderStatus = orderStatus
     if(orderStatus==="Cancelled"){
        order.isCancelled=true
@@ -85,7 +85,7 @@ export const adminorderupdate= async (req, res) => {
     }
     await order.save();
 
-    res.redirect('/admin/order'); // Redirect back to the user management page
+    res.redirect('/admin/order'); 
 }catch (error) {
     console.error('Error toggling block status:', error);
     res.status(500).send('Internal Server Error');
