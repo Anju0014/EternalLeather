@@ -95,6 +95,14 @@ const orderSchema = new mongoose.Schema({
     returnedDate:{
         type:Date,
     },
+    couponApplied: {
+        type: String, 
+        default: null 
+    },
+    discountApplied: {
+        type: Number, 
+        default: 0 
+    }
 },{timestamps:true})
 
 

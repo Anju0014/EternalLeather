@@ -350,4 +350,97 @@ function decrementQuantity(productId) {
             alert('Error deleting item from cart');
         });
     }
+// function incrementQuantity(productId) {
+//     fetch(`/user/cart/increment/${productId}`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.message === 'Quantity incremented') {
+//             // Find the element that displays the quantity and update it
+//             const quantityElement = document.querySelector(`#quantity-${productId}`);
+//             const newQuantity = parseInt(quantityElement.textContent) + 1;
+//             quantityElement.textContent = newQuantity;
+
+//             // Optionally, update the total price
+//             updateCartTotal();
+//         } else {
+//             alert('Failed to update quantity');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error incrementing quantity:', error);
+//     });
+// }
+// function decrementQuantity(productId) {
+//     fetch(`/user/cart/decrement/${productId}`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.message === 'Quantity decremented') {
+//             // Update the quantity on the page
+//             const quantityElement = document.querySelector(`#quantity-${productId}`);
+//             const newQuantity = parseInt(quantityElement.textContent) - 1;
+//             if (newQuantity > 0) {
+//                 quantityElement.textContent = newQuantity;
+//             } else {
+//                 deleteCartItem(productId); // Optional: remove item if quantity reaches 0
+//             }
+
+//             // Optionally, update the total price
+//             updateCartTotal();
+//         } else {
+//             alert('Failed to update quantity');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error decrementing quantity:', error);
+//     });
+// }
+
+// function deleteCartItem(productId) {
+//     fetch(`/user/addtocart/delete/${productId}`, {
+//         method: 'POST',  // Could also be 'DELETE', but 'POST' is fine too
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.message === 'Item deleted successfully') {
+//             // Remove the item from the DOM
+//             const cartItemElement = document.querySelector(`#cart-item-${productId}`);
+//             if (cartItemElement) {
+//                 cartItemElement.remove();
+//             }
+
+//             // Optionally, update the total price
+//             updateCartTotal();
+//         } else {
+//             alert('Failed to delete item from cart');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error deleting item:', error);
+//         alert('Error deleting item from cart');
+//     });
+// }
+
+// function updateCartTotal() {
+//     let total = 0;
+//     document.querySelectorAll('.cart-item').forEach(item => {
+//         const price = parseFloat(item.querySelector('.item-price').textContent);
+//         const quantity = parseInt(item.querySelector('.item-quantity').textContent);
+//         total += price * quantity;
+//     });
+//     document.querySelector('#cart-total').textContent = total.toFixed(2);  // Update total price in DOM
+// }
+
     </script>

@@ -11,6 +11,7 @@ import path from "path"
 import passport from "passport"
 import "./config/google.mjs"
 import "./config/cloudinaryConfig.mjs"
+import "./config/razorpayConfig.mjs"
 
 
 

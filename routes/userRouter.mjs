@@ -9,6 +9,10 @@ import { orderconfirm } from "../controllers/userController/orderController.mjs"
 import checkUser from "../middleware/checkuserSession.mjs";
 import nocache from "nocache";
 import { orderList, userorderCancel, userorderReturn } from "../controllers/userController/orderListController.mjs";
+import { wishListAdd, wishListDelete, wishListView } from "../controllers/userController/wishlistController.mjs";
+import { couponList } from "../controllers/userController/couponController.mjs";
+import { checkWalletBalance, walletView } from "../controllers/userController/walletController.mjs";
+import { paymentRender, paymentVerify } from "../controllers/userController/checkOutController.mjs";
 
 const user_router=express();
 
@@ -60,6 +64,18 @@ user_router.get('/user/order/summary',checkUser,orderconfirm)
 user_router.get('/user/profile/order',checkUser,orderList)
 user_router.get('/user/order/cancel',checkUser,userorderCancel)
 user_router.post('/user/order/return',checkUser,userorderReturn)
+
+user_router.get('/user/profile/coupons',checkUser,couponList)
+user_router.get('/user/profile/wallet',checkUser,walletView)
+user_router.post('/user/wallet',checkUser,checkWalletBalance)
+user_router.post('/user/razorPayOrder',checkUser,paymentRender)
+user_router.post('/user/verifyPayment',checkUser,paymentVerify)
+user_router.get('/user/wishList',checkUser,wishListView)
+user_router.post('/user/addToWishList',checkUser,wishListAdd)
+user_router.post('/user/wishList/delete/:productId',checkUser,wishListDelete)
+
+// user_router.get('/user/cartWish',checkUser,wishCartAdd)
+
 
 
 

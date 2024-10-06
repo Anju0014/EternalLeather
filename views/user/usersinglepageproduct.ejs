@@ -9,14 +9,14 @@
 
 
                 <div class="w-full flex gap-3 overflow-x-auto">
-                    <img src="<%= product.productImages[0] %>" alt="Image1" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
-                    <img src="<%= product.productImages[1] %>" alt="Image2" class="w-1/5 cursor-pointer rounded-lg thumbnail " />
-                    <img src="<%= product.productImages[2] %>" alt="Image3" class="w-1/5 cursor-pointer rounded-lg thumbnail object-cover" />
-                    <img src="<%= product.productImages[3] %>" alt="Image4" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
+                    <img src="<%= product.productImages[0] %>"  class="w-1/5 cursor-pointer rounded-lg thumbnail" />
+                    <img src="<%= product.productImages[1] %>"  class="w-1/5 cursor-pointer rounded-lg thumbnail " />
+                    <img src="<%= product.productImages[2] %>"  class="w-1/5 cursor-pointer rounded-lg thumbnail object-cover" />
+                    <img src="<%= product.productImages[3] %>"  class="w-1/5 cursor-pointer rounded-lg thumbnail" />
                 </div>
             </div>
-                        <div class="bg-red-100 px-5 pb-8 sm:text-center lg:text-start rounded">
-                        <h2 class="text-2xl max-sm:text-2xl font-bold font-serif text-black-800 pt-3"><%=product.productName%></h2>
+                        <div class=" px-5 pb-8 sm:text-center lg:text-start rounded">
+                        <h2 class="text-2xl max-sm:text-2xl text-red-900 font-bold font-serif text-black-800 pt-3"><%=product.productName%></h2>
                         <div class="mt-8">
                           <div>
                               <% if(product.productDiscount > 0) { %>
@@ -76,13 +76,15 @@
                                     Add to cart
                                 </button>
                             </div>
+
                                 <!-- Add to Wishlist Button -->
-                                <button type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
+                                <button id="wishList" type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 64 64">
                                         <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
                                     </svg>
                                     Add to wishlist
                                 </button>
+
                             </div>
                             
                             <!-- <div id="cart-modal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 flex hidden">
@@ -119,7 +121,7 @@
         </div>
         <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
             <div class="bg-white rounded-lg shadow-lg p-6 text-center">
-                <p id="cart-message" class="text-lg font-semibold"></p>
+                <p id="show-message" class="text-lg font-semibold"></p>
                 <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
             </div>
         </div>
@@ -192,16 +194,16 @@ document.getElementById('add-to-cart').addEventListener('click', function () {
         // Show the modal with appropriate message
         console.log(data)
         const cartModal = document.getElementById('cart-modal');
-        const cartMessage = document.getElementById('cart-message');
+        const showMessage = document.getElementById('show-message');
 
         if (data.message === 'Product added to cart') {
             console.log("false")
-            cartMessage.textContent = 'Product added to cart!';
+            showMessage.textContent = 'Product added to cart!';
         } else if (data.message == 'Please log in to add products to the cart') {
             console.log("true")
-            cartMessage.textContent = 'Please log in to continue!';
+            showMessage.textContent = 'Please log in to continue!';
             console.log("tru")
-            console.log(cartMessage.textContent)
+            console.log(showMessage.textContent)
         }
 
         cartModal.style.display = 'block';  // Show the modal
@@ -248,6 +250,60 @@ document.getElementById('close-modal').addEventListener('click', function () {
 document.getElementById('close-modal').addEventListener('click', function () {
     console.log('Close modal clicked');
     document.getElementById('cart-modal').style.display = 'none';
+});
+
+// document.getElementById('wishlist').addEventListener('click',function(){
+//     console.log('wishlist Clicked');
+//     this.innerHTML = `
+    
+//         <i class="fa-solid fa-heart" style="color: #fff;"></i>
+//         Added to cart
+//     `;
+
+//     // Change background color to show it's added
+//     this.classList.remove('bg-red-400', 'hover:bg-red-900');
+//     this.classList.add('bg-green-700', 'hover:bg-green-900');
+
+// })
+
+
+document.getElementById('wishList').addEventListener('click', function () {
+    const productId = '<%= product._id %>';
+    // const productPrice= '<%= product.productPrice %>'
+    // const discountPrice='<%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %> ' // Assuming EJS renders this correctly
+    
+   // You can make this dynamic if necessary
+    console.log("sending")
+    // Send an AJAX request to add the product to the cart
+    fetch('/user/addToWishList', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId})  // Include quantity if needed
+    })
+    .then(response => response.json())  // Parse response as JSON
+    .then(data => {
+        // Show the modal with appropriate message
+        console.log(data)
+        const cartModal = document.getElementById('cart-modal');
+        const showMessage = document.getElementById('show-message');
+
+        if (data.message === 'Product added to WishList') {
+            console.log("false")
+            showMessage.textContent = 'Product added to WishList!';
+        } else if (data.message == 'Please log in to add products to the WishList') {
+            console.log("true")
+            showMessage.textContent = 'Please log in to continue!';
+            console.log("tru")
+            console.log(showMessage.textContent)
+        }
+
+        cartModal.style.display = 'block';  // Show the modal
+    })
+    .catch(error => {
+        console.error('Error:', error);  // Handle any errors
+    });
 });
 
 </script>

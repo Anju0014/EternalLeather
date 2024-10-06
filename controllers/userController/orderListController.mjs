@@ -91,13 +91,6 @@ export const userorderCancel = async (req, res) => {
     try {
        
         console.log(req.url)
-        
-    // const order = await Order.findByIdAndUpdate(req.query.id,{
-    //     isCancelled: true,
-    //     orderStatus:"Cancelled"
-    //     //deletedAt: new Date()
-    //   },{new:true});
-
       const id=req.query.id
     //   const order = await Order.findById(id);
       const order = await Order.findById(id).populate('products.productId');

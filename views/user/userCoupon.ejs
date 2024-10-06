@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelle Eterno</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+
+<body>
+     
+    <div class="bg-black text-black h-3 w-full"></div>
+    <div class=" box-brown  m-0  ">
+      <header class="flex justify-around w-full">
+        <div class="relative mb-2 sevillana-title text-center text-brown text-opacity-100">Pelle Eterno</div>
+        <div>
+        <img src="https://res.cloudinary.com/dihyb66hn/image/upload/v1725854174/products/caehmjvrf6qftxa9la9f.jpg" alt="logo" class=" h-20 w-20 ml-auto "></div>
+      </header>
+    </div>
+    
+    <%- include('userbreadcrumb') %>
+ 
+    <div class="flex justify-normal"></div>
+        <div class="flex justify-items-start">
+            <%- include('usersidebar') %>
+        <br>
+        </div>
+
+
+
+
+
+
+
+
+
+<div class="w-full flex flex-wrap justify-center m-5 space-y-5">
+    <% if (message && message.length > 0) { %>
+        <% message.forEach((coupon) => { %>
+            <div class="container border-2 border-dashed border-gray-300 p-6 rounded-lg shadow-lg m-2 max-w-md bg-white">
+                <% if(coupon.discountType==="percentage"){ %>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-800 mb-4">Limited Time Offer!</div>
+                    <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"><%= coupon.discountValue%> %</span> on your next purchase!</div>
+                </div>
+                <% }else{ %>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-800 mb-4">Limited Time Offer!</div>
+                        <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"> Rs <%= coupon.discountValue%></span> on your next purchase!</div>
+                    </div>
+                <% } %>
+                <div class="bg-red-900 text-white p-4 rounded-lg mb-4 flex items-center justify-center">
+                    <span class="text-xl font-mono tracking-wider"><%= coupon.couponCode %></span>
+                </div>
+                <!-- <div class="text-center mb-6">
+                    <button class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600">Copy Code</button>
+                </div> -->
+                <div class="text-sm text-gray-500 text-center">
+                    <p>Expires on <span class="font-semibold text-gray-800"><%= coupon.expiryDate.toLocaleDateString()  %></span></p>
+                    <p>Terms and conditions apply.</p>
+                </div>
+            </div>
+        <% }) %>
+    <% } %>
+</div>
+
+</div>
+<%- include('userfooter') %>
+</body>
+</html>

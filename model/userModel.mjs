@@ -40,6 +40,23 @@ const userSchema=new mongoose.Schema({
     },
     facebookID: {
         type: String
-    }
+    },
+    couponsUsed: [
+        {
+            couponId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Coupon',
+                required: true
+            },
+            usageCount: {
+                type: Number,
+                default: 1
+            },
+            lastUsed: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ]
 },{timestamps: true})
 export default mongoose.model('user',userSchema)

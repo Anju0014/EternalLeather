@@ -4,6 +4,8 @@
  import Product from '../../model/productModel.mjs'
  import Cart from '../../model/cartModel.mjs'
  import Order from '../../model/orderModel.mjs'
+ import Coupon from '../../model/couponModel.mjs'
+ import Wallet from '../../model/walletModel.mjs'
  
  
  
@@ -403,10 +405,13 @@ export const cartview = async (req, res) => {
           const existingItem = userCart.items.find(item => item.productId.equals(productId));
 
           if (existingItem) {
-            
+            if (existingItem.productCount + quantity > 4) {
+              return res.status(400).json({ message: 'Product count cannot exceed 4' });
+            } else {
             existingItem.productCount += quantity;
 
-          } else {
+          } }
+          else {
             
             userCart.items.push({
               productId,
@@ -683,7 +688,14 @@ export const checkout= async (req,res)=>{
     const user = await User.findOne({ email: req.session.isUser });
     const userid=user._id
     const cart = await Cart.findOne({ userId:user._id }).populate('items.productId')
-    
+    // const coupons=await Coupon.find()
+    const coupons = await Coupon.find({
+      isActive: true,
+      isDeleted: false,
+      startDate: { $lte: new Date() },  
+      expiryDate: { $gte: new Date() }  
+  });
+    const validCoupons = coupons.filter(coupon => cart.payablePrice >= coupon.minOrderAmount);
     if (!user) {
         console.log("User not found");
         return res.status(404).send("User not found");
@@ -698,7 +710,7 @@ export const checkout= async (req,res)=>{
     // //const addresses = user.address({isDeleted:false});
     const addresses = user.address.filter(address => !address.isDeleted);
 
-    res.render('usercheckout', { sessionuser, productCollection,addresses,cart,query:req.query });
+    res.render('usercheckout', { user,coupons,sessionuser, productCollection,addresses,cart,query:req.query });
 
     
   }catch(error){
@@ -800,84 +812,235 @@ export const checkout= async (req,res)=>{
 //     }
 // });
 
-
-export const checkoutpost= async (req,res)=>{
-
-    try {
-    const { selectedAddress, paymentMethod, cartId } = req.body;
-    console.log(selectedAddress)
-    console.log(paymentMethod)
-    const user = await User.findOne({email:req.session.isUser});
+export const checkoutpost = async (req, res) => {
+  try {
+    const { selectedAddress, paymentMethod, cartId, appliedCoupon } = req.body;
+    
+    console.log(appliedCoupon)
+    const user = await User.findOne({ email: req.session.isUser });
     const customerAddress = user.address.id(selectedAddress);
-    const cart = await Cart.findById(req.body.cartId).populate('items.productId');
-        if (!customerAddress) {
-            return res.status(400).json({ success: false, message: 'Invalid address selected' });
+    const cart = await Cart.findById(cartId).populate('items.productId');
+
+    if (!customerAddress) {
+      return res.status(400).json({ success: false, message: 'Invalid address selected' });
+    }
+
+
+
+    // Validate the coupon if applied
+    let discount = 0;
+    let coupon;
+    if (appliedCoupon) {
+      coupon = await Coupon.findById(appliedCoupon);
+      console.log(coupon)
+
+      if (!coupon || !coupon.isActive || coupon.isDeleted || new Date() > coupon.expiryDate) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired coupon code' });
+      }
+       
+
+      if (appliedCoupon && coupon) {
+        const existingCouponUsage = user.couponsUsed.find(c => c.couponId.equals(coupon._id));
+
+        if (existingCouponUsage) {
+            // Check if the user has exceeded the usage limit
+            if (existingCouponUsage.usageCount >= coupon.maxUsageCount) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Coupon usage limit exceeded. You can only use this coupon ${coupon.usageLimit} times.`
+                });
+            }
+
+            // Increment the usage count and update the last used time
+            existingCouponUsage.usageCount += 1;
+            existingCouponUsage.lastUsed = Date.now();
+        } else {
+            // Add the coupon to the user's coupon usage array if they haven't used it yet
+            user.couponsUsed.push({
+                couponId: coupon._id,
+                usageCount: 1,
+                lastUsed: Date.now()
+            });
         }
-        const newOrder = new Order({
-            customerId: user._id,  
-            //orderId: Math.floor(Math.random() * 1000000),
-            products: cart.items.map(item => ({
-              productId: item.productId._id,
-              productname: item.productId.productName,
-              productquantity: item.productCount,
-              productprice: item.discountPrice,
-              productimage: item.productId.productImages[0],
-              productstatus: 'Pending'
-          })),
-          totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
-         totalPrice: cart.items.reduce((acc, item) => acc + item.productPrice * item.productCount, 0),
-          //totalPrice:cart.totalPrice,
-          totalPayablePrice: cart.payablePrice,
-            // totalQuantity: totalQuantity,
-            // totalPrice: totalPrice,
-            address: {
-                customerName: customerAddress.contactname,
-                customerEmail: customerAddress.email,  
-                building: customerAddress.building,
-                street: customerAddress.street,
-                city: customerAddress.city,
-                country: customerAddress.country,
-                pincode: customerAddress.pincode,
-                phonenumber: customerAddress.phoneno,
-                landMark: customerAddress.landMark
-            },
-            paymentMethod: paymentMethod,
-            orderStatus: 'Pending'
-        });
 
-     
-        await newOrder.save();
-        const orderIdCode = newOrder._id.toString().slice(-5); // Last 5 characters of the order id
-
-        
-        newOrder.orderId = orderIdCode;
-        await newOrder.save();
-        
-        for (const item of cart.items) {
-          const product = await Product.findById(item.productId);
-
-         
-          if (product.productQuantity < item.productCount) {
-              return res.status(400).json({
-                  success: false,
-                  message: `Insufficient stock for product: ${product.name}`
-              });
-          }
-
-         
-          product.productQuantity -= item.productCount;
-
-        
-          await product.save();
+        // Save the updated user document
+        await user.save();
+    }
+      // Apply coupon discount (percentage or flat discount)
+      if (coupon.discountType === 'percentage') {
+        discount = (cart.payablePrice * coupon.discountValue) / 100;
+      } else if (coupon.discountType === 'flat') {
+        discount = coupon.discountValue;
       }
 
-      await Cart.findByIdAndDelete(req.body.cartId);
+      // Ensure that the total price is not less than zero after applying the discount
+      cart.payablePrice = Math.max(0, cart.payablePrice - discount);
+    }
+
+    if (paymentMethod === 'Wallet') {
+      const wallet = await Wallet.findOne({ userID: user._id });
+      if (!wallet || wallet.balance < cart.payablePrice) {
+          return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+      }
+
+      // Deduct the wallet balance
+      wallet.balance -= cart.payablePrice;
+
+      // Add transaction record
+      wallet.transaction.push({
+          walletAmount: cart.payablePrice,
+          orderId: newOrder._id,
+          transactionType: 'Debited',
+          transactionDate: new Date(),
+      });
+
+      await wallet.save();
+  }
+
+
+    // Create a new order
+    const newOrder = new Order({
+      customerId: user._id,
+      products: cart.items.map(item => ({
+        productId: item.productId._id,
+        productname: item.productId.productName,
+        productquantity: item.productCount,
+        productprice: item.discountPrice,
+        productimage: item.productId.productImages[0],
+        productstatus: 'Pending'
+      })),
+      totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
+      totalPrice: cart.items.reduce((acc, item) => acc + item.productPrice * item.productCount, 0),
+      totalPayablePrice: cart.payablePrice,
+      address: {
+        customerName: customerAddress.contactname,
+        customerEmail: customerAddress.email,
+        building: customerAddress.building,
+        street: customerAddress.street,
+        city: customerAddress.city,
+        country: customerAddress.country,
+        pincode: customerAddress.pincode,
+        phonenumber: customerAddress.phoneno,
+        landMark: customerAddress.landMark
+      },
+      paymentMethod: paymentMethod,
+      orderStatus: 'Pending',
+      couponApplied: appliedCoupon ? coupon._id : null,
+      discountApplied: discount
+    });
+
+    // Save order and generate a short order ID
+    await newOrder.save();
+    const orderIdCode = newOrder._id.toString().slice(-5); // Last 5 characters of the order id
+    newOrder.orderId = orderIdCode;
+    await newOrder.save();
+
+    // Update product stock
+    for (const item of cart.items) {
+      const product = await Product.findById(item.productId);
+
+      if (product.productQuantity < item.productCount) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock for product: ${product.name}`
+        });
+      }
+
+      product.productQuantity -= item.productCount;
+      await product.save();
+    }
+
+    // Clear the user's cart after successful order placement
+    await Cart.findByIdAndDelete(cartId);
+
+    res.json({ success: true, message: 'Order placed successfully' });
+  } catch (error) {
+    console.error('Error placing order:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+
+
+
+// export const checkoutpost= async (req,res)=>{
+
+//     try {
+//     const { selectedAddress, paymentMethod, cartId } = req.body;
+//     console.log(selectedAddress)
+//     console.log(paymentMethod)
+//     const user = await User.findOne({email:req.session.isUser});
+//     const customerAddress = user.address.id(selectedAddress);
+//     const cart = await Cart.findById(req.body.cartId).populate('items.productId');
+//         if (!customerAddress) {
+//             return res.status(400).json({ success: false, message: 'Invalid address selected' });
+//         }
+//         const newOrder = new Order({
+//             customerId: user._id,  
+//             //orderId: Math.floor(Math.random() * 1000000),
+//             products: cart.items.map(item => ({
+//               productId: item.productId._id,
+//               productname: item.productId.productName,
+//               productquantity: item.productCount,
+//               productprice: item.discountPrice,
+//               productimage: item.productId.productImages[0],
+//               productstatus: 'Pending'
+//           })),
+//           totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
+//          totalPrice: cart.items.reduce((acc, item) => acc + item.productPrice * item.productCount, 0),
+//           //totalPrice:cart.totalPrice,
+//           totalPayablePrice: cart.payablePrice,
+//             // totalQuantity: totalQuantity,
+//             // totalPrice: totalPrice,
+//             address: {
+//                 customerName: customerAddress.contactname,
+//                 customerEmail: customerAddress.email,  
+//                 building: customerAddress.building,
+//                 street: customerAddress.street,
+//                 city: customerAddress.city,
+//                 country: customerAddress.country,
+//                 pincode: customerAddress.pincode,
+//                 phonenumber: customerAddress.phoneno,
+//                 landMark: customerAddress.landMark
+//             },
+//             paymentMethod: paymentMethod,
+//             orderStatus: 'Pending'
+//         });
+
+     
+//         await newOrder.save();
+//         const orderIdCode = newOrder._id.toString().slice(-5); // Last 5 characters of the order id
+
+        
+//         newOrder.orderId = orderIdCode;
+//         await newOrder.save();
+        
+//         for (const item of cart.items) {
+//           const product = await Product.findById(item.productId);
+
+         
+//           if (product.productQuantity < item.productCount) {
+//               return res.status(400).json({
+//                   success: false,
+//                   message: `Insufficient stock for product: ${product.name}`
+//               });
+//           }
+
+         
+//           product.productQuantity -= item.productCount;
+
+        
+//           await product.save();
+//       }
+
+//       await Cart.findByIdAndDelete(req.body.cartId);
 
       
-        res.json({ success: true, message: 'Order placed successfully' });
-    } catch (error) {
-        console.error('Error placing order:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-}
+//         res.json({ success: true, message: 'Order placed successfully' });
+//     } catch (error) {
+//         console.error('Error placing order:', error);
+//         res.status(500).json({ success: false, message: 'Internal server error' });
+//     }
+// }
 

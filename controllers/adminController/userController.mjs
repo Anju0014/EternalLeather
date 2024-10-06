@@ -25,7 +25,9 @@ export const adminuserpost= async (req, res) => {
     // Update the isBlocked status based on the dropdown value
     user.isBlocked = blockStatus === 'block' ? true: false;
     await user.save();
-
+    if(blockStatus==='block'){
+        req.session.isUser=null
+    }
     res.redirect('/admin/user'); 
 }catch (error) {
     console.error('Error toggling block status:', error);

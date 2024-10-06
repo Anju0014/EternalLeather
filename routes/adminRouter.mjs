@@ -8,6 +8,7 @@ import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete,
 import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost, adminusersearch } from "../controllers/adminController/userController.mjs";
 import { adminorderCancel, adminorders, adminorderupdate } from "../controllers/adminController/orderController.mjs";
+import { adminCoupon, adminCouponAdd, adminCouponAddform, adminCouponStatus } from "../controllers/adminController/couponController.mjs";
 
 
 admin_router.use(express.json());
@@ -52,6 +53,14 @@ admin_router.get("/order",isAdmin,adminorders)
 admin_router.get("/order/cancel",isAdmin,adminorderCancel);
 admin_router.post("/order/:id/toggle-block",isAdmin, adminorderupdate);
 // admin_router.post("/category/add",admincategoryAdd);
+
+
+admin_router.get("/coupon",isAdmin,adminCoupon)
+admin_router.get("/coupon/add",isAdmin,adminCouponAddform)
+admin_router.post("/coupon/add",isAdmin,adminCouponAdd)
+admin_router.post("/coupon/:id/toggle-block",isAdmin, adminCouponStatus);
+
+
 
 admin_router.get("/logout",adminlogout);
 
