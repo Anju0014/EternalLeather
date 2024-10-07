@@ -48,7 +48,7 @@
             </div>
         
             
-            <div class="bg-white p-6 rounded-md shadow-md w-1/2">
+            <!-- <div class="bg-white p-6 rounded-md shadow-md w-1/2">
                 <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
                 <div class="w-full">
                     <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
@@ -77,6 +77,38 @@
                     </div>
                 </div>
             </div>
+            </div> -->
+
+          
+            <div class="bg-white p-6 rounded-md shadow-md w-1/2">
+                <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
+                <div class="w-full">
+                    <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
+                        <option value="" selected>Select a coupon code</option>
+                        <% coupons.forEach(coupon => { %>
+                            <option value="<%= coupon._id %>" data-discount="<%= coupon.discountValue %>" data-type="<%= coupon.discountType %>">
+                                <%= coupon.couponCode %>
+                            </option>
+                        <% }) %>
+                    </select>
+            
+                    <button type="button" onclick="applyCoupon()" 
+                        class="w-full flex items-center justify-center font-semibold tracking-wide bg-black hover:bg-red-900 px-4 py-2 text-sm text-white rounded">
+                        Apply Coupon
+                    </button>
+            
+                    <input type="hidden" id="appliedCoupon" name="appliedCoupon" value="">
+                    <input type="hidden" id="newTotalPayable" value="">
+            
+                    <div id="newTotalSection" class="mt-4 hidden">
+                        <hr class="my-4">
+                        <div class="flex justify-between text-lg font-bold">
+                            <span>New Total</span>
+                            <span id="newTotal">$<%= cart.payablePrice %></span>
+                        </div>
+                    </div>
+                </div>
+            </div> 
             </div>
             <!-- <div class="bg-white p-6 rounded-md shadow-md w-1/2">
                 <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
@@ -136,7 +168,9 @@
                 </div>
             </div>
         </div>
-
+        <input type="text" id="razorpay_payment_id" name="razorpay_payment_id" value="">
+        <input type="text" id="razorpay_order_id" name="razorpay_order_id" value="">
+        <input type="text" id="razorpay_signature" name="razorpay_signature" value="">
         <!-- Place Order Button -->
         <div class="mt-6">
             <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-md font-bold hover:bg-blue-600">
@@ -185,12 +219,18 @@
        
         const cartId = '<%= cart._id %>';
         const appliedCoupon=document.getElementById('appliedCoupon').value
+        const razorpay_payment_id = document.getElementById('razorpay_payment_id').value;
+        const razorpay_order_id = document.getElementById('razorpay_order_id').value;
+        const razorpay_signature = document.getElementById('razorpay_signature').value;
    
         const formData = {
             selectedAddress: selectedAddress,
             paymentMethod: selectedPaymentMethod,
             cartId:cartId,
-            appliedCoupon:appliedCoupon
+            appliedCoupon:appliedCoupon,
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature
             
         };
 
@@ -225,51 +265,67 @@
     });
 
 
-//     async function handlePayNow(selectedMethod) {
-//     try {
-//         alert(`Proceeding to payment with: ${selectedMethod}`);
-        
-//         // Dynamically get the cart total from EJS
-//         const cartTotal = parseFloat('<%= cart.payablePrice %>');
+    let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
+    let couponApplied = false;
 
-//         console.log("Payment method:", selectedMethod);
+    function applyCoupon() {
+        const couponSelect = document.getElementById('couponCodeSelect');
+        const selectedOption = couponSelect.options[couponSelect.selectedIndex];
 
-//         // Handling wallet payment
-//         if (selectedMethod === 'Wallet') {
-//             const response = await fetch('/user/wallet', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({
-//                     paymentMethod: selectedMethod,
-//                     cartTotal: cartTotal, // Sending dynamic cart total from EJS
-//                 }),
-//             });
+        if (selectedOption.value) {
+            // Coupon is applied
+            const discountValue = parseFloat(selectedOption.getAttribute('data-discount'));
+            const discountType = selectedOption.getAttribute('data-type');
+            let newTotal;
 
-//             const data = await response.json();
+            // Calculate the new total based on the coupon type
+            if (discountType === 'percentage') {
+                newTotal = originalTotalPayable - (originalTotalPayable * (discountValue / 100));
+            } else {
+                newTotal = originalTotalPayable - discountValue;
+            }
 
-//             if (data.success) {
-//                 alert('Payment successful using wallet!');
-//             } else {
-//                 alert(data.message); // Show any error messages returned from backend
-//             }
-//         } else {
-//             // Handle other payment methods here (e.g., Cash on Delivery, Razorpay)
-//             console.log('Selected method:', selectedMethod);
-//             // Implement fetch request or logic for other payment methods as needed.
-//         }
-//     } catch (error) {
-//         console.error('Error:', error);
-//         alert('An error occurred. Please try again.');
-//     }
-// }
+            // Ensure the new total is not below zero
+            newTotal = Math.max(0, newTotal);
+
+            // Display the new total and show the section
+            document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
+            document.getElementById('newTotalSection').classList.remove('hidden');
+
+            // Update the hidden input for new total
+            document.getElementById('newTotalPayable').value = newTotal;
+            document.getElementById('appliedCoupon').value = selectedOption.value;
+
+            couponApplied = true;
+        } else {
+            // No coupon selected (reset to original total)
+            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total section
+            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('newTotalPayable').value = '';
+            document.getElementById('appliedCoupon').value = ''; // Reset the applied coupon field
+
+            couponApplied = false;
+        }
+    }
+
+    // Reset the coupon select when clicked to allow re-selection
+    document.getElementById('couponCodeSelect').addEventListener('change', () => {
+        if (!document.getElementById('couponCodeSelect').value) {
+            // Reset to original payable price if no coupon is selected
+            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total
+            couponApplied = false;
+        }
+    });
+
+    // Display the original total price before applying any coupon
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+    });
 
 
- 
-
-    // let originalTotalPayable = parseFloat('<%= cart.payablePrice %>'); 
-    // let couponApplied = false; 
+    // let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
+    // let couponApplied = false;
 
     // function applyCoupon() {
     //     const couponSelect = document.getElementById('couponCodeSelect');
@@ -286,86 +342,36 @@
     //             newTotal = originalTotalPayable - discountValue;
     //         }
 
-    //         // Ensure the new total isn't below zero
     //         newTotal = Math.max(0, newTotal);
 
-    //         // Display the new total and make the section visible
     //         document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
-    //         document.getElementById('newTotalSection').classList.remove('hidden');
+    //         // document.getElementById('newTotalSection').classList.remove('hidden');
 
-    //         // Set the applied coupon input for form submission
     //         document.getElementById('appliedCoupon').value = selectedOption.value;
-    //         //console.log(selectedOption.value);
+    //         document.getElementById('newTotalPayable').value = newTotal;  // Set new total here for Razorpay payment
 
-
-    //         couponApplied = true; 
+    //         couponApplied = true;
     //     } else {
-    //         alert('Please select a valid coupon code.');
+    //         //alert('Please select a valid coupon code.');
+    //         // document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total section
+    //         document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+    //         document.getElementById('newTotalPayable').value = originalTotalPayable;
+    //         document.getElementById('appliedCoupon').value = ''; // Reset the applied coupon field
+    //         couponApplied=false
     //     }
     // }
 
-    // // Reset the coupon select when clicked to allow re-selection
     // document.getElementById('couponCodeSelect').addEventListener('change', () => {
     //     if (couponApplied) {
-    //         // Reset the total to the original payable price if re-selecting a coupon
-    //         document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
-    //         document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total
-    //         couponApplied = false; // Reset the applied coupon flag
+    //         document.getElementById('totalPayable').innerText = `${originalTotalPayable.toFixed(2)}`;
+    //         // document.getElementById('newTotalSection').classList.add('hidden');
+    //         couponApplied = false;
     //     }
     // });
 
-    // // Display the original total price before applying any coupon
     // document.addEventListener('DOMContentLoaded', () => {
-    //     document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+    //     document.getElementById('totalPayable').innerText = `${originalTotalPayable.toFixed(2)}`;
     // });
-
-  
-
-
-    let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
-    let couponApplied = false;
-
-    function applyCoupon() {
-        const couponSelect = document.getElementById('couponCodeSelect');
-        const selectedOption = couponSelect.options[couponSelect.selectedIndex];
-
-        if (selectedOption.value) {
-            const discountValue = parseFloat(selectedOption.getAttribute('data-discount'));
-            const discountType = selectedOption.getAttribute('data-type');
-            let newTotal;
-
-            if (discountType === 'percentage') {
-                newTotal = originalTotalPayable - (originalTotalPayable * (discountValue / 100));
-            } else {
-                newTotal = originalTotalPayable - discountValue;
-            }
-
-            newTotal = Math.max(0, newTotal);
-
-            document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
-            // document.getElementById('newTotalSection').classList.remove('hidden');
-
-            document.getElementById('appliedCoupon').value = selectedOption.value;
-            document.getElementById('newTotalPayable').value = newTotal;  // Set new total here for Razorpay payment
-
-            couponApplied = true;
-        } else {
-           
-            alert('Please select a valid coupon code.');
-        }
-    }
-
-    document.getElementById('couponCodeSelect').addEventListener('change', () => {
-        if (couponApplied) {
-            document.getElementById('totalPayable').innerText = `${originalTotalPayable.toFixed(2)}`;
-            // document.getElementById('newTotalSection').classList.add('hidden');
-            couponApplied = false;
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('totalPayable').innerText = `${originalTotalPayable.toFixed(2)}`;
-    });
 
 
 
@@ -456,6 +462,7 @@
     }
 
     function processWalletPayment() {
+        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
         fetch('/user/wallet', {
             method: 'POST',
             headers: {
@@ -463,7 +470,7 @@
             },
             body: JSON.stringify({
                 paymentMethod: 'Wallet',
-                cartTotal: parseFloat('<%= cart.payablePrice %>')  // Example total
+                cartTotal: totalAmount  // Example total
             })
         })
         .then(response => response.json())
@@ -480,96 +487,21 @@
         });
     }
 
-    // function processRazorpayPayment() {
-    //     // Integrating Razorpay payment gateway (simplified version)
-    //     const options = {
-    //         "key": "YOUR_RAZORPAY_KEY", // Replace with your Razorpay Key ID
-    //         "amount": "<%= cart.payablePrice %>" * 100, // Amount in paise (multiplied by 100)
-    //         "currency": "INR",
-    //         "name": "Pelle Eterno",
-    //         "description": "Order Payment",
-    //         "handler": function (response) {
-    //             // Handle successful payment
-    //             alert('Payment successful with Razorpay ID: ' + response.razorpay_payment_id);
-    //             // You can submit the order or handle further processing here
-    //         },
-    //         "prefill": {
-    //             "name": "Customer Name",
-    //             "email": "customer@example.com",
-    //             "contact": "9999999999"
-    //         },
-    //         "theme": {
-    //             "color": "#3399cc"
-    //         }
-    //     };
-    //     const rzp1 = new Razorpay(options);
-    //     rzp1.open();
-    // }
-//     function processRazorpayPayment() {
-//         console.log("hello")
-//     const options = {
-//         "key": process.env.RAZORPAY_KEY_ID, // Replace with your Razorpay Key ID
-//         "amount": "<%= cart.payablePrice %>" * 100, // Amount in paise
-//         "currency": "INR",
-//         "name": "Pelle Eterno",
-//         "description": "Order Payment",
-//         "handler": function (response) {
-//             // Response contains Razorpay Payment ID, Order ID, and Signature
-//             const paymentData = {
-//                 razorpay_payment_id: response.razorpay_payment_id,
-//                 razorpay_order_id: response.razorpay_order_id,
-//                 razorpay_signature: response.razorpay_signature
-//             };
-            
-//             // Send payment details to backend for verification
-//             fetch('user/verifyPayment', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(paymentData)
-//             })
-//             .then(response => response.json())
-//             .then(data => {
-//                 if (data.success) {
-//                     alert('Payment successful and verified!');
-//                     // Redirect to a success page
-//                 } else {
-//                     alert('Payment verification failed.');
-//                 }
-//             })
-//             .catch(error => {
-//                 console.error('Error during payment verification:', error);
-//                 alert('Payment verification error.');
-//             });
-//         },
-//         "prefill": {
-//             "name": "Customer Name",
-//             "email": "customer@example.com",
-//             "contact": "9999999999"
-//         },
-//         "theme": {
-//             "color": "#3399cc"
-//         }
-//     };
-    
-//     const rzp1 = new Razorpay(options);
-//     rzp1.open();
-// }
-
+   
 
 
 
 async function processRazorpayPayment() {
     try {
         // Step 1: Create the order on the server
+        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
         const response = await fetch('/user/razorPayOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                amount: parseFloat('<%= cart.payablePrice %>'), // Amount in INR
+                amount: totalAmount, // Amount in INR
             }),
         });
         console.log("free")
@@ -586,6 +518,10 @@ async function processRazorpayPayment() {
                 description: "Order Payment",
                 order_id: data.orderID, // Order ID generated from backend
                 handler: async function (response) {
+
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
                     // Step 3: Payment successful, verify the payment
                     const paymentData = {
                         razorpay_payment_id: response.razorpay_payment_id,

@@ -21,6 +21,9 @@ const walletSchema = mongoose.Schema({
             type: String,
             enum:['Credited','Debited']
         },
+        transactionDescription:{
+            type:String,
+        },
         transactionDate:{
             type:Date,
             required: true,

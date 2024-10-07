@@ -27,26 +27,29 @@ export const walletView = async (req, res) => {
         //     .populate('productCategory', 'categoryName')
         //     .skip(skip)
         //     .limit(pageSize);
-        const wallets = await Wallet.find()
+        const wallets = await Wallet.findOne({userID:user._id})
     // .populate('customerId', 'name email')
     // .populate('products.productId')
     // .sort({ createdAt: -1 }) 
-    .skip(skip)
-    .limit(pageSize);
+    // .skip(skip)
+    // .limit(pageSize);
 
 
-        
+         
+         console.log("haha")
+         console.log(wallets)
+         console.log("sending")
         // console.log('Fetched Coupons:', coupons);
         // console.log(coupons)
 
         
-        const totalOrders = await Wallet.countDocuments();
-        const totalPages = Math.ceil(totalOrders / pageSize);
+        // const totalOrders = await Wallet.countDocuments();
+        // const totalPages = Math.ceil(totalOrders / pageSize);
 
         res.render('userWallet', {
             message: wallets,
-            currentPage: page,
-            totalPages: totalPages,
+            // currentPage: page,
+            // totalPages: totalPages,
             light: req.flash(),
             query:req.query
         });

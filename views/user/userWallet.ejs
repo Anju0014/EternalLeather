@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <style>
         /* Inline styles for the background image */
         .box-brown {
@@ -58,12 +59,51 @@
             <div>
             <i class="fa-solid fa-wallet" style="color: #421a05;"></i>
             <span class="ml-2 text-xl">My Wallet</span></div>
-            <span >Wallet Balance</span>
+            <!-- <span ><%= message.balance %></span> -->
+            <% if (message && message.balance) { %>
+                <span class='font-bold'><%= message.balance %></span>
+              <% } else { %>
+                <span>Balance not available</span>
+              <% } %>
          </div>
        
 
          <div class="bg-red-100 m-2 text-center">
-             <h2>Transaction History</h2>
+             <!-- <h2>Transaction History</h2> -->
+             <div class="bg-red-100 m-2 text-center">
+                <div class="mt-4">
+                    <h2 class="text-lg">Transaction History</h2>
+                    <% if (message.transaction && message.transaction.length > 0) { %>
+                        <table id="transactionTable" class="min-w-full bg-white shadow-md rounded my-6">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">Transaction ID</th>
+                                    <th class="py-3 px-6 text-left">Order ID</th>
+                                    <th class="py-3 px-6 text-left">Amount</th>
+                                    <th class="py-3 px-6 text-left">Type</th>
+                                    <th class="py-3 px-6 text-left">Transaction Description</th>
+                                    <th class="py-3 px-6 text-left">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm">
+                                <% message.transaction.forEach(function(trans) { %>
+                                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                        <td class="py-3 px-6 text-left"><%= trans._id%></td>
+                                        <td class="py-3 px-6 text-left"><%= trans.orderId%></td>
+                                        <td class="py-3 px-6 text-left"><%= trans.walletAmount %></td>
+                                        <td class="py-3 px-6 text-left"><%= trans.transactionType %></td>
+                                        <td class="py-3 px-6 text-left"><%= trans.transactionDescription %></td>
+                                        <td class="py-3 px-6 text-left"><%= new Date(trans.transactionDate).toLocaleString() %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    <% } else { %>
+                        <p class="text-center mt-4">No transactions yet.</p>
+                    <% } %>
+                </div>
+            </div>
+            
          </div>
 
 
@@ -75,4 +115,17 @@
 </div>
 <%- include('userfooter') %>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#transactionTable').DataTable({
+            paging: true,    // Enable pagination
+            searching: true, // Enable search bar
+            ordering: true,  // Enable sorting
+            info: true       // Display table info (e.g., "Showing 1 to 10 of 50 entries")
+        });
+    });
+</script>
+
 </html>

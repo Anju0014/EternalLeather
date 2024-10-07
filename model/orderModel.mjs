@@ -102,7 +102,10 @@ const orderSchema = new mongoose.Schema({
     discountApplied: {
         type: Number, 
         default: 0 
-    }
+    },
+    razorpayPaymentId: { type: String, default: null },
+    razorpayOrderId: { type: String, default: null },
+    razorpaySignature: { type: String, default: null },
 },{timestamps:true})
 
 
