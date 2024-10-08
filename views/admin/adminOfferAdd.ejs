@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <style>
+        /* Add your custom styles here */
+        #cropperContainer img {
+            max-width: 100%;
+        }
+        #croppedImagesContainer img {
+            max-width: 100px;
+            margin: 10px;
+        }
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+<body>
+    <%- include('adminheader') %> 
+    <div class="flex justify-normal">
+        <div class="flex justify-normal">
+            <%- include('adminsidebar') %> 
+            <br>
+        </div> 
+
+        <!-- <form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
+            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+             
+           
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Offer Name</label>
+                <input type="text" id="couponCode" name="couponCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Coupon Code" required>
+                <span id="couponCodeError" class="text-red-600 text-sm"></span>
+              </div>
+          
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Offer Field</label>
+                <input type="text" id="couponCode" name="couponCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Coupon Code" required>
+                <span id="couponCodeError" class="text-red-600 text-sm"></span>
+              </div>
+           
+          
+            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+          
+              <!-- Discount Value -->
+              <!-- <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Discount Value</label>
+                <input type="number" id="discountValue" name="discountValue" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Discount Value" required>
+                <span id="discountValueError" class="text-red-600 text-sm"></span>
+              </div>
+          
+            </div>
+          
+          
+            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+           -->
+           
+            <!-- Submit Button -->
+            <!-- <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Coupon</button>
+          </form>
+          
+
+</div>
+</body>
+</html> -->
+<script>
+
+//           function validateForm() {
+//             let isValid = true;
+          
+//             // Clear previous error messages
+//             document.getElementById('offerNameError').textContent = '';
+//             document.getElementById('offerTypeError').textContent = '';
+//             document.getElementById('discountValueError').textContent = '';
+          
+          
+//             // Validate Coupon Code
+//             const offerName = document.getElementById('offerName').value.trim();
+//             if (couponCode.length < 5) {
+//               document.getElementById('cofferNameError').textContent = 'Coupon code must be at least 5 characters long';
+//               isValid = false;
+//             }
+          
+//             // Validate Discount Type
+//             const discountType = document.getElementById('offerType').value;
+//             if (!discountType) {
+//               document.getElementById('offerTypeError').textContent = 'Please select a discount type';
+//               isValid = false;
+//             }
+          
+//             // Validate Discount Value
+//             const discountValue = document.getElementById('discountValue').value;
+//             // if (discountValue <= 0) {
+//             //   document.getElementById('discountValueError').textContent = 'Discount value must be greater than 0';
+//             //   isValid = false;
+//             // }
+
+           
+//   if (discountValue <= 0 || discountValue > 95) {
+//     document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 95';
+//     isValid = false;
+//   }
+
+        
+//             return isValid;
+//           }
+ </script>    
+
+<form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
+    <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+        <!-- Offer Name -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Offer Name</label>
+            <input type="text" id="offerName" name="offerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Offer Name" >
+            <span id="offerNameError" class="text-red-600 text-sm"></span>
+        </div>
+
+        <!-- Offer Field -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Offer Type</label>
+            <select name="offerType" id="offerType" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" >
+                <option value="" selected disabled>Select a category</option>
+                <% productCollection.forEach((category) => { %>
+                    <option value="<%= category._id %>">
+                        <%= category.categoryName %>
+                    </option>
+                <% }) %>
+            </select>
+            <span id="offerTypeError" class="text-red-600 text-sm"></span>
+        </div>
+        
+    </div>
+
+    <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+        <!-- Discount Value -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Discount Value</label>
+            <input type="number" id="discountValue" name="discountValue" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Discount Value" >
+            <span id="discountValueError" class="text-red-600 text-sm"></span>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Offer</button>
+</form>
+</div>
+<script>
+    function validateForm() {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.getElementById('offerNameError').textContent = '';
+        document.getElementById('offerTypeError').textContent = '';
+        document.getElementById('discountValueError').textContent = '';
+
+        // Validate Offer Name
+        const offerName = document.getElementById('offerName').value.trim();
+        if (offerName.length < 5) {
+            document.getElementById('offerNameError').textContent = 'Offer name must be at least 5 characters long';
+            isValid = false;
+        }
+
+        // Validate Offer Field (Assuming you have a specific validation for this)
+        const offerType = document.getElementById('offerType').value.trim();
+        if (offerType.length < 3) {
+            document.getElementById('offerTypeError').textContent = 'Offer field must be at least 3 characters long';
+            isValid = false;
+        }
+
+        // Validate Discount Value
+        const discountValue = document.getElementById('discountValue').value;
+        if (discountValue <= 0 || discountValue > 95) {
+            document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 95';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
+
+</body>
+</html>

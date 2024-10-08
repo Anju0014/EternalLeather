@@ -322,7 +322,7 @@ export const adminproductdelete = async (req, res) => {
         // req.flash("success", "Category deleted successfully");
         // res.redirect('/admin/category');
         console.log(req.url)
-    const category = await Product.findByIdAndUpdate(req.query.id,{
+    const product = await Product.findByIdAndUpdate(req.query.id,{
         isDeleted: true,
         deletedAt: new Date(),
       });

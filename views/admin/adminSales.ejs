@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin DashBoard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+    </style>
+</head>
+
+
+<body>
+    <%- include('adminheader') %>
+  
+    <div class="flex justify-normal">
+        <div class="flex justify-items-start">
+            <%- include('adminsidebar') %>
+        <br>
+        </div>
+     
+        <div class="flex-grow  p-6 ">
+           
+
+            <div class="report-summary flex justify-center gap-4">
+          
+                <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-64 text-center">
+                    <p class="text-lg font-semibold">Total Revenue</p>
+                    <p class="text-2xl font-bold text-green-500"><%= Revenue %></p>
+                </div>
+            
+                <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-64 text-center">
+                    <p class="text-lg font-semibold">Total Products Ordered</p>
+                    <p class="text-2xl font-bold text-blue-500"><%= productCount %></p>
+                </div>
+            
+                <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-64 text-center">
+                    <p class="text-lg font-semibold">Total Products Sold</p>
+                    <p class="text-2xl font-bold text-green-500"><%= deliveredOrderCount %></p>
+                </div>
+            
+       
+                <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-64 text-center">
+                    <p class="text-lg font-semibold">Total Orders</p>
+                    <p class="text-2xl font-bold text-blue-500"><%= orderCount %></p>
+                </div>
+            </div>
+            
+      
+            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
+                <a href="/admin/sales/downloadExcel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Download Excel</a>
+                <a href="/admin/sales/downloadPdf" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Download PDF</a>
+            </div>
+             -->
+             <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
+                <div class="relative inline-block">
+                    <button id="downloadButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+                        Download Sales Report
+                    </button>
+                    <div id="dropdownMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
+                        <a href="/admin/sales/downloadExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download Excel</a>
+                        <a href="/admin/sales/downloadPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download PDF</a>
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
+                <div class="relative inline-block">
+                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+                        Download Sales Report
+                    </button>
+                    <div id="dropdownSalesMenu" class="absolute hidden  bg-white shadow-lg rounded-lg mt-2 w-full">
+                        <a href="/admin/sales/downloadExcel"id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download Excel</a>
+                        <a href="/admin/sales/downloadPdf" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download PDF</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-filters flex justify-start gap-4 mt-4">
+                          <div class="relative inline-block">
+                    <label for="filterOrders" class="block text-gray-700 text-sm font-bold mb-2">Filter by Date:</label>
+                    <select id="filterOrders" class="bg-white border border-gray-300 text-gray-900 py-2 px-4 pr-8 rounded-lg shadow-md focus:outline-none focus:border-indigo-500">
+                        <option value="all">All Time</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="thisWeek">This Week</option>
+                    </select>
+                </div>
+            </div>
+            
+    
+                <table id="ordersTable" class=" m-10  p-5 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                    
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8"><%= message[i].orderStatus %></td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+             -->
+
+             <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
+                <div class="relative inline-block">
+                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md" onclick="toggleDropdown()">
+                        Download Sales Report
+                    </button>
+                    <div id="dropdownSalesMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
+                        <a href="#" id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('excel')">Download Excel</a>
+                        <a href="#" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('pdf')">Download PDF</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-filters flex justify-start gap-4 mt-4">
+          
+                <div class="relative inline-block">
+                    <label for="filterOrders" class="block text-gray-700 text-sm font-bold mb-2">Filter by Date:</label>
+                    <select id="filterOrders" class="bg-white border border-gray-300 text-gray-900 py-2 px-4 pr-8 rounded-lg shadow-md focus:outline-none focus:border-indigo-500">
+                        <option value="all">All Time</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="thisWeek">This Week</option>
+                    </select>
+                </div>
+            </div>
+            
+            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8"><%= message[i].orderStatus %></td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            
+            <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
+                <div class="bg-white p-5 rounded-md w-1/2 ">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">Order Details</h3>
+                        <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
+                    </div>
+                    <hr>
+                    <div id="modalContent" class="max-height-[200px]">
+                        
+                        <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
+                        <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
+                        <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                        <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+                        <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+                         <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+                        
+                    </div>
+                     <div class="mt-4"> 
+                    
+                        <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>  -->
+            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
+                <div class="relative inline-block">
+                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md" onclick="toggleDropdown()">
+                        Download Sales Report
+                    </button>
+                    <div id="dropdownSalesMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
+                        <a href="#" id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('excel')">Download Excel</a>
+                        <a href="#" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('pdf')">Download PDF</a>
+                    </div>
+                </div>
+            </div> -->
+
+            <div class="relative inline-block  flex justify-end">
+                <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600">
+                    Sales Report
+                </button>
+                <div class="absolute hidden mt-10 w-48 bg-white rounded-md shadow-lg z-10 group-hover:block">
+                    <div class="py-1">
+                        <button id="generatePDF" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200">
+                            Download PDF
+                        </button>
+                        <button id="generateExcel" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200">
+                            Download Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="filterForm">
+                <label>Filter</label>
+                <select name="filter" class=" text-gray-700 text-sm font-bold mb-2" id="filter">
+                    <option value="all">All</option>
+                    <option value="thisMonth">This Month</option>
+                    <option value="thisWeek">This Week</option>
+                    <option value="thisYear">This Year</option>
+                </select>
+                <button type="submit" class="bg-red-900 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Apply Filter</button>
+            </form>
+
+<br>
+<br>
+            
+            <!-- <div class="report-filters flex justify-start gap-4 mt-4">
+                
+                <div class="relative inline-block">
+                    <label for="filterOrders" class="block text-gray-700 text-sm font-bold mb-2">Filter by Date:</label>
+                    <select id="filterOrders" class="bg-white border border-gray-300 text-gray-900 py-2 px-4 pr-8 rounded-lg shadow-md focus:outline-none focus:border-indigo-500">
+                        <option value="all">All Time</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="thisWeek">This Week</option>
+                    </select>
+                </div>
+                <button id="applyFilterButton" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Apply</button>
+            </div>
+             -->
+            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8"><%= message[i].orderStatus %></td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            
+            <!-- Modal for Order Details -->
+            <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+                <div class="bg-white p-5 rounded-md w-1/2 ">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">Order Details</h3>
+                        <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
+                    </div>
+                    <hr>
+                    <div id="modalContent" class="max-height-[200px]">
+                        <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
+                        <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
+                        <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                        <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+                        <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+                        <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+                    </div>
+                    <div class="mt-4"> 
+                        <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            </div>
+        
+</div>
+</body>
+</html>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+      $(document).ready(function() {
+      $('#ordersTable').DataTable({
+        "paging": true,       // Enable pagination
+        "ordering": true,     // Enable column sorting
+        "info": true,         // Display table information
+        "searching": true,    // Enable search box
+        "autoWidth": false,   // Disable automatic column width calculation
+        "order": [[ 0, "desc" ]],  // Default sorting on the first column (Order ID), in descending order
+        "columnDefs": [
+          { "orderable": false, "targets": [] }  // Disable sorting for Action and View columns
+        ]
+      });
+    });
+
+function openModal(orderData) {
+       
+       const modal = document.getElementById('orderModal');
+       const modalOrderId = document.getElementById('modalOrderId');
+       const modalOrderDate = document.getElementById('modalOrderDate');
+       const modalProducts = document.getElementById('modalProducts');
+       const modalCustomerName = document.getElementById('modalCustomerName');
+       const modalPrice = document.getElementById('modalTotalPrice');
+       const modalPayment = document.getElementById('modalPaymentMethod');
+       const orderStatus=document.getElementById('modalOrderStatus');
+      
+       modalOrderId.innerText = orderData.orderId;
+       modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
+       modalCustomerName.innerText = orderData.customerId.name;
+       modalPrice.innerText=orderData.totalPayablePrice;
+       modalPayment.innerText=orderData.paymentMethod;
+       modalOrderStatus.innerText=orderData.orderStatus;
+
+   
+       modalProducts.innerHTML = '';  
+       orderData.products.forEach(product => {
+ 
+   const productPrice = product.productprice;
+
+
+   modalProducts.innerHTML += `
+       <div class="product-details border-b py-2">
+           <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
+           <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
+           <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
+           <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+       
+       </div>
+   `;
+});
+
+
+       // Show the modal
+       modal.classList.remove('hidden');
+       modal.classList.add('flex');
+   }
+
+   // Function to close the modal
+   function closeModal() {
+       const modal = document.getElementById('orderModal');
+       modal.classList.add('hidden');
+   }
+</script>
+
+<script>
+    document.getElementById('downloadButton').addEventListener('click', async function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+    
+        // Fetching order details from modal
+        const orderId = document.getElementById('modalOrderId').innerText;
+        const orderDate = document.getElementById('modalOrderDate').innerText;
+        const customerName = document.getElementById('modalCustomerName').innerText;
+        const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+        const totalPrice = document.getElementById('modalTotalPrice').innerText;
+        const orderStatus=document.getElementById('modalOrderStatus').innerText;
+    
+        // Adding text content to the PDF
+        doc.text(`Order ID: ${orderId}`, 10, 10);
+        doc.text(`Order Date: ${orderDate}`, 10, 20);
+        doc.text(`Customer Name: ${customerName}`, 10, 30);
+        doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
+        doc.text(`Total Price: ${totalPrice}`, 10, 50);
+        doc.text(`Order Status: ${orderStatus}`, 10, 60);
+    
+        // Fetch product details from modalProducts div
+        const productElements = document.querySelectorAll('#modalProducts .product-details');
+    
+        let yOffset = 70; // Initial Y position for product details and images
+        for (const productElement of productElements) {
+            const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+            const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+            const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+            const productImage = productElement.querySelector('img').src;
+    
+            // Add product details (name, price, quantity) to PDF
+            doc.text(`Product Name: ${productName}`, 90, yOffset);
+            doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
+            doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+    
+            try {
+                // Convert image URL to base64 and add to PDF
+                const base64Img = await getBase64ImageFromURL(productImage);
+                // Adding image to PDF at (x, y, width, height)
+                doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+            } catch (error) {
+                console.error('Error loading image', error);
+            }
+    
+            yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+        }
+    
+        // Save the generated PDF
+        doc.save('adminorder-details.pdf');
+    });
+    
+    // Function to convert image URL to base64
+    async function getBase64ImageFromURL(url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+    
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.add('hidden');
+    }
+    
+ 
+    
+   
+    </script>
+    <!-- <script>
+        // JavaScript to toggle the dropdown menu visibility
+        const downloadSalesButton = document.getElementById('downloadSalesButton');
+        const dropdownSalesMenu = document.getElementById('dropdownSalesMenu');
+    
+        downloadSalesButton.addEventListener('click', () => {
+            dropdownSalesMenu.classList.toggle('hidden');
+        });
+    
+        // Hide dropdown if clicked outside
+        document.addEventListener('click', (event) => {
+            if (!downloadSalesButton.contains(event.target) && !dropdownSalesMenu.contains(event.target)) {
+                dropdownSalesMenu.classList.add('hidden');
+            }
+        });
+        
+        </script>
+   -->
+
+   
+<script>
+// function toggleDropdown() {
+//     const dropdown = document.getElementById('dropdownSalesMenu');
+//     dropdown.classList.toggle('hidden');
+// }
+
+// function downloadReport(type) {
+//     const filterValue = document.getElementById('filterOrders').value;
+//     const baseUrl = `/admin/sales/download${type.charAt(0).toUpperCase() + type.slice(1)}`;
+    
+//     // Redirect to the download URL with the selected filter
+//     const downloadUrl = filterValue === 'all' ? baseUrl : `${baseUrl}?filter=${filterValue}`;
+    
+//     // Close the dropdown after selecting
+//     document.getElementById('dropdownSalesMenu').classList.add('hidden');
+    
+//     // Redirect to download
+//     window.location.href = downloadUrl;
+// }
+</script>
+<script>
+// Function to fetch orders based on the selected filter
+// async function fetchFilteredOrders(filter) {
+//     try {
+//         const response = await fetch(`/admin/sales?filter=${filter}`); // Adjust the URL based on your backend routing
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         const data = await response.json(); // Expecting JSON response
+
+//         // Update the table with the new data
+//         updateOrdersTable(data);
+//     } catch (error) {
+//         console.error('Error fetching filtered orders:', error);
+//     }
+// }
+
+// Function to update the orders table
+// function updateOrdersTable(orders) {
+//     const tbody = document.querySelector('#ordersTable tbody');
+//     tbody.innerHTML = ''; // Clear existing rows
+
+//     if (orders && orders.length > 0) {
+//         orders.forEach(order => {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td class="px-2">${order.orderId}</td>
+//                 <td class="px-8">${order.address.customerName}</td>
+//                 <td class="px-20">${order.paymentMethod}</td>
+//                 <td class="px-8">${order.orderStatus}</td>
+//                 <td class="px-8">${order.totalPayablePrice}</td>
+//                 <td class="px-8">
+//                     <button onclick="openModal(${JSON.stringify(order)})" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+//                 </td>
+//             `;
+//             tbody.appendChild(row);
+//         });
+//     } else {
+//         tbody.innerHTML = '<tr><td colspan="6" class="text-center">No Orders found.</td></tr>';
+//     }
+// }
+
+// Add event listener to the apply button
+// document.getElementById('applyFilterButton').addEventListener('click', () => {
+//     const selectedFilter = document.getElementById('filterOrders').value;
+//     fetchFilteredOrders(selectedFilter); // Fetch orders based on the selected filter
+// });
+const salesReportButton = document.querySelector('button.bg-blue-500');
+const dropdownMenu = document.querySelector('.absolute');
+
+salesReportButton.addEventListener('click', () => {
+    dropdownMenu.classList.toggle('hidden');
+});
+
+// Function to set the selected filter value in localStorage
+function setFilterValue() {
+    const filterSelect = document.getElementById('filter');
+    // Retrieve the saved filter value from localStorage, default to 'all'
+    const savedFilterValue = localStorage.getItem('selectedFilter') || 'all'; 
+    // Set the select option to the saved value
+    filterSelect.value = savedFilterValue;
+}
+
+// Function to handle form submission
+document.getElementById('filterForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    const filterValue = document.getElementById('filter').value;
+    // Store the selected filter value in localStorage
+    localStorage.setItem('selectedFilter', filterValue);
+    // Redirect to the sales page with the filter applied
+    window.location.href = `/admin/sales?filter=${filterValue}`;
+});
+
+// Call the function to set the filter value when the page loads
+window.onload = setFilterValue;
+
+// document.getElementById('filterForm').addEventListener('submit', function (event) {
+//         event.preventDefault(); // Prevent the default form submission
+//         const filterValue = document.getElementById('filter').value;
+//         // Redirect to the sales page with the filter applied
+//         window.location.href = `/admin/sales?filter=${filterValue}`;
+
+//     });
+
+    document.getElementById('generatePDF').addEventListener('click', function () {
+        const filterValue = document.getElementById('filter').value;
+        window.location.href = `/admin/sales/downloadPdf?filter=${filterValue}`;
+      
+    });
+
+    // Handle Excel generation
+    document.getElementById('generateExcel').addEventListener('click', function () {
+        const filterValue = document.getElementById('filter').value;
+        window.location.href = `/admin/sales/downloadExcel?filter=${filterValue}`;
+    });
+</script>

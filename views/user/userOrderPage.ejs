@@ -97,7 +97,7 @@
                     <% }); %>
                 </div> -->
 
-                <div class="col-span-1 space-y-4">
+                <!-- <div class="col-span-1 space-y-4">
                     <% order.products.forEach((product) => { %>
                         <div class="flex gap-4">
                             <div class="w-20 h-20">
@@ -117,22 +117,20 @@
                                     <p class="text-red-500">Product is out of stock</p>
                                 <% } %>
                 
-                                <!-- Cancel and Return Buttons -->
-                                <!-- <div class="flex gap-2 mt-2">
-                                
-                                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                                        onclick="handleCancel('<%= product._id %>')">Cancel</button>
-                                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
-                                        onclick="handleReturn('<%= product._id %>')">Return</button>
-                                </div> -->
+                            
+                             
                                
                                 <div class="flex gap-2 mt-2">
                                   
                                     <% if (order.orderStatus !=='Cancelled' && order.orderStatus !== 'Returned') { %>
 
                                     <% if (product.productstatus === 'Pending' || product.productstatus === 'Confirmed') { %>
-                                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                                            onclick="handleCancel('<%= product._id %>')">Cancel</button>
+                                       
+                                            <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                            data-order-id="<%= order._id %>"
+                                            data-product-id="<%= product.productId._id %>"
+                                            onclick="cancelProduct(this)">Cancel</button>
+                                        
                                     <% } %>
                 
                           
@@ -161,8 +159,64 @@
                         </div>
                     <% }); %>
                 </div>
-                
+                 -->
 
+                 <div class="col-span-1 space-y-4">
+                    <% order.products.forEach((product) => { %>
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20">
+                                <img src="<%= product.productimage %>" alt="<%= product.productname %>" class="w-full h-full object-cover rounded-md">
+                            </div>
+                            <div>
+                                <p><strong>Product Name:</strong> <%= product.productname %></p>
+                                <p><strong>Quantity:</strong> <%= product.productquantity %></p>
+                                <% if (product.productDiscount > 0) { %>
+                                    <p><strong>Price:</strong> $<%= (product.productprice - (product.productprice * (product.productDiscount / 100))).toFixed(2) %> 
+                                        <span class="line-through text-sm text-gray-500">₹<%= product.productprice %></span></p>
+                                    <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
+                                <% } else { %>
+                                    <p><strong>Price:</strong> $<%= product.productprice %></p>
+                                <% } %>
+                                <% if (product.productquantity <= 0) { %>
+                                    <p class="text-red-500">Product is out of stock</p>
+                                <% } %>
+                                
+                                <!-- Cancel and Return Buttons -->
+                                <div class="flex gap-2 mt-2">
+                                    <% const excludedStatuses = ['Cancelled', 'Returned']; %>
+                                    <% const validStatuses = ['Pending', 'Confirmed']; %>
+                                    <% if (!excludedStatuses.includes(order.orderStatus)) { %>
+                                        <% if (validStatuses.includes(product.productstatus)) { %>
+                                    <!-- <% if (order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned') { %> -->
+                                        <!-- <% if (product.productstatus === 'Pending' || product.productstatus === 'Confirmed') { %> -->
+
+                                            <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                                data-order-id="<%= order._id %>"
+                                                data-product-id="<%= product.productId._id %>"
+                                                onclick="cancelProduct(this)">Cancel</button>
+                                        <% } %> 
+                                        <% } %>
+                                        <% if (product.productstatus === 'Delivered') { %>
+                                            <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                                onclick="handleReturn('<%= product._id %>')">Return</button>
+                                        <% } %>
+                                    <% } %>
+                                    <% } %>
+                                    <% if (order.orderStatus === 'Cancelled') { %>
+                                        <p class="text-gray-500">This Order has been cancelled</p>
+                                    <% } else if (order.orderStatus === 'Returned') { %>
+                                        <p class="text-gray-500">This Order has been returned</p>
+                                    <% } else if (product.productstatus === 'Cancelled') { %>
+                                        <p class="text-gray-500">This product has been cancelled</p>
+                                    <% } else if (product.productstatus === 'Returned') { %>
+                                        <p class="text-gray-500">This product has been returned</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+                
                
                 <div class="col-span-1 flex items-center justify-end gap-2">
                     <% if (order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed') { %>
@@ -253,8 +307,7 @@
     </div>
     <%- include('userfooter') %>
 
-</body>
-</html>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -460,24 +513,96 @@ function handleReturn(productId) {
         console.error('Error returning product:', error);
     });
 }
+
+// function cancelProduct(orderId, productId) {
+//     console.log("reached")
+//     if (confirm('Are you sure you want to cancel this product?')) {
+//         window.location.href = `/user/order/product/cancel?orderId=${orderId}&productId=${productId}`;
+//     }
+// }
+// function cancelProduct(button) {
+//     const orderId = button.getAttribute('data-order-id');
+//     const productId = button.getAttribute('data-product-id');
+    
+//     // Now, you can use orderId and productId for your AJAX call or further logic.
+//     console.log(`Cancelling product with ID: ${productId} from order: ${orderId}`);
+    
+//     // Add your AJAX or fetch logic here to handle the cancellation.
+
+// }
+// function cancelProduct(button) {
+//     const orderId = button.getAttribute('data-order-id');
+//     const productId = button.getAttribute('data-product-id');
+
+//     // Send a DELETE request using fetch to the backend API
+//     fetch(`/user/order/cancelProduct`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             orderId: orderId,
+//             productId: productId
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             alert('Product successfully canceled!');
+//             // You can optionally reload the page or remove the product from the UI dynamically
+//             window.location.reload(); // or update the DOM to reflect the cancellation
+//         } else {
+//             alert('Failed to cancel the product. Please try again.');
+//         }
+//     })
+//     .catch((error) => {
+//         console.error('Error:', error);
+//         alert('An error occurred while canceling the product.');
+//     });
+// }
+
 </script>
 
-<!-- // Example route to handle cancellation
-app.post('/order/cancel/:productId', (req, res) => {
-    const { productId } = req.params;
-    // Find the product in the order and update its status to "Cancelled"
-    Order.updateOne({ 'products._id': productId }, { 'products.$.productstatus': 'Cancelled' }, (err, result) => {
-        if (err) return res.status(500).send('Error canceling product');
-        res.send('Product cancelled successfully');
+<script>
+    function cancelProduct(button) {
+    const orderId = button.getAttribute('data-order-id');
+    console.log(orderId)
+    const productId = button.getAttribute('data-product-id');
+   
+   console.log(productId)
+    console.log("going")
+    // Send a POST request using fetch to the backend API
+    fetch(`/user/order/cancelProduct`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            orderId: orderId,
+            productId: productId
+        })
+    })
+    .then(response => {
+        console.log('Response Status:', response.status); // Log response status
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response Data:', data); // Log response data
+        if (data.success) {
+            alert('Product successfully canceled!');
+            // Optionally reload the page or remove the product from the UI dynamically
+            window.location.reload(); // or update the DOM to reflect the cancellation
+        } else {
+            alert('Failed to cancel the product. Please try again.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while canceling the product.');
     });
-});
+}
 
-// Example route to handle return
-app.post('/order/return/:productId', (req, res) => {
-    const { productId } = req.params;
-    // Find the product in the order and update its status to "Returned"
-    Order.updateOne({ 'products._id': productId }, { 'products.$.productstatus': 'Returned' }, (err, result) => {
-        if (err) return res.status(500).send('Error returning product');
-        res.send('Product returned successfully');
-    });
-}); -->
+</script>
+
+</body>
+</html>

@@ -9,6 +9,8 @@ import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost, adminusersearch } from "../controllers/adminController/userController.mjs";
 import { adminorderCancel, adminorders, adminorderupdate } from "../controllers/adminController/orderController.mjs";
 import { adminCoupon, adminCouponAdd, adminCouponAddform, adminCouponStatus } from "../controllers/adminController/couponController.mjs";
+import { adminOffer, adminOfferAdd, adminOfferAddform, adminOfferDelete } from "../controllers/adminController/offerController.mjs";
+import { adminSales, downloadSalesExcel, downloadSalesPdf } from "../controllers/adminController/salesController.mjs";
 
 
 admin_router.use(express.json());
@@ -60,7 +62,15 @@ admin_router.get("/coupon/add",isAdmin,adminCouponAddform)
 admin_router.post("/coupon/add",isAdmin,adminCouponAdd)
 admin_router.post("/coupon/:id/toggle-block",isAdmin, adminCouponStatus);
 
+admin_router.get("/sales",isAdmin,adminSales)
+admin_router.get("/sales/downloadExcel",isAdmin,downloadSalesExcel)
+admin_router.get("/sales/downloadPdf",isAdmin,downloadSalesPdf)
 
+
+admin_router.get("/offer",isAdmin,adminOffer)
+admin_router.get("/offer/add",isAdmin,adminOfferAddform)
+admin_router.post("/offer/add",isAdmin,adminOfferAdd)
+admin_router.get("/offer/delete",isAdmin,adminOfferDelete);
 
 admin_router.get("/logout",adminlogout);
 

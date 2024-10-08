@@ -8,7 +8,7 @@ import { addressAdd, editAddress, useraddressdelete, useraddressedit, userchange
 import { orderconfirm } from "../controllers/userController/orderController.mjs";
 import checkUser from "../middleware/checkuserSession.mjs";
 import nocache from "nocache";
-import { orderList, userorderCancel, userorderReturn } from "../controllers/userController/orderListController.mjs";
+import { orderList, userorderCancel, userorderReturn, userProductCancel } from "../controllers/userController/orderListController.mjs";
 import { wishListAdd, wishListDelete, wishListView } from "../controllers/userController/wishlistController.mjs";
 import { couponList } from "../controllers/userController/couponController.mjs";
 import { checkWalletBalance, walletView } from "../controllers/userController/walletController.mjs";
@@ -64,6 +64,7 @@ user_router.get('/user/order/summary',checkUser,orderconfirm)
 user_router.get('/user/profile/order',checkUser,orderList)
 user_router.get('/user/order/cancel',checkUser,userorderCancel)
 user_router.post('/user/order/return',checkUser,userorderReturn)
+user_router.post('/user/order/cancelProduct',userProductCancel);
 
 user_router.get('/user/profile/coupons',checkUser,couponList)
 user_router.get('/user/profile/wallet',checkUser,walletView)
