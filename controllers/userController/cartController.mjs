@@ -1087,14 +1087,148 @@ export const checkout= async (req,res)=>{
 
 
 
+// export const checkoutpost = async (req, res) => {
+//   try {
+//     const { selectedAddress, paymentMethod, cartId, appliedCoupon, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+//     console.log("hello")
+
+//     const user = await User.findOne({ email: req.session.isUser });
+//     const customerAddress = user.address.id(selectedAddress);
+//     const cart = await Cart.findById(cartId).populate('items.productId');
+
+//     if (!cart) {
+//       return res.status(404).json({ success: false, message: 'Cart not found' });
+//     }
+
+//     if (!customerAddress) {
+//       return res.status(400).json({ success: false, message: 'Invalid address selected' });
+//     }
+
+   
+//     let discount = 0;
+//     let coupon;
+//     if (appliedCoupon) {
+//       coupon = await Coupon.findById(appliedCoupon);
+
+//       if (!coupon || !coupon.isActive || coupon.isDeleted || new Date() > coupon.expiryDate) {
+//         return res.status(400).json({ success: false, message: 'Invalid or expired coupon code' });
+//       }
+
+//       if (coupon.discountType === 'percentage') {
+//         discount = (cart.payablePrice * coupon.discountValue) / 100;
+//       } else if (coupon.discountType === 'flat') {
+//         discount = coupon.discountValue;
+//       }
+
+//       cart.payablePrice = Math.max(0, cart.payablePrice - discount);
+//     }
+
+//     // Wallet payment logic
+//     if (paymentMethod === 'Wallet') {
+//       const wallet = await Wallet.findOne({ userID: user._id });
+//       if (!wallet || wallet.balance < cart.payablePrice) {
+//         return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+//       }
+
+//       wallet.balance -= cart.payablePrice;
+//       wallet.transaction.push({
+//         walletAmount: cart.payablePrice,
+//         orderId: newOrder._id,
+//         transactionType: 'Debited',
+//         transactionDate: new Date(),
+//       });
+
+//       await wallet.save();
+//     }
+
+//     // Create and save order
+//     const newOrder = new Order({
+//       customerId: user._id,
+//       products: cart.items.map(item => ({
+//         productId: item.productId._id,
+//         productname: item.productId.productName,
+//         productquantity: item.productCount,
+//         productprice: item.discountPrice,
+//         productimage: item.productId.productImages[0],
+//         productstatus: 'Pending'
+//       })),
+//       totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
+//       totalPrice: cart.items.reduce((acc, item) => acc + item.productPrice * item.productCount, 0),
+//       totalPayablePrice: cart.payablePrice,
+//       address: {
+//         customerName: customerAddress.contactname,
+//         customerEmail: customerAddress.email,
+//         building: customerAddress.building,
+//         street: customerAddress.street,
+//         city: customerAddress.city,
+//         country: customerAddress.country,
+//         pincode: customerAddress.pincode,
+//         phonenumber: customerAddress.phoneno,
+//         landMark: customerAddress.landMark
+//       },
+//       paymentMethod,
+//       orderStatus: 'Pending',
+//       couponApplied: appliedCoupon ? coupon._id : null,
+//       discountApplied: discount,
+
+//       // Store Razorpay payment details if applicable
+//       razorpayPaymentId: paymentMethod === 'razorpay' ? razorpay_payment_id : null,
+//       razorpayOrderId: paymentMethod === 'razorpay' ? razorpay_order_id : null,
+//       razorpaySignature: paymentMethod === 'razorpay' ? razorpay_signature : null,
+//     });
+
+//     await newOrder.save();
+//     const orderIdCode = newOrder._id.toString().slice(-5);
+//     newOrder.orderId = orderIdCode;
+//     await newOrder.save();
+
+//     // Update product stock
+//     for (const item of cart.items) {
+//       const product = await Product.findById(item.productId);
+//       if (product.productQuantity < item.productCount) {
+//         return res.status(400).json({
+//           success: false,
+//           message: `Insufficient stock for product: ${product.name}`
+//         });
+//       }
+//       product.productQuantity -= item.productCount;
+//       await product.save();
+//     }
+
+//     await Cart.findByIdAndDelete(cartId);
+
+//     res.json({ success: true, message: 'Order placed successfully' });
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json({ success: false, message: 'Order processing failed', error: error.message });
+//   }
+// };
+
+
 export const checkoutpost = async (req, res) => {
   try {
-    const { selectedAddress, paymentMethod, cartId, appliedCoupon, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+    const {
+      selectedAddress,
+      paymentMethod,
+      cartId,
+      appliedCoupon,
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    } = req.body;
+    console.log(req.body)
 
+    
     const user = await User.findOne({ email: req.session.isUser });
     const customerAddress = user.address.id(selectedAddress);
     const cart = await Cart.findById(cartId).populate('items.productId');
 
+    if (paymentMethod === 'Wallet') {
+      const wallet = await Wallet.findOne({ userID: user._id });
+      console.log(wallet)
+      if (!wallet || wallet.balance < cart.payablePrice) {
+        return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+      }}
     if (!cart) {
       return res.status(404).json({ success: false, message: 'Cart not found' });
     }
@@ -1103,24 +1237,6 @@ export const checkoutpost = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid address selected' });
     }
 
-    // Verify Razorpay payment signature
-    // let isRazorpayPaymentValid = true;
-    // if (paymentMethod === 'razorpay') {
-    //   const secret = 'your_razorpay_secret'; // Replace with your actual Razorpay secret key
-    //   const generatedSignature = crypto
-    //     .createHmac('sha256', secret)
-    //     .update(razorpay_order_id + "|" + razorpay_payment_id)
-    //     .digest('hex');
-      
-    //   if (generatedSignature !== razorpay_signature) {
-    //     return res.status(400).json({ success: false, message: 'Invalid payment signature' });
-    //   }
-
-    //   // Mark Razorpay payment as valid
-    //   isRazorpayPaymentValid = true;
-    // }
-
-    // Coupon logic
     let discount = 0;
     let coupon;
     if (appliedCoupon) {
@@ -1139,34 +1255,16 @@ export const checkoutpost = async (req, res) => {
       cart.payablePrice = Math.max(0, cart.payablePrice - discount);
     }
 
-    // Wallet payment logic
-    if (paymentMethod === 'Wallet') {
-      const wallet = await Wallet.findOne({ userID: user._id });
-      if (!wallet || wallet.balance < cart.payablePrice) {
-        return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
-      }
-
-      wallet.balance -= cart.payablePrice;
-      wallet.transaction.push({
-        walletAmount: cart.payablePrice,
-        orderId: newOrder._id,
-        transactionType: 'Debited',
-        transactionDate: new Date(),
-      });
-
-      await wallet.save();
-    }
-
     // Create and save order
     const newOrder = new Order({
       customerId: user._id,
-      products: cart.items.map(item => ({
+      products: cart.items.map((item) => ({
         productId: item.productId._id,
         productname: item.productId.productName,
         productquantity: item.productCount,
         productprice: item.discountPrice,
         productimage: item.productId.productImages[0],
-        productstatus: 'Pending'
+        productstatus: 'Pending',
       })),
       totalQuantity: cart.items.reduce((acc, item) => acc + item.productCount, 0),
       totalPrice: cart.items.reduce((acc, item) => acc + item.productPrice * item.productCount, 0),
@@ -1180,23 +1278,58 @@ export const checkoutpost = async (req, res) => {
         country: customerAddress.country,
         pincode: customerAddress.pincode,
         phonenumber: customerAddress.phoneno,
-        landMark: customerAddress.landMark
+        landMark: customerAddress.landMark,
       },
       paymentMethod,
       orderStatus: 'Pending',
       couponApplied: appliedCoupon ? coupon._id : null,
       discountApplied: discount,
-
       // Store Razorpay payment details if applicable
       razorpayPaymentId: paymentMethod === 'razorpay' ? razorpay_payment_id : null,
       razorpayOrderId: paymentMethod === 'razorpay' ? razorpay_order_id : null,
       razorpaySignature: paymentMethod === 'razorpay' ? razorpay_signature : null,
     });
 
+    // Save the order before using it in wallet transactions
     await newOrder.save();
+
     const orderIdCode = newOrder._id.toString().slice(-5);
     newOrder.orderId = orderIdCode;
     await newOrder.save();
+
+    // Wallet payment logic
+    if (paymentMethod === 'Wallet') {
+      const wallet = await Wallet.findOne({ userID: user._id });
+      // console.log(wallet)
+      // if (!wallet || wallet.balance < cart.payablePrice) {
+      //   return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+      // }
+
+      wallet.balance -= cart.payablePrice;
+      console.log("done")
+      wallet.transaction.push({
+        walletAmount: cart.payablePrice,
+        orderId: newOrder.orderId, // Use newOrder here after saving it
+        transactionType: 'Debited',
+        transactionDescription:"Order Placed",
+        transactionDate: new Date(),
+      });
+      console.log("veendeum")
+
+      await wallet.save();
+    }
+
+    // Verify Razorpay payment if applicable
+    // if (paymentMethod === 'razorpay') {
+      
+    //   const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
+    //   hmac.update(razorpay_order_id + '|' + razorpay_payment_id);
+    //   const generated_signature = hmac.digest('hex');
+
+    //   if (generated_signature !== razorpay_signature) {
+    //     return res.status(400).json({ success: false, message: 'Payment verification failed' });
+    //   }
+    // }
 
     // Update product stock
     for (const item of cart.items) {
@@ -1204,7 +1337,7 @@ export const checkoutpost = async (req, res) => {
       if (product.productQuantity < item.productCount) {
         return res.status(400).json({
           success: false,
-          message: `Insufficient stock for product: ${product.name}`
+          message: `Insufficient stock for product: ${product.productName}`,
         });
       }
       product.productQuantity -= item.productCount;
@@ -1215,10 +1348,10 @@ export const checkoutpost = async (req, res) => {
 
     res.json({ success: true, message: 'Order placed successfully' });
   } catch (error) {
+    console.error(error); // Log the error for debugging
     res.status(500).json({ success: false, message: 'Order processing failed', error: error.message });
   }
 };
-
 
 
 // export const checkoutpost= async (req,res)=>{

@@ -249,13 +249,13 @@
 
         <div class="bg-white rounded-md px-4 py-6 h-max shadow-[0_2px_12px_-3px_rgba(6,81,237,0.3)]">
             <ul class="text-gray-800 space-y-4">
-                <div class="flex border border-slate-900 overflow-hidden rounded-md">
+                <!-- <div class="flex border border-slate-900 overflow-hidden rounded-md">
                     <input type="email" placeholder="Coupon code"
                         class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5" />
                     <button type='button' class="flex items-center justify-center font-semibold tracking-wide bg-black hover:bg-red-900 px-4 text-sm text-white">
                         Apply
                     </button>
-                </div>
+                </div> -->
                 <li class="flex flex-wrap gap-4 text-sm">Subtotal <span class="ml-auto font-bold">$<%=totalPriceWithoutDiscount.toFixed(2)%></span></li>
                 <li class="flex flex-wrap gap-4 text-sm">Subtotal(with discount) <span class="ml-auto font-bold">$<%=totalPrice.toFixed(2)%></span></li>
                 <li class="flex flex-wrap gap-4 text-sm">Shipping <span class="ml-auto font-bold"><%= cart.payablePrice > 1000 ? 'Free' : '$50' %></span></li>

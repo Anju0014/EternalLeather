@@ -31,50 +31,37 @@
 
 <body class="bg-center min-h-screen bg-cover flex flex-col justify-center items-center">
 
-<!-- <div class="absolute inset-0 bg-white opacity-40"></div> -->
+
     
         
 <div class="relative mb-2 sevillana-title text-center">Pelle Eterno</div>
     
-        <!-- Login Container -->
+   
         <div class="relative bg-white bg-opacity-50 p-8 rounded-lg shadow-lg w-full max-w-sm">
             <h2 class="text-2xl font-bold text-center mb-6">USER Login</h2>
             <form id="loginForm" action="" method="post">
     
                 <div id="error" class="text-danger"></div>
-                <!-- Error Message -->
+               
                 <% if (message.error) { %>
                     <h3 class="text-brown text-center mb-4"><%= message.error %></h3>
                 <% } %> 
-              
-              <!-- <% if (message.success) { %>
-                <script>
-                    alert("<%= message.success %>");
-                </script>
-            <% } %>
-            
-            <% if (message.error) { %>
-                <script>
-                    alert("<%= message.error %>");
-                </script>
-            <% } %>
-             -->
-              
-    
-                <!-- Email Field -->
+        
                 <div class="mb-4">
-                    <label for="username" class="block font-bold mb-2">Email</label>
-                    <input type="text" id="email" name="email"  class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+                  <label for="email" class="block font-bold mb-2">Email</label>
+                  <input type="text" id="email" name="email" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <div id="emailError" class="text-red-500 text-sm mt-1"></div> 
+              </div>
+          
+            
+              <div class="mb-6">
+                  <label for="password" class="block font-bold mb-2">Password</label>
+                  <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <div id="passwordError" class="text-red-500 text-sm mt-1"></div> 
+                  <h4><a href="/user/forgotpassword">Forgot Password?</a></h4>
+              </div>
     
-                <!-- Password Field -->
-                <div class="mb-6">
-                    <label for="password" class="block font-bold mb-2">Password</label>
-                    <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <h4><a href="/user/forgotpassword">Forgot Password?</a></h4>
-                </div>
-    
-                <!-- Submit Button -->
+             
                 <button type="submit" class="w-full bg-black text-white font-bold py-2 px-4 rounded-lg">Submit</button>
                 <h4>Don't have an account? <a href="/user/signup">Sign Up</a></h4>
                 <br>
@@ -106,36 +93,76 @@
         </div>
 
     <script>
-            const password = document.getElementById('password');
+      const password = document.getElementById('password');
+const email = document.getElementById('email');
+const form = document.getElementById('loginForm');
+
+form.addEventListener('submit', (e) => {
+    // Clear previous error messages
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    emailError.innerText = '';
+    passwordError.innerText = '';
+
+    let messages = [];
+
+    // Validate email
+    if (email.value === '' || email.value == null) {
+        emailError.innerText = "Email is required";
+        messages.push("Email is required");
+    } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+        emailError.innerText = "Enter a valid email address";
+        messages.push("Enter a valid email address");
+    }
+
+    // Validate password
+    if (password.value === '' || password.value == null || password.value === "password") {
+        passwordError.innerText = "Enter a valid password";
+        messages.push("Enter a valid password");
+    } else if (password.value.length < 8 || password.value.length > 15) {
+        passwordError.innerText = 'Password must be between 8 and 15 characters';
+        messages.push('Password must be between 8 and 15 characters');
+    } else if (!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)) {
+        passwordError.innerText = 'Valid Password is required';
+        messages.push('Valid Password is required');
+    }
+
+    // Prevent form submission if there are errors
+    if (messages.length > 0) {
+        e.preventDefault();
+    }
+});
+
+        //     const password = document.getElementById('password');
           
-            const email = document.getElementById('email');
-            const form = document.getElementById('loginForm');
-            const errorElement = document.getElementById('error');
+        //     const email = document.getElementById('email');
+        //     const form = document.getElementById('loginForm');
+        //     const errorElement = document.getElementById('error');
           
-            form.addEventListener('submit', (e) => {
+        //     form.addEventListener('submit', (e) => {
         
-              let messages = [];
+        //       let messages = [];
           
             
-              if (password.value === '' || password.value == null || password.value === "password") {
-                messages.push("Enter a valid password");
-              } else if (password.value.length < 8 || password.value.length > 15) {
-                messages.push('Password must be between 8 and 15 characters');
-             }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
-               messages.push('Valid Password is required')
-             }
+        //       if (password.value === '' || password.value == null || password.value === "password") {
+        //         messages.push("Enter a valid password");
+        //       } else if (password.value.length < 8 || password.value.length > 15) {
+        //         messages.push('Password must be between 8 and 15 characters');
+        //      }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
+        //        messages.push('Valid Password is required')
+        //      }
              
-             if (email.value === '' || email.value == null) {
-                messages.push("Email is required");
-              } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
-                messages.push("Enter a valid email address");
-              } 
+        //      if (email.value === '' || email.value == null) {
+        //         messages.push("Email is required");
+        //       } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+        //         messages.push("Enter a valid email address");
+        //       } 
 
-              if(messages.length>0){
-                e.preventDefault(); // Prevent form submission
-                errorElement.innerText = messages
-               }
-        });
+        //       if(messages.length>0){
+        //         e.preventDefault(); // Prevent form submission
+        //         errorElement.innerText = messages
+        //        }
+        // });
         document.addEventListener('DOMContentLoaded', function() {
       const modal = document.getElementById('flashMessageModal');
       const closeModalBtn = document.getElementById('modalCloseBtn');

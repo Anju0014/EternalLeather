@@ -45,7 +45,7 @@
                 <% } %>
                 <div>
            
-                    <label for="username" class=" font-bold mb-2">Name</label>
+                    <!-- <label for="username" class=" font-bold mb-2">Name</label>
                     <input type="text" id="name" name="name"  class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
             
                     <label for="Email" class=" font-bold mb-2">Email</label>
@@ -60,6 +60,24 @@
                     <!-- <label for="phoneno" class="font-bold mb-2">Phone Number</label>
                   <input type="number" id="phoneno" name="phoneno"  class="w-full px-4 py-2 rounded-lg mb-4 border focus:outline-none focus:ring-2 focus:ring-blue-500"> -->
            
+
+                  <label for="username" class="font-bold mb-2">Name</label>
+                  <input type="text" id="name" name="name" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                  <span id="nameError" class="text-red-500 text-sm mb-4"></span>
+                <br>
+                  <label for="Email" class="font-bold mb-2">Email</label>
+                  <input type="text" id="email" name="email" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                  <span id="emailError" class="text-red-500 text-sm mb-4"></span>
+                <br>
+                  <label for="password" class="font-bold mb-2">Password</label>
+                  <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                  <span id="passwordError" class="text-red-500 text-sm mb-4"></span>
+                <br>
+                  <label for="password" class="font-bold mb-2">Confirm Password</label>
+                  <input type="password" id="confirmpassword" name="confirmpassword" class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                  <span id="confirmPasswordError" class="text-red-500 text-sm mb-4"></span>
+                <br>
+                  <!-- <button type="submit" class="w-full bg-black text-white font-bold py-2 mt-4 px-4 mb-6 rounded-lg">Submit</button> -->
                 <button type="submit" class="w-full bg-black text-white font-bold py-2 mt-4 px-4 mb-6 rounded-lg">Submit</button>
                 <h4>Already have an account? <a href="/user/login">Login</a></h4>
                </div> 
@@ -69,52 +87,117 @@
                 <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="/user/signup/facebook"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Sign up with Facebook</a></div>
                 </div>
                 
-              </form>
+              </form> -
         </div>
         <script>
-            const name = document.getElementById('name');
-            const password = document.getElementById('password');
-            const confirmpassword = document.getElementById('confirmpassword');
-            const email = document.getElementById('email');
-            const form = document.getElementById('form');
-            const errorElement = document.getElementById('error');
+            // const name = document.getElementById('name');
+            // const password = document.getElementById('password');
+            // const confirmpassword = document.getElementById('confirmpassword');
+            // const email = document.getElementById('email');
+            // const form = document.getElementById('form');
+            // const errorElement = document.getElementById('error');
           
-            form.addEventListener('submit', (e) => {
+            // form.addEventListener('submit', (e) => {
         
-              let messages = [];
+            //   let messages = [];
           
-              if (name.value === '' || name.value == null) {
-                messages.push('Name is required');
-              }else if (!name.value.match(/^[A-Za-z]+(\s[A-Za-z]+)?$/)) {
-                messages.push('Proper full name is required');
-              }
-              else if (name.value.length < 3) {  
-                messages.push('Name must be at least 3 characters long');
-              } else if (name.value.length > 20) {  
-                messages.push('Name must be less than 20 characters');
-              }
+            //   if (name.value === '' || name.value == null) {
+            //     messages.push('Name is required');
+            //   }else if (!name.value.match(/^[A-Za-z]+(\s[A-Za-z]+)?$/)) {
+            //     messages.push('Proper full name is required');
+            //   }
+            //   else if (name.value.length < 3) {  
+            //     messages.push('Name must be at least 3 characters long');
+            //   } else if (name.value.length > 20) {  
+            //     messages.push('Name must be less than 20 characters');
+            //   }
           
               
-              if(password.value !== confirmpassword.value){
-                messages.push('passwords should be same')
-               } else if (password.value === '' || password.value == null || password.value === "password") {
-                messages.push("Enter a valid password");
-              } else if (password.value.length < 8 || password.value.length > 15) {
-                messages.push('Password must be between 8 and 15 characters');
-              }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
-                messages.push('Valid Password is required')
-              }
+            //   if(password.value !== confirmpassword.value){
+            //     messages.push('passwords should be same')
+            //    } else if (password.value === '' || password.value == null || password.value === "password") {
+            //     messages.push("Enter a valid password");
+            //   } else if (password.value.length < 8 || password.value.length > 15) {
+            //     messages.push('Password must be between 8 and 15 characters');
+            //   }else if(!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)){
+            //     messages.push('Valid Password is required')
+            //   }
           
-              if (email.value === '' || email.value == null) {
-                messages.push("Email is required");
-              } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
-                messages.push("Enter a valid email address");
-              }  
-              if (messages.length > 0) {
-                e.preventDefault();
-                errorElement.innerText = messages.join(', ');
-              }
-            });
+            //   if (email.value === '' || email.value == null) {
+            //     messages.push("Email is required");
+            //   } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+            //     messages.push("Enter a valid email address");
+            //   }  
+            //   if (messages.length > 0) {
+            //     e.preventDefault();
+            //     errorElement.innerText = messages.join(', ');
+            //   }
+            // });
+            const form = document.getElementById('form');
+const name = document.getElementById('name');
+const password = document.getElementById('password');
+const confirmpassword = document.getElementById('confirmpassword');
+const email = document.getElementById('email');
+
+// Error spans
+const nameError = document.getElementById('nameError');
+const emailError = document.getElementById('emailError');
+const passwordError = document.getElementById('passwordError');
+const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+form.addEventListener('submit', (e) => {
+  let isValid = true;
+
+  // Clear previous error messages
+  nameError.textContent = '';
+  emailError.textContent = '';
+  passwordError.textContent = '';
+  confirmPasswordError.textContent = '';
+
+  // Name validation
+  if (name.value === '' || name.value == null) {
+    nameError.textContent = 'Name is required';
+    isValid = false;
+  } else if (!name.value.match(/^[A-Za-z]+(\s[A-Za-z]+)?$/)) {
+    nameError.textContent = 'Proper full name is required';
+    isValid = false;
+  } else if (name.value.length < 3) {
+    nameError.textContent = 'Name must be at least 3 characters long';
+    isValid = false;
+  } else if (name.value.length > 20) {
+    nameError.textContent = 'Name must be less than 20 characters';
+    isValid = false;
+  }
+
+  // Email validation
+  if (email.value === '' || email.value == null) {
+    emailError.textContent = 'Email is required';
+    isValid = false;
+  } else if (!email.value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+    emailError.textContent = 'Enter a valid email address';
+    isValid = false;
+  }
+
+  // Password validation
+  if (password.value !== confirmpassword.value) {
+    confirmPasswordError.textContent = 'Passwords must match';
+    isValid = false;
+  } else if (password.value === '' || password.value == null || password.value === "password") {
+    passwordError.textContent = 'Enter a valid password';
+    isValid = false;
+  } else if (password.value.length < 8 || password.value.length > 15) {
+    passwordError.textContent = 'Password must be between 8 and 15 characters';
+    isValid = false;
+  } else if (!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)) {
+    passwordError.textContent = 'Password must contain letters, numbers, and special characters (*, #, @, %)';
+    isValid = false;
+  }
+
+  if (!isValid) {
+    e.preventDefault();  // Prevent form submission if validation fails
+  }
+});
+
           </script>
     
 </body>

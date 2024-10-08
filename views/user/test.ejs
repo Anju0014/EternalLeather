@@ -1,419 +1,421 @@
 
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Checkout</h1>
 
+    <form action="/user/checkout" method="POST" id="checkout-form" class="flex flex-col space-y-6">
+        
+       
+        <div class="bg-white p-6 rounded-md shadow-md">
+            <h2 class="text-xl font-bold mb-4">Select Delivery Address</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <% if (addresses && addresses.length > 0) { %>
+                    <% addresses.forEach((address, index) => { %>
+                        <div class="flex items-start justify-between bg-gray-100 p-4 rounded-md shadow">
+                            <input type="radio" id="address<%= index %>" name="selectedAddress" value="<%= address._id %>" class="mr-4 mt-2" <%= index === 0 ? 'checked' : '' %> />
+                            <div class="flex-grow">
+                                <p class="font-semibold text-lg"><%= address.contactname %></p>
+                                <p><%= address.building %>, <%= address.street %></p>
+                                <p><%= address.city %>, <%= address.state %>, <%= address.country %>, <%= address.pincode %></p>
+                                <p>Landmark: <%= address.landMark %></p>
+                                <p>Phone: <%= address.phoneno %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="text-gray-500">No addresses found. Please add a new address.</p>
+                <% } %>
+            </div>
+            <a href="/user/profile" class="text-blue-500 hover:underline mt-4 block">Manage Addresses</a>
+        </div>
+       
 
-<div class="font-sans">
-    <div class="p-4 max-w-6xl max-md:max-w-xl mx-auto mt-8 ">
-        <div class="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="sm:w-full lg:w-4/5 lg:sticky top-0 flex flex-col gap-3 ">
-
-                <div class="zoom-container">
-                    <img id="mainImage" src="<%= product.productImages[0] %>" alt="Imagex" class="w-full rounded-lg object-cover zoom-image h-80" />
-                </div>
-
-                <div class="w-full flex gap-3 overflow-x-auto">
-                    <img src="<%= product.productImages[0] %>" alt="Image1" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
-                    <img src="<%= product.productImages[1] %>" alt="Image2" class="w-1/5 cursor-pointer rounded-lg thumbnail " />
-                    <img src="<%= product.productImages[2] %>" alt="Image3" class="w-1/5 cursor-pointer rounded-lg thumbnail object-cover" />
-                    <img src="<%= product.productImages[3] %>" alt="Image4" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
+        <div class="flex justify-between">
+         
+            <div class="bg-white p-6 rounded-md shadow-md w-1/2 mr-10">
+                <h2 class="text-xl font-bold mb-4">Cart Summary</h2>
+                <input type="hidden" id="cartId" name="cartId" value="<%= cart._id %>">>
+                <% cart.items.forEach(item => { %>
+                    <div class="flex justify-between mb-4">
+                        <span class="font-semibold text-gray-800"><%= item.productId.productName %></span>
+                        <span class="font-semibold text-gray-800">$<%= item.discountPrice %> x <%= item.productCount %></span>
+                    </div>
+                <% }) %>
+        
+                <hr class="my-4">
+                <div class="flex justify-between text-lg font-bold">
+                    <span>Total Payable</span>
+                    <span id="totalPayable">$<%= cart.payablePrice %></span> 
                 </div>
             </div>
+        
+            
+   
 
-            <div class="bg-red-100 px-5 pb-8 sm:text-center lg:text-start rounded">
-                <h2 class="text-2xl max-sm:text-2xl font-bold font-serif text-black-800 pt-3"><%= product.productName %></h2>
-                <div class="mt-8">
-                    <!-- Display Price and Discount Info -->
-                    <div>
-                        <% if(product.productDiscount > 0) { %>
-                            <h3 class="text-black text-2xl max-sm:text-2xl font-bold inline-block">
-                                <del>Rs. <%= product.productPrice %></del>
-                                Rs. <%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %>
-                            </h3>
-                            <h4 class="text-black text-xs max-sm:text-xs font-normal">Save <%= product.productDiscount %> %</h4>
-                        <% } else { %>
-                            <h3 class="text-black text-2xl max-sm:text-2xl font-bold inline-block">
-                                Rs. <%= product.productPrice %>
-                            </h3>
-                        <% } %>
-                    </div>
-                </div>
-
-                <!-- Availability Section -->
-                <div>
-                    <% if(product.productQuantity<=0){ %>
-                        <h2 class="px-5">SOLD OUT</h2>
-                        <p>This Item is currently out of Stock</p>
-                    <% } else { %>
-                        <h3 class="px-5 py-2">Availability: In Stock</h3>
-                    <% }  %>
-
-                    <h2 class="px-5 py-2 font-light">Features</h2>
-                    <li class="px-8 font-light">Type: <%= product.productType %></li>
-                    <li class="px-8 font-light">Colour: <%= product.productColor %></li>
-                </div>
-
-                <!-- Cart Button / Quantity Controls -->
-                <div id="cart-controls" class="mt-10 flex flex-wrap gap-4 font-serif">
-                    <button id="add-to-cart-btn" type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 512 512">
-                            <path d="..." />
-                        </svg>
-                        Add to cart
+          
+            <div class="bg-white p-6 rounded-md shadow-md w-1/2">
+                <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
+                <div class="w-full">
+                    <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
+                        <option value="" selected>Select a coupon code</option>
+                        <% coupons.forEach(coupon => { %>
+                            <option value="<%= coupon._id %>" data-discount="<%= coupon.discountValue %>" data-type="<%= coupon.discountType %>">
+                                <%= coupon.couponCode %>
+                            </option>
+                        <% }) %>
+                    </select>
+            
+                    <button type="button" onclick="applyCoupon()" 
+                        class="w-full flex items-center justify-center font-semibold tracking-wide bg-black hover:bg-red-900 px-4 py-2 text-sm text-white rounded">
+                        Apply Coupon
                     </button>
-                </div>
-
-                <!-- Modal -->
-                <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-                    <div class="bg-white rounded-lg p-6">
-                        <h2 class="text-xl font-semibold">Product added to cart!</h2>
-                        <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded">Close</button>
+            
+                    <input type="hidden" id="appliedCoupon" name="appliedCoupon" value="">
+                    <input type="hidden" id="newTotalPayable" value="">
+            
+                    <div id="newTotalSection" class="mt-4 hidden">
+                        <hr class="my-4">
+                        <div class="flex justify-between text-lg font-bold">
+                            <span>New Total</span>
+                            <span id="newTotal">$<%= cart.payablePrice %></span>
+                        </div>
                     </div>
                 </div>
+            </div> 
             </div>
+     
+      
+        <div class="bg-white p-6 rounded-md shadow-md">
+            <h2 class="text-xl font-bold mb-4">Select Payment Method</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery" checked>
+                        <label for="cashOnDelivery" class="ml-2 text-gray-700">Cash on Delivery</label>
+                    </div>
+                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Cash On Delivery')">Pay Now</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="radio" id="Wallet" name="paymentMethod" value="Wallet">
+                        <label for="Wallet" class="ml-2 text-gray-700">Wallet</label>
+                    </div>
+                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Wallet')">Pay Now</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="radio" id="razorpay" name="paymentMethod" value="razorpay">
+                        <label for="razorpay" class="ml-2 text-gray-700">Razorpay</label>
+                    </div>
+                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Razorpay')">Pay Now</button>
+                </div>
+            </div>
+        </div>
+        <input type="text" id="razorpay_payment_id" name="razorpay_payment_id" value="">
+        <input type="text" id="razorpay_order_id" name="razorpay_order_id" value="">
+        <input type="text" id="razorpay_signature" name="razorpay_signature" value="">
+        <!-- Place Order Button -->
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-md font-bold hover:bg-blue-600">
+                Place Order
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal Structure -->
+<div id="orderConfirmationModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg max-w-lg w-1/3 p-6">
+        <div class="text-center">
+            <h2 class="text-2xl font-semibold text-gray-800">Order Confirmed!</h2>
+            <p class="mt-4 text-gray-600">Your order has been confirmed successfully.</p>
+            <button id="closeModal" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none">Close</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Get the Add to Cart button and Cart Modal
-    const addToCartBtn = document.getElementById('add-to-cart-btn');
-    const cartModal = document.getElementById('cart-modal');
-    const closeModalBtn = document.getElementById('close-modal');
-    const cartControls = document.getElementById('cart-controls');
+    // Function to show the modal
+    function showModal() {
+        document.getElementById("orderConfirmationModal").classList.remove("hidden");
+    }
 
-    // Event listener for Add to Cart button
-    addToCartBtn.addEventListener('click', function () {
-        // Show modal
-        cartModal.classList.remove('hidden');
-        // Replace Add to Cart button with quantity controls
-        cartControls.innerHTML = `
-            <div class="flex items-center gap-3">
-                <button id="decrease-qty" class="px-4 py-2 bg-red-400 text-white rounded">-</button>
-                <span id="qty-display" class="font-semibold">1</span>
-                <button id="increase-qty" class="px-4 py-2 bg-red-400 text-white rounded">+</button>
-            </div>
-        `;
-        // Handle Quantity Increase/Decrease
-        let quantity = 1;
-        const qtyDisplay = document.getElementById('qty-display');
-        document.getElementById('increase-qty').addEventListener('click', function () {
-            quantity++;
-            qtyDisplay.innerText = quantity;
+    // Close modal when the "Close" button is clicked
+    document.getElementById("closeModal").addEventListener("click", function() {
+        document.getElementById("orderConfirmationModal").classList.add("hidden");
+    });
+    
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.getElementById('checkout-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+          
+        console.log("ooo")
+    
+        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+        
+    
+        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+       
+        const cartId = document.getElementById('cartId').value;
+        const appliedCoupon=document.getElementById('appliedCoupon').value
+        const razorpay_payment_id = document.getElementById('razorpay_payment_id').value;
+        const razorpay_order_id = document.getElementById('razorpay_order_id').value;
+        const razorpay_signature = document.getElementById('razorpay_signature').value;
+   
+        const formData = {
+            selectedAddress: selectedAddress,
+            paymentMethod: selectedPaymentMethod,
+            cartId:cartId,
+            appliedCoupon:appliedCoupon,
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature
+            
+        };
+
+        // Send the data using fetch API
+        const response = await fetch('/user/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
         });
-        document.getElementById('decrease-qty').addEventListener('click', function () {
-            if (quantity > 1) {
-                quantity--;
-                qtyDisplay.innerText = quantity;
+
+        const result = await response.json();
+
+        if (result.success) {
+            const modal = document.getElementById('orderConfirmationModal');
+    modal.classList.remove('hidden');
+
+    // Add event listener to close the modal
+    document.getElementById('closeModal').addEventListener('click', function() {
+        // Hide the modal
+        modal.classList.add('hidden');
+
+        // Redirect to the order summary page after closing the modal
+        window.location.href = '/user/order/summary';
+    });
+            // // Redirect to the order confirmation page
+            // window.location.href = '/user/order/summary';
+        } else {
+            alert(result.message);
+        }
+    });
+
+
+    let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
+    let couponApplied = false;
+
+    function applyCoupon() {
+        const couponSelect = document.getElementById('couponCodeSelect');
+        const selectedOption = couponSelect.options[couponSelect.selectedIndex];
+
+        if (selectedOption.value) {
+            // Coupon is applied
+            const discountValue = parseFloat(selectedOption.getAttribute('data-discount'));
+            const discountType = selectedOption.getAttribute('data-type');
+            let newTotal;
+
+            // Calculate the new total based on the coupon type
+            if (discountType === 'percentage') {
+                newTotal = originalTotalPayable - (originalTotalPayable * (discountValue / 100));
+            } else {
+                newTotal = originalTotalPayable - discountValue;
             }
-        });
+
+            // Ensure the new total is not below zero
+            newTotal = Math.max(0, newTotal);
+
+            // Display the new total and show the section
+            document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
+            document.getElementById('newTotalSection').classList.remove('hidden');
+
+            // Update the hidden input for new total
+            document.getElementById('newTotalPayable').value = newTotal;
+            document.getElementById('appliedCoupon').value = selectedOption.value;
+
+            couponApplied = true;
+        } else {
+            // No coupon selected (reset to original total)
+            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total section
+            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('newTotalPayable').value = '';
+            document.getElementById('appliedCoupon').value = ''; // Reset the applied coupon field
+
+            couponApplied = false;
+        }
+    }
+
+    // Reset the coupon select when clicked to allow re-selection
+    document.getElementById('couponCodeSelect').addEventListener('change', () => {
+        if (!document.getElementById('couponCodeSelect').value) {
+            // Reset to original payable price if no coupon is selected
+            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total
+            couponApplied = false;
+        }
     });
 
-    // Event listener for Close Modal button
-    closeModalBtn.addEventListener('click', function () {
-        cartModal.classList.add('hidden');
+    // Display the original total price before applying any coupon
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
     });
+
+
+    function handlePayNow(selectedMethod) {
+        // Get the selected payment method value
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (selectedMethod === 'Cash On Delivery') {
+            // Handle Cash on Delivery logic here
+            alert('Proceeding with Cash on Delivery');
+            // Submit the order form or call the backend API
+            processOrder(paymentMethod);
+        } else if (selectedMethod === 'Wallet') {
+            // Handle Wallet payment logic here
+            alert('Proceeding with Wallet payment');
+            // Call backend API for wallet payment
+            processWalletPayment();
+        } else if (selectedMethod === 'Razorpay') {
+            // Handle Razorpay payment logic here
+            alert('Proceeding with Razorpay payment');
+            processRazorpayPayment();
+        }
+    }
+
+    function processOrder(paymentMethod) {
+        // Example function to process an order for COD
+        console.log(`Order placed with ${paymentMethod}`);
+        // Here you can call your backend or proceed to order confirmation
+    }
+
+    function processWalletPayment() {
+        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
+        fetch('/user/wallet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                paymentMethod: 'Wallet',
+                cartTotal: totalAmount  // Example total
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Payment  will be from wallet!');
+              
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+   
+
+
+
+async function processRazorpayPayment() {
+    try {
+        // Step 1: Create the order on the server
+        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
+        const response = await fetch('/user/razorPayOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                amount: totalAmount, // Amount in INR
+            }),
+        });
+        console.log("free")
+        const data = await response.json();
+        console.log(data)
+        // Step 2: Check if the order was created successfully
+        if (data.orderID) {
+            console.log(data.order)
+            const options = {
+                key: data.key_id, // Your API key from Razorpay
+                 amount: data.amount, // Amount in paise
+                currency: "INR",
+                name: "Pelle Eterno",
+                description: "Order Payment",
+                order_id: data.orderID, // Order ID generated from backend
+                handler: async function (response) {
+
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    // Step 3: Payment successful, verify the payment
+                    const paymentData = {
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature,
+                    };
+                  console.log("pat")
+                    // Send payment details to backend for verification
+                    const verifyResponse = await fetch('/user/verifyPayment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(paymentData),
+                    });
+
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.success) {
+                        alert('Payment successful and verified!');
+                        // Redirect to a success page 
+                    } else {
+                        alert('Payment verification failed.');
+                    }
+                },
+                prefill: {
+                    name: "<%= user.name %>", // Prefill with user data
+                    email: "<%= user.email %>",
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+
+            // Step 4: Open Razorpay checkout form
+            const rzp1 = new Razorpay(options);
+            rzp1.open();
+
+            // Handle payment failure
+            rzp1.on('payment.failed', function (response) {
+                alert('Payment failed. Please try again.');
+            });
+        } else {
+            alert(data.message); // Show error message if order creation fails
+        }
+    } catch (error) {
+        console.error('Error initiating Razorpay payment:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+
 </script>
 
 
 
 
-<div id="cart-controls" class="flex items-center gap-4">
-    <!-- Add to Cart Button -->
-    <button id="add-to-cart-btn" type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 512 512">
-            <path d="..." />
-        </svg>
-        Add to cart
-    </button>
 
-    <!-- Add to Wishlist Button -->
-    <button type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 64 64">
-            <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
-        </svg>
-        Add to wishlist
-    </button>
-</div>
-<%- if(sessionuser){ %>
-<!-- Modal for Add to Cart Confirmation -->
-<div id="cart-modal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50  flex hidden">
-    <div class="bg-white rounded-lg text-center p-6">
-        <h2 class="text-xl text-center font-semibold">Product added to cart!</h2>
-        <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400  text-white rounded">Close</button>
-    </div>
-</div>
-</div>
-<% }else{ %>
-<a href="/user/login"></a>
-<%  }   %>
+<script>
+
+
+</script>
 
 
 
-
-
-
-<div class="flex flex-col gap-4">
-    <div>
-        <h3 class="text-base font-bold text-gray-800"></h3>
-        <p class="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2">Color: <span class="inline-block w-5 h-5 rounded-md 
-            <% if (product.productColor === 'Brown') { %> bg-red-900 
-            <% } else if (product.productColor === 'Blue') { %> bg-blue-400 
-            <% } else if (product.productColor === 'Green') { %> bg-green-400 
-            <% } %>"  >
-
-        </span>
-        </span></p>
-    </div>
-
-
-
-    
-
-
-
-
-    <div class="font-sans">
-        <div class="p-4 max-w-6xl max-md:max-w-xl mx-auto mt-8 ">
-            <div class="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="sm:w-full lg:w-4/5 lg:sticky top-0 flex flex-col gap-3 ">
-     
-                    <div class="zoom-container">
-                        <img id="mainImage" src="<%= product.productImages[0] %>" alt="Imagex" class="w-full rounded-lg object-cover zoom-image h-80" />
-                    </div>
-    
-    
-                    <div class="w-full flex gap-3 overflow-x-auto">
-                        <img src="<%= product.productImages[0] %>" alt="Image1" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
-                        <img src="<%= product.productImages[1] %>" alt="Image2" class="w-1/5 cursor-pointer rounded-lg thumbnail " />
-                        <img src="<%= product.productImages[2] %>" alt="Image3" class="w-1/5 cursor-pointer rounded-lg thumbnail object-cover" />
-                        <img src="<%= product.productImages[3] %>" alt="Image4" class="w-1/5 cursor-pointer rounded-lg thumbnail" />
-                    </div>
-                </div>
-                            <div class="bg-red-100 px-5 pb-8 sm:text-center lg:text-start rounded">
-                            <h2 class="text-2xl max-sm:text-2xl font-bold font-serif text-black-800 pt-3"><%=product.productName%></h2>
-                            <div class="mt-8">
-                              <div>
-                                  <% if(product.productDiscount > 0) { %>
-                                      <h3 class="text-black text-2xl max-sm:text-2xl font-bold inline-block">
-                                          <del>Rs. <%= product.productPrice %></del>
-                                          Rs. <%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %>
-                                      </h3>
-                                      <h4 class="text-black text-xs max-sm:text-xs font-normal">Save <%= product.productDiscount %> %</h4>
-                                  <% } else { %>
-                                      <h3 class="text-black text-2xl max-sm:text-2xl font-bold inline-block">
-                                          Rs. <%= product.productPrice %>
-                                      </h3>
-                                  <% } %>
-                              </div>
-                          </div>
-                          
-                            <div>
-                                <% if(product.productQuantity<=0){ %>
-                                    <h2 class="px-5">SOLD OUT</h2>
-                                    <p>This Item is currently out of Stock</p>
-                               <% } else { %>
-                                     <h3 class="px-5 py-2">Availability: In Stock</h3>
-                               <% }  %>
-                                <h2 class="px-5 py-2 font-light">Features</h2>
-                                <li class="px-8 font-light">Type: <%= product.productType %></li>
-                                <li class="px-8 font-light">Colour: <%= product.productColor %></li>
-    
-                                <div class="px-5 py-3">
-                                  <h2 class="inline-block">Ratings:</h2>
-                                  <% for(let i = 1; i <= 5; i++) { %>
-                                      <% if(i <= product.ratings) { %>
-                                          <i class="fa-solid fa-star" style="color: #FFD43B;"></i>
-                                      <% } else { %>
-                                          <i class="fa-regular fa-star" style="color: rgb(247, 245, 242);"></i> <!-- empty star -->
-                                      <% } %>
-                                  <% } %>
-                              </div>
-    
-                              
-                            </div>
-    
-                            <br>
-                            <br>
-    
-                            <div class="flex items-center gap-4">
-                                <!-- Cart and Wishlist Controls -->
-                                <div id="cart-controls" >
-                                    <!-- Add to Cart Button -->
-                                     
-                                    <button id="add-to-cart-btn" type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 512 512">
-                                            <path d="..." />
-                                        </svg>
-                                        Add to cart
-                                    </button>
-                                </div>
-                                    <!-- Add to Wishlist Button -->
-                                    <button type="button" class="flex items-center justify-center px-8 py-4 bg-red-400 hover:bg-red-900 text-white border border-gray-800 text-base rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer fill-current inline mr-3" viewBox="0 0 64 64">
-                                            <path d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z" data-original="#000000"></path>
-                                        </svg>
-                                        Add to wishlist
-                                    </button>
-                                </div>
-                                
-                                <div id="cart-modal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 flex hidden">
-                                    <div class="bg-white rounded-lg text-center p-6">
-                                        <% if (sessionuser) { %>
-                                            <h2 class="text-xl text-center font-semibold">Product added to cart!</h2>
-                                            <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded">Close</button>
-                                        <% } else { %>
-                                            <h2 class="text-xl text-center font-semibold">Please log in to add items to your cart.</h2>
-                                            <a href="/user/login" class="mt-4 inline-block px-4 py-2 bg-red-400 text-white rounded hover:bg-red-900">Log in</a>
-                                        <% } %>
-                                        <form id="cart-form" action="/user/addtocart/product._id" method="POST" class="hidden">
-                                            <input type="hidden" name="productId" value="<%= product._id %>">
-                                            <input type="hidden" id="quantity-input" name="quantity" value="1">
-                                        </form>
-                                    </div>
-                                </div>  
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <br>
-                    <h3 class="text-red-900 font-semibold font-serif py-3 px-5 border-b-2 border-red-900">Description</h3>
-                    <ul class="text-black font-normal  font-serif text-base py-3  px-10 cursor-pointer">
-                        <%= product.productDescription %></ul>
-                    <br>
-                    <hr>
-                    <h3 class=" font-semibold py-3 px-5">Reviews</h3>
-                    <hr class="w-1/12">
-                    <ul class="py-2 px-10">"Recently purchased a wallet via online. Well satisfied with the product delivery and the quality"</ul>
-                    <ul class="py-2 px-10">"Nice Product"</ul>
-                </div>
-            </div>
-    
-    
-            <script>
-                // Select all thumbnail images
-                const thumbnails = document.querySelectorAll('.thumbnail');
-                
-                // Select the main image
-                const mainImage = document.getElementById('mainImage');
-                
-                const addToCartBtn = document.getElementById('add-to-cart-btn');
-                const cartModal = document.getElementById('cart-modal');
-                const closeModalBtn = document.getElementById('close-modal');
-                const cartControls = document.getElementById('cart-controls');
-               
-        //const qtyBox=document.getElementById('qty-box')
-                // Loop through each thumbnail and add a click event listener
-                thumbnails.forEach(thumbnail => {
-                  thumbnail.addEventListener('click', function() {
-                    // On click, set the main image source to the clicked thumbnail's source
-                    mainImage.src = this.src;
-                  });
-                });
-    
-    
-                addToCartBtn.addEventListener('click', function () {
-            // Show modal
-            cartModal.classList.remove('hidden');
-            cartform.submit();
-            // Replace Add to Cart button with quantity controls
-            cartControls.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <h2>Qty</h2>
-                    <button id="decrease-qty" class="px-4 py-2 bg-red-400 text-white rounded">-</button>
-                    <span id="qty-display" class="font-semibold">1</span>
-                    <button id="increase-qty" class="px-4 py-2 bg-red-400 text-white rounded">+</button>
-                </div>
-            `;
-            
-            // Handle Quantity Increase/Decrease
-            let quantity = 1;
-            const qtyDisplay = document.getElementById('qty-display');
-            document.getElementById('increase-qty').addEventListener('click', function () {
-                quantity++;
-                qtyDisplay.innerText = quantity;
-            });
-            document.getElementById('decrease-qty').addEventListener('click', function () {
-                if (quantity > 1) {
-                    quantity--;
-                    qtyDisplay.innerText = quantity;
-                }
-            });
-        });
-    
-        // Event listener for Close Modal button
-        closeModalBtn.addEventListener('click', function () {
-            cartModal.classList.add('hidden');
-            qtyBox.style.display='inline'
-        });
-    
-              </script>
-    
-    <style>
-        .zoom-container {
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .zoom-image {
-          transition: transform 0.3s ease; /* Smooth zoom effect */
-        }
-        
-        .zoom-image:hover {
-          transform: scale(1.5); /* Zoom factor (increase this value for more zoom) */
-          cursor: zoom-in;
-        }
-      </style>
-    
-    <!-- <style>
-        .zoom-container {
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .zoom-image {
-          transition: transform 0.5s ease;
-        }
-        
-        .zoom-container.zoomed .zoom-image {
-          transform: scale(2); /* Adjust scale as needed */
-        }
-      </style> -->
-    
-
-
-
-
-
-
-
-
-
-
-
-      
-    <!-- <div class="flex justify-center mt-4 mb-8">
-        <% if (currentPage > 1) { %>
-            <a href="/user/allproducts?page=<%= currentPage - 1 %>&id=<%=catid%>&minPrice=<%= query.minPrice %>&maxPrice=<%= query.maxPrice %>&type=<%= query.type %>&sortstyle=<%= query.sortstyle %>"
-               class="px-4 py-2 bg-gray-300 border border-gray-500 rounded mr-2"><--</a>
-        <% } %>
-    
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="/user/allproducts?page=<%= i %>&id=<%=catid%>&minPrice=<%= query.minPrice %>&maxPrice=<%= query.maxPrice %>&type=<%= query.type %>&sortstyle=<%= query.sortstyle %>"
-               class="px-4 py-2 bg-gray-300 border border-gray-500 rounded <%= currentPage === i ? 'bg-red-500 text-white' : '' %>">
-                <%= i %>
-            </a>
-        <% } %>
-    
-        <% if (currentPage < totalPages) { %>
-            <a href="/user/allproducts?page=<%= currentPage + 1 %>&id=<%=catid%>&minPrice=<%= query.minPrice %>&maxPrice=<%= query.maxPrice %>&type=<%= query.type %>&sortstyle=<%= query.sortstyle %>"
-               class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
-        <!-- <% } %>
-    </div> --> 
-
-
-
-
-
-
-
-
-    

@@ -34,8 +34,9 @@ export const walletView = async (req, res) => {
     // .skip(skip)
     // .limit(pageSize);
 
+     
+    // wallets.transaction.sort((a, b) => new Date(a.transactionDate) - new Date(b.transactionDate));
 
-         
          console.log("haha")
          console.log(wallets)
          console.log("sending")

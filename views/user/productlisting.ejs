@@ -38,7 +38,7 @@
     </select>
 </form>  -->
     
-    <form action="/user/allproducts" method="GET" class="p-4 bg-red-200 rounded-md"> 
+    <!-- <form action="/user/allproducts" method="GET" class="p-4 bg-red-200 rounded-md"> 
     <label for="category" class="block text-sm font-medium text-white">Category:</label>
     <select name="category" id="category" class="bg-white border rounded px-2 py-1 mb-2 w-full">
         <option value="">All Categories</option>
@@ -84,4 +84,48 @@
     <button type="submit" class="bg-red-900 text-white py-2 px-4 rounded hover:bg-red-600 mt-2 w-full">Apply Filters</button>
 </form>
 
-   </div> 
+   </div>  -->
+
+   <form action="/user/allproducts" method="GET" class="p-4 bg-red-200 rounded-md"> 
+    <label for="category" class="block text-sm font-medium text-white">Category:</label>
+    <select name="category" id="category" class="bg-white border rounded px-2 py-1 mb-2 w-full">
+        <option value="">All Categories</option>
+        <% productCollection.forEach(function (category) { %>
+            <option value="<%= category._id %>" <%= category._id === catid ? 'selected' : '' %>>
+                <%= category.categoryName %> 
+            </option>  
+        <% }); %>
+    </select>
+
+    <label for="minPrice" class="block text-sm font-medium text-white">Min Price:</label>
+    <input type="number" name="minPrice" id="minPrice" placeholder="0" 
+           class="border rounded px-2 py-1 mb-2 w-full" 
+           value="<%= minPrice %>">
+
+    <label for="maxPrice" class="block text-sm font-medium text-white">Max Price:</label>
+    <input type="number" name="maxPrice" id="maxPrice" placeholder="5000" 
+           class="border rounded px-2 py-1 mb-2 w-full" 
+           value="<%= maxPrice %>">
+
+    <label for="type" class="block text-sm font-medium text-white">Type:</label>
+    <select name="type" id="type" class="bg-white border rounded px-2 py-1 mb-2 w-full">
+        <option value="">All Types</option>
+        <option value="Wallet" <%= type === 'Wallet' ? 'selected' : '' %>>Wallet</option>
+        <option value="File Holder" <%= type === 'File Holder' ? 'selected' : '' %>>File Holder</option>
+        <option value="Gadget Holder" <%= type === 'Gadget Holder' ? 'selected' : '' %>>Gadget Holder</option>
+    </select>
+
+    <label for="sortstyle" class="block text-sm font-medium text-white">Sort By:</label>
+    <select name="sortstyle" id="sortstyle" class="bg-white border rounded px-2 py-1 mb-2 w-full">
+        <option value="">Sort By</option>
+        <option value="lowToHigh" <%= sortstyle === 'lowToHigh' ? 'selected' : '' %>>Price: Low to High</option>
+        <option value="highToLow" <%= sortstyle === 'highToLow' ? 'selected' : '' %>>Price: High to Low</option>
+        <option value="aToZ" <%= sortstyle === 'aToZ' ? 'selected' : '' %>>Name: A to Z</option>
+        <option value="zToA" <%= sortstyle === 'zToA' ? 'selected' : '' %>>Name: Z to A</option>
+        <option value="recent" <%= sortstyle === 'recent' ? 'selected' : '' %>>New Arrivals</option>
+        <option value="ratings" <%= sortstyle === 'ratings' ? 'selected' : '' %>>Ratings</option>
+    </select>
+
+    <button type="submit" class="bg-red-900 text-white py-2 px-4 rounded hover:bg-red-600 mt-2 w-full">Apply Filters</button>
+</form>
+</div>

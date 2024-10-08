@@ -133,8 +133,6 @@ export const userproductdetail = async (req, res) => {
 // };
 
 
-
-
 export const userproductview = async (req, res) => {
     try {
         const catid = req.query.category || ''; // Get the category from the query
@@ -159,18 +157,17 @@ export const userproductview = async (req, res) => {
             sortCriteria = { productName: 1 }; // Sort by name A to Z
         } else if (sortstyle === 'zToA') {
             sortCriteria = { productName: -1 }; // Sort by name Z to A
-        }else if (sortstyle === 'recent') {
-            sortCriteria = { createdAt: -1 }; // Sort by name Z to A
+        } else if (sortstyle === 'recent') {
+            sortCriteria = { createdAt: -1 }; // Sort by recent
         } else if (sortstyle === 'ratings') {
-            sortCriteria = { ratings: -1 }; // Sort by name Z to A
+            sortCriteria = { ratings: -1 }; // Sort by ratings
         }
 
         const query = {
             isDeleted: false,
-            productPrice: { $gte: minPrice, $lte: maxPrice } 
+            productPrice: { $gte: minPrice, $lte: maxPrice }
         };
 
-        
         if (catid) {
             query.productCategory = catid;
         }
@@ -179,23 +176,17 @@ export const userproductview = async (req, res) => {
             query.productType = type;
         }
 
-   
         product = await Product.find(query)
             .populate('productCategory', 'categoryName')
             .sort(sortCriteria) // Apply sorting
             .skip(skip)
             .limit(pageSize);
 
-      
         totalProducts = await Product.countDocuments(query);
-
-    
         const totalPages = Math.ceil(totalProducts / pageSize);
-
-      
         const productCollection = await Category.find({ isActive: true });
 
-    
+        // Pass the filter values to the view for rendering
         res.render('userAllProducts', {
             product,
             currentPage: page,
@@ -203,13 +194,94 @@ export const userproductview = async (req, res) => {
             productCollection,
             sessionuser: req.session.isUser,
             catid,
-            query:req.query
-
+            minPrice,    // Include minPrice
+            maxPrice,    // Include maxPrice
+            type,        // Include type
+            sortstyle,   // Include sortstyle
+            query: req.query
         });
     } catch (error) {
         console.log(error);
+        res.status(500).send('Internal Server Error'); // Handle error response
     }
 };
+
+
+// export const userproductview = async (req, res) => {
+//     try {
+//         const catid = req.query.category || ''; // Get the category from the query
+//         const minPrice = parseFloat(req.query.minPrice) || 0; // Get the minimum price
+//         const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; // Get the maximum price
+//         const type = req.query.type || ''; // Get the product type
+//         const sortstyle = req.query.sortstyle || ''; // Get the sort style
+
+//         const page = parseInt(req.query.page) || 1;
+//         const pageSize = 12;
+//         const skip = (page - 1) * pageSize;
+
+//         let product;
+//         let totalProducts;
+
+//         let sortCriteria = {};
+//         if (sortstyle === 'lowToHigh') {
+//             sortCriteria = { productPrice: 1 }; // Sort by price ascending
+//         } else if (sortstyle === 'highToLow') {
+//             sortCriteria = { productPrice: -1 }; // Sort by price descending
+//         } else if (sortstyle === 'aToZ') {
+//             sortCriteria = { productName: 1 }; // Sort by name A to Z
+//         } else if (sortstyle === 'zToA') {
+//             sortCriteria = { productName: -1 }; // Sort by name Z to A
+//         }else if (sortstyle === 'recent') {
+//             sortCriteria = { createdAt: -1 }; // Sort by name Z to A
+//         } else if (sortstyle === 'ratings') {
+//             sortCriteria = { ratings: -1 }; // Sort by name Z to A
+//         }
+
+//         const query = {
+//             isDeleted: false,
+//             productPrice: { $gte: minPrice, $lte: maxPrice } 
+//         };
+
+        
+//         if (catid) {
+//             query.productCategory = catid;
+//         }
+
+//         if (type) {
+//             query.productType = type;
+//         }
+
+   
+//         product = await Product.find(query)
+//             .populate('productCategory', 'categoryName')
+//             .sort(sortCriteria) // Apply sorting
+//             .skip(skip)
+//             .limit(pageSize);
+
+      
+//         totalProducts = await Product.countDocuments(query);
+
+    
+//         const totalPages = Math.ceil(totalProducts / pageSize);
+
+      
+//         const productCollection = await Category.find({ isActive: true });
+
+    
+//         res.render('userAllProducts', {
+//             product,
+//             currentPage: page,
+//             totalPages: totalPages,
+//             productCollection,
+//             sessionuser: req.session.isUser,
+//             catid,
+//             query:req.query
+
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
 
 
 export const userproductcategorywise= async(req,res)=>{
