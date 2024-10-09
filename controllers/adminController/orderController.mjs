@@ -21,10 +21,13 @@ export const adminorders= async (req, res) => {
             light:req.flash()
         });
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        console.log(error)
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        console.log('Error fetching orders:', error);
+    //     console.log(error)
+    //     res.status(500).json({ success: false, message: 'Internal server error' });
+    // 
+    next(error)
     }
+ 
 };
 
 // Delete Category
@@ -52,11 +55,10 @@ export const adminorderCancel = async (req, res) => {
 
     } catch (error) {
         console.log(`Error deleting product: ${error}`);
-        req.flash("error", "An error occurred while cancelling the order");
-        res.redirect('/admin/order');
+        // req.flash("error", "An error occurred while cancelling the order");
+        // res.redirect('/admin/order');
+        next(error)
     }
-
-    
    
 };
 export const adminorderupdate= async (req, res) => {
@@ -88,6 +90,7 @@ export const adminorderupdate= async (req, res) => {
     res.redirect('/admin/order'); 
 }catch (error) {
     console.error('Error toggling block status:', error);
-    res.status(500).send('Internal Server Error');
+    // res.status(500).send('Internal Server Error');
+    next(error)
 }
-};
+}

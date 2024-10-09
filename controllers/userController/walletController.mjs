@@ -56,6 +56,7 @@ export const walletView = async (req, res) => {
         });
     } catch (error) {
         console.log(`error from user Wallet${error}`);
+        next(error)
     }
 };
 export const checkWalletBalance = async (req, res) => {
@@ -75,7 +76,8 @@ export const checkWalletBalance = async (req, res) => {
         // Sufficient balance
         res.json({ success: true });
     } catch (error) {
-        console.error('Error checking wallet balance:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        console.log('Error checking wallet balance:', error);
+        next(error)
+        // res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

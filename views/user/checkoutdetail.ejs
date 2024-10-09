@@ -37,14 +37,14 @@
                 <% cart.items.forEach(item => { %>
                     <div class="flex justify-between mb-4">
                         <span class="font-semibold text-gray-800"><%= item.productId.productName %></span>
-                        <span class="font-semibold text-gray-800">$<%= item.discountPrice %> x <%= item.productCount %></span>
+                        <span class="font-semibold text-gray-800">Rs.<%= item.discountPrice %> x <%= item.productCount %></span>
                     </div>
                 <% }) %>
         
                 <hr class="my-4">
                 <div class="flex justify-between text-lg font-bold">
                     <span>Total Payable</span>
-                    <span id="totalPayable">$<%= cart.payablePrice %></span> 
+                    <span id="totalPayable">Rs.<%= cart.payablePrice %></span> 
                 </div>
             </div>
         
@@ -76,7 +76,7 @@
                         <hr class="my-4">
                         <div class="flex justify-between text-lg font-bold">
                             <span>New Total</span>
-                            <span id="newTotal">$<%= cart.payablePrice %></span>
+                            <span id="newTotal">Rs.<%= cart.payablePrice %></span>
                         </div>
                     </div>
                 </div>
@@ -231,7 +231,7 @@
             newTotal = Math.max(0, newTotal);
 
             // Display the new total and show the section
-            document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
+            document.getElementById('newTotal').innerText = `Rs.${newTotal.toFixed(2)}`;
             document.getElementById('newTotalSection').classList.remove('hidden');
 
             // Update the hidden input for new total
@@ -242,7 +242,7 @@
         } else {
             // No coupon selected (reset to original total)
             document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total section
-            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('totalPayable').innerText = `Rs.${originalTotalPayable.toFixed(2)}`;
             document.getElementById('newTotalPayable').value = '';
             document.getElementById('appliedCoupon').value = ''; // Reset the applied coupon field
 
@@ -254,7 +254,7 @@
     document.getElementById('couponCodeSelect').addEventListener('change', () => {
         if (!document.getElementById('couponCodeSelect').value) {
             // Reset to original payable price if no coupon is selected
-            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+            document.getElementById('totalPayable').innerText = `Rs.${originalTotalPayable.toFixed(2)}`;
             document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total
             couponApplied = false;
         }
@@ -262,7 +262,7 @@
 
     // Display the original total price before applying any coupon
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
+        document.getElementById('totalPayable').innerText = `Rs.${originalTotalPayable.toFixed(2)}`;
     });
 
 
@@ -658,8 +658,9 @@ async function processRazorpayPayment() {
             processWalletPayment()
         }
     } catch (error) {
-        console.error('Error initiating Razorpay payment:', error);
-        alert('An error occurred. Please try again.');
+        // console.error('Error initiating Razorpay payment:', error);
+        // alert('An error occurred. Please try again.');
+        next(error)
     }
 }
 </script>

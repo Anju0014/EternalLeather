@@ -3,19 +3,7 @@ import Category from "../../model/categoryModel.mjs"
 import bcrypt from "bcrypt"
 import addressSchema from "../../model/addressModel.mjs"
 
-// export const userdata=async (req,res)=>{
-//     try{
-//         const sessionuser=req.session.isUser
-//         const productCollection=await Category.find({isActive:true});
-//         const user= await User.findOne({email:req.session.user})
-//         const addresses=user.address;
-//         //const addresses=await Address.find({isDeleted:false})
-//         res.render('userprofile',{sessionuser,productCollection,addresses})
-//     }catch(error){
-//         console.log(error)
-//     }
 
-// }
 
 const securePassword = async(password)=>{
     try{
@@ -25,6 +13,7 @@ const securePassword = async(password)=>{
 
     }catch(error){
         console.log(error.message)
+        next(error)
 
     }
 }
@@ -55,7 +44,8 @@ export const userdata = async (req, res) => {
         res.render('userprofile', { sessionuser, productCollection, addresses, user ,message:req.flash(),query:req.query});
     } catch (error) {
         console.log(`Error in userdata function: ${error}`);
-        return res.redirect('/user/home');
+        next(error)
+        // return res.redirect('/user/home');
     }
 };
 
@@ -74,7 +64,8 @@ export const useredit = async (req, res) => {
         res.redirect('/user/profile')
     }catch(error){
         console.log(error)
-        res.redirect('/user/profile')
+        next(error)
+        // res.redirect('/user/profile')
     }
 }
 export const userchangepassword= async (req,res)=>{
@@ -112,7 +103,8 @@ export const userchangepassword= async (req,res)=>{
 
 } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    next(err)
+    // res.status(500).json({ error: 'Server error' });
 }
     // }
 }
@@ -152,8 +144,9 @@ export const addressAdd = async (req, res) => {
         return res.redirect('/user/profile');
     } catch (error) {
         console.log(`Error from user address add: ${error}`);
-        req.flash("error", "An error occurred while adding the address");
-        return res.redirect('/user/profile');
+        // next(error)
+         req.flash("error", "An error occurred while adding the address");
+         return res.redirect('/user/profile');
     }
 };
 

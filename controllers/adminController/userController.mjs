@@ -7,7 +7,8 @@ export const adminuserget= async (req, res) => {
         res.render('adminUser', { message:users }); 
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).send('Internal Server Error');
+        // res.status(500).send('Internal Server Error');
+        next(error)
     }
 };
 
@@ -31,7 +32,8 @@ export const adminuserpost= async (req, res) => {
     res.redirect('/admin/user'); 
 }catch (error) {
     console.error('Error toggling block status:', error);
-    res.status(500).send('Internal Server Error');
+    // res.status(500).send('Internal Server Error');
+    next(error)
 }
 };
 
@@ -59,5 +61,6 @@ export const adminusersearch=async(req,res)=>{
         }
     }catch(error){
         console.log(error.message)
+        next(error)
     }
 }

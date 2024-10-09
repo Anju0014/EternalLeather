@@ -9,7 +9,8 @@ export const googleauth = (req, res, next) => {
   } catch (err) {
     console.log(`Error during Google authentication: ${err}`);
 
-    res.redirect('user/login');
+    // res.redirect('user/login');
+    next(error)
   }
 };
 

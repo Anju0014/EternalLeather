@@ -51,5 +51,6 @@ export const couponList = async (req, res) => {
         });
     } catch (error) {
         console.log(`error from admin coupon${error}`);
+        next(error)
     }
 };

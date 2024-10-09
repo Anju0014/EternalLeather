@@ -1,0 +1,29 @@
+<!-- views/error.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: red; }
+        .error-container { text-align: center; margin-top: 50px; }
+        .back-button { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>Error <%= statusCode %></h1>
+        <p><%= message %></p>
+
+        <div class="back-button">
+            <a href="<%= referrer %>">Go Back to Previous Page</a>
+        </div>
+       
+        <div>
+            <a href="/">Go to Homepage</a>
+        </div>
+    </div>
+</body>
+</html>

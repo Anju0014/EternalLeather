@@ -10,42 +10,6 @@ import crypto from 'crypto';
 import Razorpay from 'razorpay';
 
 
-// export const paymentRender = async (req, res) => {
-//     try {
-//         const totalAmount = req.body.amount;
-//         console.log(req.body)
-//         console.log("....." + totalAmount)
-//         if (!totalAmount) {
-//             return res.status(404).json({ error: "Amount parameter is missing" });
-//         }
-
-//         // const instance = new Razorpay({
-//         //     key_id: "rzp_test_jyh8u3FB51sm3I",
-//         //     key_secret: "5Cz0sGy9qDgUqCLLieURAfkD"
-//         // });
-
-//         const options = {
-//             amount: totalAmount * 100,
-//             currency: "INR",
-//             receipt: "receipt#1"
-//         };
-//         console.log("....." + totalAmount+"flu")
-//         razorpayInstance.orders.create(options, (error, order) => {
-//             if (error) {
-//                 console.log("....." + totalAmount+"flu444")
-//                 console.error(`Failed to create order: ${error}`);
-//                 return res.status(500).json({ error: `Failed to create order: ${error.message}` });
-//             }
-//             console.log("....." + totalAmount+"flu444333")
-//             return res.status(200).json({ orderID: order.id });
-//         });
-
-//     } catch (err) {
-//         console.error(`Error on orders in checkout: ${err}`);
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
-
 export const checkoutpost = async (req, res) => {
     try {
       const { selectedAddress, paymentMethod, cartId, appliedCoupon, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
@@ -165,6 +129,7 @@ export const checkoutpost = async (req, res) => {
   
       res.json({ success: true, message: 'Order placed successfully' });
     } catch (error) {
+
       res.status(500).json({ success: false, message: 'Order processing failed', error: error.message });
     }
   };
@@ -202,15 +167,17 @@ export const paymentRender = async (req, res) => {
                 key_id: process.env.RAZORPAY_KEY_ID // Include key_id for frontend use
             });
         });
-    } catch (err) {
-        console.error(`Error on orders in checkout: ${err}`);
+    } catch (error) {
+        console.error(`Error on orders in checkout: ${error}`);
         return res.status(500).json({ error: 'Internal server error' });
+        // next(error)
     }
 };
 
 
 
 export const paymentVerify = async (req, res) => {
+  try{
     console.log(req.body)
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
   
@@ -229,4 +196,7 @@ export const paymentVerify = async (req, res) => {
         // Signature is invalid, reject the payment
         res.status(400).json({ success: false });
     }
+  }catch(error){
+    // next(error)
+  }
 };

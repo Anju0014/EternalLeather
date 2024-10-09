@@ -14,6 +14,7 @@ export const adminOffer=async(req,res)=>{
         
     }catch(error){
         console.log(`error from admin offer ${error}`);
+        next(error)
     }
 }
 
@@ -26,6 +27,7 @@ export const adminOfferAddform=async(req,res)=>{
         res.render('adminOfferAdd', {message: req.flash(),productCollection });
     }catch(error){
         console.log(`error from admin offer ${error}`);
+        next(error)
     }
 }
 
@@ -124,7 +126,7 @@ export const adminOfferAdd = async (req, res) => {
         const { offerName, offerType, discountValue } = req.body;
         console.log(req.body);
 
-        // Check if the offer already exists
+   
         const existingOffer = await Offer.findOne({ offerName });
         if (existingOffer) {
             console.log("Offer already exists");
@@ -132,28 +134,28 @@ export const adminOfferAdd = async (req, res) => {
             return res.status(400).json({ message: 'Offer already exists' });
         }
 
-        // Create a new offer
+     
         const newOffer = new Offer({
             offerName,
             offerType,
             discountPercentage: discountValue,
         });
 
-        // Save the new offer
+   
         await newOffer.save();
         console.log("Offer saved");
 
-        // Fetch products in the specific category
+  
         const products = await Product.find({ productCategory: offerType });
          console.log(products)
-        // Apply the new offer discount to each product
+   
         for (const product of products) {
-            // Calculate the total discount
-            const existingDiscount = product.productDiscount || 0; // Default to 0 if no existing discount
+         
+            const existingDiscount = product.productDiscount || 0; 
             const totalDiscount = existingDiscount + discountValue;
 
-            // Update the product with the new discount
-            product.productDiscount = totalDiscount; // Store the updated discount percentage
+
+            product.productDiscount = totalDiscount; 
             await product.save();
         }
 
@@ -162,8 +164,9 @@ export const adminOfferAdd = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        req.flash("error", "An error occurred while adding the offer");
-        res.redirect('/admin/offer');
+        // req.flash("error", "An error occurred while adding the offer");
+        // res.redirect('/admin/offer');
+        next(error)
     }
 };
 
@@ -171,9 +174,7 @@ export const adminOfferAdd = async (req, res) => {
 
 export const adminOfferDelete = async (req, res) => {
     try {
-        const id  = req.query.id; // Assuming you're passing the offer ID in the URL
-
-        // Find the offer to be deleted
+        const id  = req.query.id; 
         const offerToDelete = await Offer.findById(id);
         if (!offerToDelete) {
             req.flash("error", "Offer not found");
@@ -201,8 +202,9 @@ export const adminOfferDelete = async (req, res) => {
         res.redirect('/admin/offer');
     } catch (error) {
         console.error(error);
-        req.flash("error", "An error occurred while deleting the offer");
-        res.redirect('/admin/offer');
+        // req.flash("error", "An error occurred while deleting the offer");
+        // res.redirect('/admin/offer');
+        next(error)
     }
 };
 

@@ -119,13 +119,50 @@
             </div>
             
         </div>
-        <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <!-- <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
             <div class="bg-white rounded-lg shadow-lg p-6 text-center">
                 <p id="show-message" class="text-lg font-semibold"></p>
                 <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
             </div>
         </div>
-        
+    
+         -->
+    
+         <!-- <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <p id="show-message" class="text-lg font-semibold"></p>
+                <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
+            </div>
+        </div> -->
+        <!-- <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden ">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+              <div class="flex justify-between items-center mb-4">
+                <p id="show-message" class="text-lg font-semibold"></p>
+                <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
+            </div>
+        </div>
+        </div> -->
+        <!-- <div id="cart-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <div class="flex justify-between items-center mb-4">
+                    <p id="show-message" class="text-lg font-semibold"></p>
+                    <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
+                </div>
+            </div>
+        </div>
+         -->
+        <!-- Modal Structure -->
+<div id="cart-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+    <div class="bg-white p-6 rounded shadow-lg w-96">
+        <div class="flex justify-between items-center mb-4">
+            <p id="show-message" class="text-lg font-semibold"></p>
+            <button id="close-modal" class="mt-4 px-4 py-2 bg-red-400 text-white rounded hover:bg-red-600">Close</button>
+        </div>
+    </div>
+</div>
+
+
+
 
       
 <!--      
@@ -274,7 +311,7 @@ document.getElementById('wishList').addEventListener('click', function () {
     
    // You can make this dynamic if necessary
     console.log("sending")
-    // Send an AJAX request to add the product to the cart
+ 
     fetch('/user/addToWishList', {
         method: 'POST',
         headers: {
@@ -297,6 +334,8 @@ document.getElementById('wishList').addEventListener('click', function () {
             showMessage.textContent = 'Please log in to continue!';
             console.log("tru")
             console.log(showMessage.textContent)
+        } else {
+            showMessage.textContent=data.message;
         }
 
         cartModal.style.display = 'block';  // Show the modal

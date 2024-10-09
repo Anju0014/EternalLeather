@@ -12,6 +12,7 @@ import passport from "passport"
 import "./config/google.mjs"
 import "./config/cloudinaryConfig.mjs"
 import "./config/razorpayConfig.mjs"
+import errorHandler from "./middleware/errorHandler.mjs"
 
 
 
@@ -47,6 +48,8 @@ app.use('/', userroute);
 
 
 connectDB();
+
+app.use(errorHandler);
 
 app.listen(port,(error)=>{
     if(error){

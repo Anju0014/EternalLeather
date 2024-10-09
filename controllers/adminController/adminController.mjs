@@ -8,7 +8,8 @@ export const admin = async (req, res) => {
   try {
     res.redirect("/admin/login");
   } catch (error) {
-    console.log(`error from admin ${error}`);
+    console.error(`error from admin ${error}`);
+    next(error)
   }
 };
 
@@ -20,7 +21,8 @@ export const adminlogin = async (req, res) => {
       res.render("adminlogin", { message: req.flash() });
     }
   } catch (error) {
-    console.log(`error from admin login ${error}`);
+    console.error(`error from admin login ${error}`);
+    next(error)
   }
 };
 
@@ -46,7 +48,9 @@ export const adminverify = async (req, res) => {
       res.redirect("/admin/login");
     }
   } catch (error) {
+   
     console.log(`error from admin verification ${error}`);
+    next(error)
   }
 };
 
@@ -58,6 +62,7 @@ export const adminhome = async (req, res) => {
     res.render("adminDashboard");
   } catch (error) {
     console.log(`error from admin home ${error}`);
+    next(error)
   }
 };
 
@@ -67,5 +72,6 @@ export const adminlogout = async (req, res) => {
     res.redirect("/admin/login");
   } catch (error) {
     console.log(error.message);
+    next(error)
   }
 };

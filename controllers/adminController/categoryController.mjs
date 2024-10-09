@@ -22,6 +22,7 @@ export const check= async (req,res)=>{
         
     }catch(error){
         console.log(`error from admin category ${error}`);
+        next(error);
     }
 }
 
@@ -30,6 +31,7 @@ export const admincategoryaddform = async (req, res) => {
         res.render('adminCategoryAdd', { message: req.flash() });
     } catch (error) {
       console.log(`error from admin category ${error}`);
+      next(error)
     }
   };
   
@@ -59,6 +61,7 @@ export const admincategoryAdd = async (req, res) => {
     }
     } catch (error) {
         console.log(`error from admin category add ${error}`)
+        next(error)
     }
 };
 
@@ -77,8 +80,9 @@ export const admincategoryeditform = async (req, res) => {
         res.render('adminCategoryEdit', { category, message: req.flash() }); 
     } catch (error) {
         console.log(`Error fetching category for edit: ${error}`);
-        req.flash("error", "An error occurred while fetching the category");
-        return res.redirect('/admin/category');
+        // req.flash("error", "An error occurred while fetching the category");
+        // return res.redirect('/admin/category');
+        next(error);
     }
 };
 
@@ -105,18 +109,17 @@ export const admincategoryupdate = async (req, res) => {
         
     } catch (error) {
         console.log(`Error updating category: ${error}`);
-        req.flash("error", "An error occurred while updating the category");
-        return res.redirect(`/admin/category/edit/${req.params.id}`);
+        // req.flash("error", "An error occurred while updating the category");
+        // return res.redirect(`/admin/category/edit/${req.params.id}`);
+        next(error);
     }
 };
 
 export const admincategorysearch=async(req,res)=>{
     try{
-       
-        
         const name=req.body.sename;
         if(name){
-            const regex = new RegExp(name, 'i'); // 'i' for case-insensitive
+            const regex = new RegExp(name, 'i'); 
             const user1= await Category.find({categoryName:{ $regex: regex } });
         if(user1){
             console.log("entered");
@@ -132,6 +135,7 @@ export const admincategorysearch=async(req,res)=>{
        
     }catch(error){
         console.log(error.message)
+        next(error);
     }
 }
 
@@ -164,6 +168,7 @@ export const admincategorypost= async (req, res) => {
     res.redirect('/admin/category'); 
 }catch (error) {
     console.error('Error toggling toggling category:', error);
-    res.redirect('/admin/category')
+    next(error);
+    // res.redirect('/admin/category')
 }
 };

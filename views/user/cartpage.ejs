@@ -185,12 +185,12 @@
                             <% if(item.productId.productDiscount > 0) { %>
                                 <h3 class="text-black  font-semibold inline-block">
                                     <del>Rs. <%= item.productId.productPrice %></del>
-                                    $ <%= item.productId.productPrice - (item.productId.productPrice * (item.productId.productDiscount / 100)) %>
+                                    Rs. <%= item.productId.productPrice - (item.productId.productPrice * (item.productId.productDiscount / 100)) %>
                                 </h3>
                                 <h4 class="text-black text-xs max-sm:text-xs font-normal">Save <%= item.productId.productDiscount %> %</h4>
                             <% } else { %>
                                 <h3 class="text-black font-semibold inline-block">
-                                    $ <%= item.productId.productPrice %>
+                                    Rs. <%= item.productId.productPrice %>
                                 </h3>
                             <% } %>
                             <% if(item.productId.productQuantity<=0) { %>
@@ -239,7 +239,7 @@
 
                      
                     </div>
-                    <h3 class="text-base font-bold text-gray-800 mt-auto">$ <%= ((item.productId.productPrice - (item.productId.productPrice * (item.productId.productDiscount / 100)))*item.productCount).toFixed(2) %></h3>
+                    <h3 class="text-base font-bold text-gray-800 mt-auto">Rs. <%= ((item.productId.productPrice - (item.productId.productPrice * (item.productId.productDiscount / 100)))*item.productCount).toFixed(2) %></h3>
                 </div>
             </div>
           <% }) %>
@@ -256,12 +256,12 @@
                         Apply
                     </button>
                 </div> -->
-                <li class="flex flex-wrap gap-4 text-sm">Subtotal <span class="ml-auto font-bold">$<%=totalPriceWithoutDiscount.toFixed(2)%></span></li>
-                <li class="flex flex-wrap gap-4 text-sm">Subtotal(with discount) <span class="ml-auto font-bold">$<%=totalPrice.toFixed(2)%></span></li>
-                <li class="flex flex-wrap gap-4 text-sm">Shipping <span class="ml-auto font-bold"><%= cart.payablePrice > 1000 ? 'Free' : '$50' %></span></li>
+                <li class="flex flex-wrap gap-4 text-sm">Subtotal <span class="ml-auto font-bold">Rs.<%=totalPriceWithoutDiscount.toFixed(2)%></span></li>
+                <li class="flex flex-wrap gap-4 text-sm">Subtotal(with discount) <span class="ml-auto font-bold">Rs.<%=totalPrice.toFixed(2)%></span></li>
+                <li class="flex flex-wrap gap-4 text-sm">Shipping <span class="ml-auto font-bold"><%= cart.payablePrice > 1000 ? 'Free' : 'Rs.50' %></span></li>
                 <!-- <li class="flex flex-wrap gap-4 text-sm">Tax <span class="ml-auto font-bold">$4.00</span></li> -->
                 <hr class="border-gray-300" />
-                <li class="flex flex-wrap gap-4 text-sm font-bold">Total <span class="ml-auto">$<%= cart.payablePrice.toFixed(2) %></span></li>
+                <li class="flex flex-wrap gap-4 text-sm font-bold">Total <span class="ml-auto">Rs.<%= cart.payablePrice.toFixed(2) %></span></li>
             </ul>
 
             <div class="mt-8 space-y-2">

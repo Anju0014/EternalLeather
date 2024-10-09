@@ -12,6 +12,7 @@ export const adminCoupon=async(req,res)=>{
         
     }catch(error){
         console.log(`error from admin coupons ${error}`);
+        next(error);
     }
 }
 
@@ -25,6 +26,7 @@ export const adminCouponAddform=async(req,res)=>{
 
     }catch(error){
         console.log(`error from admin coupons ${error}`);
+        next(error);
     }
 }
 
@@ -100,8 +102,10 @@ export const adminCouponAdd = async (req, res) => {
 
     } catch (error) {
        
-        req.flash("error", "An error occurred while adding the coupon");
-     res.redirect('/admin/coupon')
+        console.log(`error from admin coupons ${error}`);
+    //     req.flash("error", "An error occurred while adding the coupon");
+    //  res.redirect('/admin/coupon')
+         next(error);
     }
 };
 
@@ -116,7 +120,8 @@ export const adminCouponStatus= async (req, res) => {
     await coupon.save();
     res.redirect('/admin/coupon'); 
 }catch (error) {
-    console.error('Error toggling  status:', error);
-    res.status(500).send('Internal Server Error');
+    console.log('Error toggling  status:', error);
+    next(error);
+
 }
 };

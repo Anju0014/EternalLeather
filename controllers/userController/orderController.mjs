@@ -11,10 +11,6 @@ export const orderconfirm= async (req,res)=>{
     try{
         const sessionuser = req.session.isUser;
         const productCollection = await Category.find({ isActive: true });
-        
-        
-
-        
         if (!req.session.isUser) {
             console.log("User session is missing");
             return res.status(400).send("User is not logged in.");
@@ -39,6 +35,7 @@ export const orderconfirm= async (req,res)=>{
         
       }catch(error){
         console.log("error from checkout page",error)
+        next(error)
       }
 }
 
