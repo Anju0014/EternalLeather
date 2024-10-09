@@ -18,11 +18,11 @@ const user_router=express();
 
 
 
-user_router.use(express.json());
-user_router.use(express.urlencoded({extended:true}));
-user_router.set('view engine','ejs');
+// user_router.use(express.json());
+// user_router.use(express.urlencoded({extended:true}));
+ user_router.set('view engine','ejs');
 user_router.set('views','./views/user');
-user_router.use(express.static('public'));
+// user_router.use(express.static('public'));
 
 
 user_router.get('/',userlanding)

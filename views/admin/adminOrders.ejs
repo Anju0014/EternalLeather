@@ -137,7 +137,7 @@
                                 <td class="px-8"><%= message[i].address.customerName %></td>
                                 <td class="px-20"><%= message[i].paymentMethod %></td>
                                 <td class="px-8">
-                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                    <!-- <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
                                         <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
                                             <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
                                             <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
@@ -146,7 +146,26 @@
                                             <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                                             <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                         </select>
+                                    </form> -->
+                                  
+                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                        </select>
                                     </form>
+                                    
+                                    
                                 </td>
                                 <td class="px-8"><%= message[i].totalPayablePrice %></td>
                                 <td class="px-8">

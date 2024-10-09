@@ -13,12 +13,12 @@ import { adminOffer, adminOfferAdd, adminOfferAddform, adminOfferDelete } from "
 import { adminSales, downloadSalesExcel, downloadSalesPdf } from "../controllers/adminController/salesController.mjs";
 
 
-admin_router.use(express.json());
-admin_router.use(express.urlencoded({extended:true}));
+// admin_router.use(express.json());
+// admin_router.use(express.urlencoded({extended:true}));
 admin_router.set('view engine','ejs');
 admin_router.set('views','./views/admin');
 
-admin_router.use(express.static('public'));
+// admin_router.use(express.static('public'));
 
  admin_router.get('/try',check)
 admin_router.get('/',admin)

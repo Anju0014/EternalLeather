@@ -29,12 +29,7 @@ const userSchema=new mongoose.Schema({
     phoneno:{
         type:Number
     },
-    otp:{
-        type:Number
-    },
-    otpExpires:{
-        type:String
-    },
+   
     googleID:{
         type:String
     },
