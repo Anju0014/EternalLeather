@@ -16,6 +16,10 @@ const orderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId ,
             ref:"Product"
         },
+        productOrderId:{
+            type: String,
+            unique:true,
+        },
         productname: {
             type: String
         },
@@ -36,12 +40,21 @@ const orderSchema = new mongoose.Schema({
         },
         productstatus: {
             type: String,
-            enum:['Confirmed', 'Pending', 'Delivered', 'Returned', 'Cancelled'],
+            enum:['Confirmed', 'Pending', 'Delivered','Shipped', 'Returned', 'Cancelled'],
             default:'Pending'
         },
         isproductCancelled:{
             type: Boolean,
             default: false
+        },
+        returnProductReason:{
+            type:String,
+        },
+        deliveredDate:{
+            type:Date,
+        },
+        returnedDate:{
+            type:Date,
         }
     }],
     totalQuantity: {
@@ -81,20 +94,20 @@ const orderSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    returnReason:{
-        type:String,
-    },
+    // returnReason:{
+    //     type:String,
+    // },
     orderStatus: {
         type: String,
         enum:['Pending', 'Shipped', 'Confirmed', 'Delivered', 'Cancelled', 'Returned']
         
     },
-    deliveredDate:{
-        type:Date,
-    },
-    returnedDate:{
-        type:Date,
-    },
+    // deliveredDate:{
+    //     type:Date,
+    // },
+    // returnedDate:{
+    //     type:Date,
+    // },
     couponApplied: {
         type: String, 
         default: null 
@@ -106,6 +119,11 @@ const orderSchema = new mongoose.Schema({
     razorpayPaymentId: { type: String, default: null },
     razorpayOrderId: { type: String, default: null },
     razorpaySignature: { type: String, default: null },
+    paymentStatus:{
+        type:String,
+        enum:['Paid','Unpaid'],
+        default:'Unpaid'
+    },
 },{timestamps:true})
 
 

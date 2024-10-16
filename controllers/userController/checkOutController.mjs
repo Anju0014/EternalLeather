@@ -200,3 +200,78 @@ export const paymentVerify = async (req, res) => {
     // next(error)
   }
 };
+
+export const userPaymentRetry = async (req, res) => {
+  try {
+    console.log("reeedddsffsf")
+      const orderId = req.body.orderId; // The amount received from the client
+      const order = await Order.findById(orderId).populate('products.productId');
+      const totalAmount= order.totalPayablePrice;
+      console.log("kkkmkncb")
+
+      console.log("Received Amount: " + totalAmount); // Log the received amount
+
+      if (!totalAmount) {
+          return res.status(400).json({ error: "Amount parameter is missing" });
+      }
+
+      const options = {
+          amount: totalAmount * 100, // Amount in paise
+          currency: "INR",
+          receipt: "receipt#1"
+      };
+      console.log("89889")
+      razorpayInstance.orders.create(options, (error, order) => {
+          console.log("hiiii")
+          if (error) {
+              console.log("....." + totalAmount+"flu444333")
+              console.error("Failed to create order:", error); // Log the full error object
+              return res.status(500).json({ error: `Failed to create order: ${JSON.stringify(error)}` }); // Return the error as JSON
+          }
+          console.log(order.id)
+          return res.status(200).json({
+              orderID: order.id,
+              amount: order.amount, // Send back the amount
+              key_id: process.env.RAZORPAY_KEY_ID // Include key_id for frontend use
+          });
+      });
+  } catch (error) {
+      console.error(`Error on orders in checkout: ${error}`);
+      return res.status(500).json({ error: 'Internal server error' });
+      // next(error)
+  }
+};
+
+
+export const paymentRetryStatus = async (req, res) => {
+  try {
+
+   console.log("moijdhdbhd")
+    const {
+      orderId,
+      razorpay_payment_id,
+      razorpay_order_id,
+       razorpay_signature,
+      // paymentMethod
+      paymentStatus,
+    } = req.body;
+    console.log("regggggg")
+     
+      const order = await Order.findById(orderId).populate('products.productId');
+      console.log(order)
+      order.paymentStatus='Paid'
+      order.razorpayPaymentId=razorpay_payment_id
+      order.razorpayOrderId=razorpay_order_id
+      order.razorpaySignature=razorpay_signature
+      
+      order.save()
+      console.log(order)
+      res.json({ success: true, message: 'Order Status Changed successfully' });
+    
+  } catch (error) {
+      console.error(`Error on orders in checkout: ${error}`);
+      return res.status(500).json({ error: 'Internal server error' });
+      // next(error)
+  }
+};
+

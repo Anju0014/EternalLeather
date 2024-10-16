@@ -8,49 +8,30 @@ export const walletView = async (req, res) => {
         if (!req.session.isUser) {
             return res.redirect('/user/home');
         }
-
         const page = parseInt(req.query.page) || 1;
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
 
-        // Fetch user by email
         const user = await User.findOne({ email: req.session.isUser });
 
-        // Ensure the user exists
         if (!user) {
             return res.status(404).send('User not found');
         }
        
         console.log(user)
-        // Fetch orders with pagination
-        // const orders = await Order.find({ customerId: user._id })
-        //     .populate('productCategory', 'categoryName')
-        //     .skip(skip)
-        //     .limit(pageSize);
-        const wallets = await Wallet.findOne({userID:user._id})
-    // .populate('customerId', 'name email')
-    // .populate('products.productId')
-    // .sort({ createdAt: -1 }) 
-    // .skip(skip)
-    // .limit(pageSize);
-
-     
-    // wallets.transaction.sort((a, b) => new Date(a.transactionDate) - new Date(b.transactionDate));
+    
+        let wallet = await Wallet.findOne({userID:user._id})
 
          console.log("haha")
-         console.log(wallets)
+         console.log(wallet)
          console.log("sending")
-        // console.log('Fetched Coupons:', coupons);
-        // console.log(coupons)
-
-        
-        // const totalOrders = await Wallet.countDocuments();
-        // const totalPages = Math.ceil(totalOrders / pageSize);
-
+         if (!wallet) {
+            wallet = new Wallet({ userID: user._id, balance: 0, transaction: [] });
+            await wallet.save();
+        }
         res.render('userWallet', {
-            message: wallets,
-            // currentPage: page,
-            // totalPages: totalPages,
+            message: wallet,
+  
             light: req.flash(),
             query:req.query
         });

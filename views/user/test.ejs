@@ -1,421 +1,805 @@
 
-<div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Checkout</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin DashBoard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 
-    <form action="/user/checkout" method="POST" id="checkout-form" class="flex flex-col space-y-6">
-        
-       
-        <div class="bg-white p-6 rounded-md shadow-md">
-            <h2 class="text-xl font-bold mb-4">Select Delivery Address</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <% if (addresses && addresses.length > 0) { %>
-                    <% addresses.forEach((address, index) => { %>
-                        <div class="flex items-start justify-between bg-gray-100 p-4 rounded-md shadow">
-                            <input type="radio" id="address<%= index %>" name="selectedAddress" value="<%= address._id %>" class="mr-4 mt-2" <%= index === 0 ? 'checked' : '' %> />
-                            <div class="flex-grow">
-                                <p class="font-semibold text-lg"><%= address.contactname %></p>
-                                <p><%= address.building %>, <%= address.street %></p>
-                                <p><%= address.city %>, <%= address.state %>, <%= address.country %>, <%= address.pincode %></p>
-                                <p>Landmark: <%= address.landMark %></p>
-                                <p>Phone: <%= address.phoneno %></p>
-                            </div>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p class="text-gray-500">No addresses found. Please add a new address.</p>
-                <% } %>
-            </div>
-            <a href="/user/profile" class="text-blue-500 hover:underline mt-4 block">Manage Addresses</a>
+
+    <style>
+        /* Inline styles for the background image */
+        .box-brown {
+            /* background-image: #e3c7b4; */
+            background-image: linear-gradient(to right,#FFE0CA, #964820)
+        }
+        .box-dash{
+            background-image: linear-gradient(#FFE0CA, #bc6438)
+
+        }
+        .text-brown {
+            color: #250201; /* Brown color */
+        }
+         .sevillana-title {
+            font-family: 'Sevillana', cursive;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .box-foot
+        {   
+            background-color:#964820
+        }
+      
+    /* Apply bg-red-100 to even rows */
+    /* #ordersTable tbody tr:nth-child(even) {
+        background-color: #fecaca; /* bg-red-100 */
+    /* } */
+
+    </style>
+</head>
+
+
+<body>
+    <%- include('adminheader') %>
+  
+    <div class="flex justify-normal">
+        <div class="flex justify-items-start">
+            <%- include('adminsidebar') %>
+        <br>
         </div>
-       
+     
+        <div class="flex-grow  p-6 ">
+            <!-- <form action="/admin/order/search" method="post">
+                <div class="flex justify-center m-10 ">
+                    <input class="bg-white border border-red-900 rounded w-1/2 m-3 py-2 px-3" type="search" placeholder="Search Order" aria-label="Search" name="sename">
+                    <button class=" text-white rounded bg-red-900 m-3 px-3 py-2" type="submit">Search</button>
+                     <button class= "text-white rounded bg-red-900 m-3 px-3 py-2"><a href="/admin/product/add">Add Product</a></button> -->
+                <!-- </div>
+            </form> --> 
 
-        <div class="flex justify-between">
-         
-            <div class="bg-white p-6 rounded-md shadow-md w-1/2 mr-10">
-                <h2 class="text-xl font-bold mb-4">Cart Summary</h2>
-                <input type="hidden" id="cartId" name="cartId" value="<%= cart._id %>">>
-                <% cart.items.forEach(item => { %>
-                    <div class="flex justify-between mb-4">
-                        <span class="font-semibold text-gray-800"><%= item.productId.productName %></span>
-                        <span class="font-semibold text-gray-800">$<%= item.discountPrice %> x <%= item.productCount %></span>
-                    </div>
-                <% }) %>
-        
-                <hr class="my-4">
-                <div class="flex justify-between text-lg font-bold">
-                    <span>Total Payable</span>
-                    <span id="totalPayable">$<%= cart.payablePrice %></span> 
-                </div>
-            </div>
-        
-            
-   
+            <% if (light.error) { %>
+                <div class="text-center bg-red-500 text-white rounded mb-4"><%= light.error %></div>
+            <% } %>
+            <% if (light.success) { %>
+                <div class="text-center bg-green-700 text-white rounded mb-4"><%= light.success %></div>
+            <% } %> 
+
 
           
-            <div class="bg-white p-6 rounded-md shadow-md w-1/2">
-                <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
-                <div class="w-full">
-                    <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
-                        <option value="" selected>Select a coupon code</option>
-                        <% coupons.forEach(coupon => { %>
-                            <option value="<%= coupon._id %>" data-discount="<%= coupon.discountValue %>" data-type="<%= coupon.discountType %>">
-                                <%= coupon.couponCode %>
-                            </option>
-                        <% }) %>
-                    </select>
+            <!-- <table class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8">
+                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <a href="/admin/order/cancel?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this product?');">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </a>
+                                </td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table> -->
+
+            <!-- <table id="ordersTable" class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded"> -->
+                <!-- <table id="ordersTable" class=" m-10 p-5 align-items-center border border-red-900 rounded">
+                
+                  
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8">
+
+                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %> 
+                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                        </select>
+                                    </form>
+                                    
+                                    
+                                </td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <a href="/admin/order/cancel?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this product?');">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </a>
+                                </td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table> -->
+            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Payment</th>
+                        <th>OrderStatus</th>
+                        <th>Product Order Id</th>
+                        <th>Product Name</th>
+                        <th>product Order Status</th>
+                        <th>Price</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <% for (let j = 0; j < message[i].products.length; j++) { %> <!-- Iterate over products -->
+                                <tr>
+                                    <% if (j === 0) { %> <!-- Only display order ID for the first product -->
+                                        <!-- <td class="px-2" rowspan="<%= message[i].products.length %>"><%= message[i].orderId %></td> -->
+                                        <td class="px-2" rowspan="<%= message[i].products.length %>"><%= message[i].orderId %></td>
+                                         <td class="px-8" rowspan="<%= message[i].products.length %>"><%= message[i].paymentMethod %></td>
+                                         <td class="px-8" rowspan="<%= message[i].products.length %>"><%= message[i].orderStatus %></td>
+                                    <% } %>
+                                    <!-- <td class="px-20"><%= message[i].paymentMethod %></td> -->
+                                    <td class="px-8"><%= message[i].products[j].productOrderId %></td>
+                                    <td class="px-8"><%= message[i].products[j].productname %></td>
+                                    <!-- <td class="px-8"><%= message[i].products[j].productname %></td> -->
+                                    <td class="px-8">
+                                        <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                            <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                                <option value="Pending" <%= message[i].productstatus === 'Pending' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                                <option value="Confirmed" <%= message[i].productstatus === 'Confirmed' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                                <option value="Delivered" <%= message[i].productstatus === 'Delivered' ? 'selected' : '' %> 
+                                                    <%= message[i].productStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                                <option value="Returned" <%= message[i].productstatus === 'Returned' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                                <option value="Cancelled" <%= message[i].productstatus === 'Cancelled' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                                <option value="Shipped" <%= message[i].productstatus === 'Shipped' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="px-8"><%= message[i].products[j].productprice %></td>
+                                    <!-- <td class="px-8">
+                                        <a href="/admin/order/cancel?id=<%= message[i]._id %>&productId=<%= message[i].products[j].productId %>" onclick="return confirm('Are you sure you want to delete this product?');">
+                                            <i class="fa-solid fa-trash text-danger"></i>
+                                        </a>
+                                    </td> -->
+                                    <!-- <td class="px-8">
+                                        <button onclick="openModal(<%= JSON.stringify(message[i]) %>, <%= JSON.stringify(message[i].products[j]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                    </td> -->
+                                    <% if (j === 0) { %> <!-- Common View button for all products of the order -->
+                                        <td class="px-8" rowspan="<%= message[i].products.length %>">
+                                            <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                        </td>
+                                    <% } %>
+                                </tr>
+                            <% } %>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
             
-                    <button type="button" onclick="applyCoupon()" 
-                        class="w-full flex items-center justify-center font-semibold tracking-wide bg-black hover:bg-red-900 px-4 py-2 text-sm text-white rounded">
-                        Apply Coupon
-                    </button>
             
-                    <input type="hidden" id="appliedCoupon" name="appliedCoupon" value="">
-                    <input type="hidden" id="newTotalPayable" value="">
-            
-                    <div id="newTotalSection" class="mt-4 hidden">
-                        <hr class="my-4">
-                        <div class="flex justify-between text-lg font-bold">
-                            <span>New Total</span>
-                            <span id="newTotal">$<%= cart.payablePrice %></span>
-                        </div>
+            <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
+                <div class="bg-white p-5 rounded-md w-1/2 ">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">Order Details</h3>
+                        <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
+                    </div>
+                    <hr>
+                    <div id="modalContent" class="max-height-[200px]">
+                        
+                        <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
+                        <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
+                        <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                        <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+                        <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+                         <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+                        
+                    </div>
+                     <div class="mt-4"> 
+                    
+                        <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                            Download
+                        </button>
                     </div>
                 </div>
             </div> 
-            </div>
-     
-      
-        <div class="bg-white p-6 rounded-md shadow-md">
-            <h2 class="text-xl font-bold mb-4">Select Payment Method</h2>
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="radio" id="cashOnDelivery" name="paymentMethod" value="Cash On Delivery" checked>
-                        <label for="cashOnDelivery" class="ml-2 text-gray-700">Cash on Delivery</label>
+            
+            <!-- Modal Structure -->
+            <!-- <div id="orderModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+                <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                    <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-1/2">
+                        <div class="bg-red-900 px-4 py-3">
+                            <h2 class="text-lg font-medium text-white">Order Details</h2>
+                        </div>
+                        
+                        <div class="px-4 py-5 bg-white">
+                            <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+                            <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                            <p><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                            <p><strong>Total Price:</strong> <span id="modalTotalPrice"></span></p>
+                            <p><strong>Products:</strong></p>
+                            <ul id="modalProducts"></ul>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 text-right">
+                            <button onclick="closeModal()" class="bg-red-900 text-white px-4 py-2 rounded hover:bg-red-700">Close</button>
+                        </div>
                     </div>
-                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Cash On Delivery')">Pay Now</button>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="radio" id="Wallet" name="paymentMethod" value="Wallet">
-                        <label for="Wallet" class="ml-2 text-gray-700">Wallet</label>
-                    </div>
-                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Wallet')">Pay Now</button>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="radio" id="razorpay" name="paymentMethod" value="razorpay">
-                        <label for="razorpay" class="ml-2 text-gray-700">Razorpay</label>
-                    </div>
-                    <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" onclick="handlePayNow('Razorpay')">Pay Now</button>
                 </div>
             </div>
-        </div>
-        <input type="text" id="razorpay_payment_id" name="razorpay_payment_id" value="">
-        <input type="text" id="razorpay_order_id" name="razorpay_order_id" value="">
-        <input type="text" id="razorpay_signature" name="razorpay_signature" value="">
-        <!-- Place Order Button -->
-        <div class="mt-6">
-            <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-md font-bold hover:bg-blue-600">
-                Place Order
-            </button>
-        </div>
-    </form>
-</div>
+             -->
 
-<!-- Modal Structure -->
-<div id="orderConfirmationModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-lg max-w-lg w-1/3 p-6">
-        <div class="text-center">
-            <h2 class="text-2xl font-semibold text-gray-800">Order Confirmed!</h2>
-            <p class="mt-4 text-gray-600">Your order has been confirmed successfully.</p>
-            <button id="closeModal" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none">Close</button>
-        </div>
-    </div>
+
+            <!-- <div class="flex justify-center mt-4 mb-8">
+                <% if (currentPage > 1) { %>
+                    <a href="/admin/products?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded mr-2"><--</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/products?page=<%= i %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded <%= currentPage === i ? 'bg-red-500 text-white' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/products?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-gray-300 border border-gray-500 rounded ml-2">--></a>
+                <!-- <% } %>
+            </div> -->
+            
+            </div>
+        
 </div>
+</body>
+</html>
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<!-- jQuery (required by DataTables) -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<!-- DataTables JS -->
+<!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> -->
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
 
 <script>
-    // Function to show the modal
-    function showModal() {
-        document.getElementById("orderConfirmationModal").classList.remove("hidden");
-    }
-
-    // Close modal when the "Close" button is clicked
-    document.getElementById("closeModal").addEventListener("click", function() {
-        document.getElementById("orderConfirmationModal").classList.add("hidden");
+      $(document).ready(function() {
+        $('#ordersTable').DataTable({
+            "paging": true,       // Enable pagination
+            "ordering": true,     // Enable column sorting
+            "info": true,         // Display table information
+            "searching": true,    // Enable search box
+            "autoWidth": false,   // Disable automatic column width calculation
+            "order": [[ 0, "desc" ]],  // Default sorting on the first column (Order ID), in descending order
+            "columnDefs": [
+              { "orderable": false, "targets": [7] }  // Disable sorting for the View column (index 7)
+            ]
+        });
     });
-    
+//     function openModal(order) {
+
+//     document.getElementById('modalOrderId').innerText = order.orderId;
+//     document.getElementById('modalCustomerName').innerText = orderData.customerId.name;
+//     document.getElementById('modalPaymentMethod').innerText = order.paymentMethod;
+//     // document.getElementById('modalTotalPayablePrice').innerText = order.totalPayablePrice;
+//     document.getElementById('modalTotalPrice').innerText= order.totalPayablePrice;
+//     // document.getElementById('modalTotalQuantity').innerText=order.totalQuantity;
+//     document.getElementById('')
+
+
+//     //const modal = document.getElementById('orderModal');
+//     const modalOrderId = document.getElementById('modalOrderId');
+//     const modalOrderDate = document.getElementById('modalOrderDate');
+//     const modalProducts = document.getElementById('modalProducts');
+//     const modalCustomerName = document.getElementById('modalCustomerName');
+//     const modalPrice = document.getElementById('modalTotalPrice');
+//     const modalPayment = document.getElementById('modalPaymentMethod');
+//     const orderStatus=document.getElementById('modalOrderStatus');
+//     // Populate product list
+//     const productList = document.getElementById('modalProducts');
+//     productList.innerHTML = ''; // Clear existing content
+//     order.products.forEach(product => {
+//         const listItem = document.createElement('li');
+//         listItem.innerText = `${product.productname} - Quantity: ${product.productquantity}`;
+//         productList.appendChild(listItem);
+//     });
+
+//     // Show modal
+//     document.getElementById('orderModal').classList.remove('hidden');
+// }
+
+// function closeModal() {
+//     // Hide modal
+//     document.getElementById('orderModal').classList.add('hidden');
+// }
+function openModal(orderData) {
+       
+       const modal = document.getElementById('orderModal');
+       const modalOrderId = document.getElementById('modalOrderId');
+       const modalOrderDate = document.getElementById('modalOrderDate');
+       const modalProducts = document.getElementById('modalProducts');
+       const modalCustomerName = document.getElementById('modalCustomerName');
+       const modalPrice = document.getElementById('modalTotalPrice');
+       const modalPayment = document.getElementById('modalPaymentMethod');
+       const orderStatus=document.getElementById('modalOrderStatus');
+      
+       modalOrderId.innerText = orderData.orderId;
+       modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
+       modalCustomerName.innerText = orderData.customerId.name;
+       modalPrice.innerText=orderData.totalPayablePrice;
+       modalPayment.innerText=orderData.paymentMethod;
+       modalOrderStatus.innerText=orderData.orderStatus;
+
+   
+       modalProducts.innerHTML = '';  
+       orderData.products.forEach(product => {
+ 
+   const productPrice = product.productprice;
+
+
+   modalProducts.innerHTML += `
+       <div class="product-details border-b py-2">
+           <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
+           <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
+           <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
+           <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+       
+       </div>
+   `;
+});
+
+
+       // Show the modal
+       modal.classList.remove('hidden');
+       modal.classList.add('flex');
+   }
+
+   // Function to close the modal
+   function closeModal() {
+       const modal = document.getElementById('orderModal');
+       modal.classList.add('hidden');
+   }
 </script>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <script>
-    document.getElementById('checkout-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-          
-        console.log("ooo")
+    document.getElementById('downloadButton').addEventListener('click', async function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
     
-        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-        
+        // Fetching order details from modal
+        const orderId = document.getElementById('modalOrderId').innerText;
+        const orderDate = document.getElementById('modalOrderDate').innerText;
+        const customerName = document.getElementById('modalCustomerName').innerText;
+        const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+        const totalPrice = document.getElementById('modalTotalPrice').innerText;
+        const orderStatus=document.getElementById('modalOrderStatus').innerText;
     
-        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-       
-        const cartId = document.getElementById('cartId').value;
-        const appliedCoupon=document.getElementById('appliedCoupon').value
-        const razorpay_payment_id = document.getElementById('razorpay_payment_id').value;
-        const razorpay_order_id = document.getElementById('razorpay_order_id').value;
-        const razorpay_signature = document.getElementById('razorpay_signature').value;
+        // Adding text content to the PDF
+        doc.text(`Order ID: ${orderId}`, 10, 10);
+        doc.text(`Order Date: ${orderDate}`, 10, 20);
+        doc.text(`Customer Name: ${customerName}`, 10, 30);
+        doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
+        doc.text(`Total Price: ${totalPrice}`, 10, 50);
+        doc.text(`Order Status: ${orderStatus}`, 10, 60);
+    
+        // Fetch product details from modalProducts div
+        const productElements = document.querySelectorAll('#modalProducts .product-details');
+    
+        let yOffset = 70; // Initial Y position for product details and images
+        for (const productElement of productElements) {
+            const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+            const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+            const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+            const productImage = productElement.querySelector('img').src;
+    
+            // Add product details (name, price, quantity) to PDF
+            doc.text(`Product Name: ${productName}`, 90, yOffset);
+            doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
+            doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+    
+            try {
+                // Convert image URL to base64 and add to PDF
+                const base64Img = await getBase64ImageFromURL(productImage);
+                // Adding image to PDF at (x, y, width, height)
+                doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+            } catch (error) {
+                console.error('Error loading image', error);
+            }
+    
+            yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+        }
+    
+        // Save the generated PDF
+        doc.save('adminorder-details.pdf');
+    });
+    
+    // Function to convert image URL to base64
+    async function getBase64ImageFromURL(url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+    
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.add('hidden');
+    }
+    
+ 
+    
    
-        const formData = {
-            selectedAddress: selectedAddress,
-            paymentMethod: selectedPaymentMethod,
-            cartId:cartId,
-            appliedCoupon:appliedCoupon,
-            razorpay_payment_id,
-            razorpay_order_id,
-            razorpay_signature
+    </script>
+  
+
+
+
+
+
+    <table id="ordersTable" class=" m-10 p-5 align-items-center border border-red-900 rounded">
+                
+                  
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>OrderStatus</th>
+                        <!-- <th>productName</th>
+                        <th>Status</th>
+                        <th>Price</th> -->
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8" ><%= message[i].orderStatus %></td>
+                                <!-- <td class="px-8">
+                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                        </select>
+                                    </form>
+                                </td> -->
+                                <!-- <% for (let j = 0; j < message[i].products.length; j++) { %>
+
+                                    <td class="px-8"><%= message[i].products[j].productname %></td>
+                                    <td class="px-8">
+                                        <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                            <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                                <option value="Pending" <%= message[i].productstatus === 'Pending' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                                <option value="Confirmed" <%= message[i].productstatus === 'Confirmed' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                                <option value="Delivered" <%= message[i].productstatus === 'Delivered' ? 'selected' : '' %> 
+                                                    <%= message[i].productStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                                <option value="Returned" <%= message[i].productstatus === 'Returned' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                                <option value="Cancelled" <%= message[i].productstatus === 'Cancelled' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                                <option value="Shipped" <%= message[i].productstatus === 'Shipped' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="px-8"><%= message[i].products[j].productprice %></td>
+                                    <% } %> -->
+                                <!-- <td class="px-8"><%= message[i].totalPayablePrice %></td> -->
+                              
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
+
+            <table id="ordersTable" class=" m-10 p-5 align-items-center border border-red-900 rounded">
+                
+                  
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Name</th>
+                        <th>Payment</th>
+                        <th>OrderStatus</th>
+                        <!-- <th>Status</th> -->
+                        <th>Price</th>
+                        <!-- <th>Action</th> -->
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8" ><%= message[i].orderStatus %></td>
+                               
+                                <!-- <% for (let j = 0; j < message[i].products.length; j++) { %> -->
+                                    <!-- <td class="px-8"><%= message[i].products[j].productOrderId %></td>
+                                    <td class="px-8"><%= message[i].products[j].productname %></td>
+                                    <td class="px-8">
+                                        <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                            <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                                <option value="Pending" <%= message[i].productstatus === 'Pending' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                                <option value="Confirmed" <%= message[i].productstatus === 'Confirmed' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                                <option value="Delivered" <%= message[i].productstatus === 'Delivered' ? 'selected' : '' %> 
+                                                    <%= message[i].productStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                                <option value="Returned" <%= message[i].productstatus === 'Returned' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                                <option value="Cancelled" <%= message[i].productstatus === 'Cancelled' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                                <option value="Shipped" <%= message[i].productstatus === 'Shipped' ? 'selected' : '' %> 
+                                                    <%= message[i].productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="px-8"><%= message[i].products[j].productprice %></td>
+                                    <% } %> -->
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                              
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
             
-        };
 
-        // Send the data using fetch API
-        const response = await fetch('/user/checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
+
+
+
+
+
+
+
+            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
+                <thead style="background-color: rgb(119, 45, 11); color: white;">
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Payment</th>
+                        <th>OrderStatus</th>
+                        <th>Product Order Id</th>
+                        <th>Product Name</th>
+                        <th>product Order Status</th>
+                        <th>Price</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                        
+                            <% for (let j = 0; j < message[i].products.length; j++) { %> 
+                                <tr class="mb-2 py-10">
+                                    <!-- <% if (j === 0) { %>  -->
+                                        <td class="px-8" rowspan="<%= message[i].products.length %>"><%= message[i].orderId %></td>
+                                         <td class="px-8" rowspan="<%= message[i].products.length %>"><%= message[i].paymentMethod %></td>
+                                         <td class="px-8" rowspan="<%= message[i].products.length %>"><%= message[i].orderStatus %></td>
+                                    <!-- <% } %> -->
+                                 
+                                    <td class="px-8"><%= message[i].products[j].productOrderId %></td>
+                                    <td class="px-8"><%= message[i].products[j].productname %></td>
+                                 
+                                    <td class="px-8">
+                                        <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
+                                            <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                                                <option value="Pending" <%= message[i].products[j].productstatus === 'Pending' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Delivered' || message[i].products[j].productstatus === 'Cancelled' || message[i].products[j].productstatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                                                <option value="Confirmed" <%= message[i].products[j].productstatus === 'Confirmed' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Delivered' || message[i].products[j].productstatus === 'Cancelled' || message[i].products[j].productstatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                                                <option value="Delivered" <%= message[i].products[j].productstatus === 'Delivered' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Cancelled' || message[i].products[j].productstatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                                                <option value="Returned" <%= message[i].products[j].productstatus === 'Returned' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                                                <option value="Cancelled" <%= message[i].products[j].productstatus === 'Cancelled' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                                <option value="Shipped" <%= message[i].products[j].productstatus === 'Shipped' ? 'selected' : '' %> 
+                                                    <%= message[i].products[j].productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="px-8"><%= message[i].products[j].productprice %></td>
+                                  
+                                    <!-- <% if (j === 0) { %> -->
+                                        <td class="px-8" rowspan="<%= message[i].products.length %>">
+                                            <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                        </td>
+                                    <!-- <% } %> -->
+                                </tr>
+                             
+                            <% } %>
+                        <% } %>
+                    <% } else { %>
+                        <tr class="mb-2">
+                            <td colspan="6" class="text-center">No Orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
+
+
+
+
+
+
+            // alert('Payment failed. Please try again.');
+                
+            Swal.fire({
+            icon: "error",
+            title: "Payment Failed",
+            text: "Payment failed. Switching to Cash on Delivery."
         });
 
-        const result = await response.json();
+        // Change the payment method to Cash on Delivery
+        document.querySelector('input[name="paymentMethod"][value="Cash On Delivery"]').checked = true;
 
-        if (result.success) {
-            const modal = document.getElementById('orderConfirmationModal');
-    modal.classList.remove('hidden');
+        // Call the COD function
+        processWalletPayment()
 
-    // Add event listener to close the modal
-    document.getElementById('closeModal').addEventListener('click', function() {
-        // Hide the modal
-        modal.classList.add('hidden');
-
-        // Redirect to the order summary page after closing the modal
-        window.location.href = '/user/order/summary';
-    });
-            // // Redirect to the order confirmation page
-            // window.location.href = '/user/order/summary';
-        } else {
-            alert(result.message);
-        }
-    });
-
-
-    let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
-    let couponApplied = false;
-
-    function applyCoupon() {
-        const couponSelect = document.getElementById('couponCodeSelect');
-        const selectedOption = couponSelect.options[couponSelect.selectedIndex];
-
-        if (selectedOption.value) {
-            // Coupon is applied
-            const discountValue = parseFloat(selectedOption.getAttribute('data-discount'));
-            const discountType = selectedOption.getAttribute('data-type');
-            let newTotal;
-
-            // Calculate the new total based on the coupon type
-            if (discountType === 'percentage') {
-                newTotal = originalTotalPayable - (originalTotalPayable * (discountValue / 100));
-            } else {
-                newTotal = originalTotalPayable - discountValue;
-            }
-
-            // Ensure the new total is not below zero
-            newTotal = Math.max(0, newTotal);
-
-            // Display the new total and show the section
-            document.getElementById('newTotal').innerText = `$${newTotal.toFixed(2)}`;
-            document.getElementById('newTotalSection').classList.remove('hidden');
-
-            // Update the hidden input for new total
-            document.getElementById('newTotalPayable').value = newTotal;
-            document.getElementById('appliedCoupon').value = selectedOption.value;
-
-            couponApplied = true;
-        } else {
-            // No coupon selected (reset to original total)
-            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total section
-            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
-            document.getElementById('newTotalPayable').value = '';
-            document.getElementById('appliedCoupon').value = ''; // Reset the applied coupon field
-
-            couponApplied = false;
-        }
-    }
-
-    // Reset the coupon select when clicked to allow re-selection
-    document.getElementById('couponCodeSelect').addEventListener('change', () => {
-        if (!document.getElementById('couponCodeSelect').value) {
-            // Reset to original payable price if no coupon is selected
-            document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
-            document.getElementById('newTotalSection').classList.add('hidden'); // Hide the new total
-            couponApplied = false;
-        }
-    });
-
-    // Display the original total price before applying any coupon
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('totalPayable').innerText = `$${originalTotalPayable.toFixed(2)}`;
-    });
-
-
-    function handlePayNow(selectedMethod) {
-        // Get the selected payment method value
-        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-        if (selectedMethod === 'Cash On Delivery') {
-            // Handle Cash on Delivery logic here
-            alert('Proceeding with Cash on Delivery');
-            // Submit the order form or call the backend API
-            processOrder(paymentMethod);
-        } else if (selectedMethod === 'Wallet') {
-            // Handle Wallet payment logic here
-            alert('Proceeding with Wallet payment');
-            // Call backend API for wallet payment
-            processWalletPayment();
-        } else if (selectedMethod === 'Razorpay') {
-            // Handle Razorpay payment logic here
-            alert('Proceeding with Razorpay payment');
-            processRazorpayPayment();
-        }
-    }
-
-    function processOrder(paymentMethod) {
-        // Example function to process an order for COD
-        console.log(`Order placed with ${paymentMethod}`);
-        // Here you can call your backend or proceed to order confirmation
-    }
-
-    function processWalletPayment() {
-        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
-        fetch('/user/wallet', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                paymentMethod: 'Wallet',
-                cartTotal: totalAmount  // Example total
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Payment  will be from wallet!');
-              
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-    }
-
-   
+       
 
 
 
-async function processRazorpayPayment() {
-    try {
-        // Step 1: Create the order on the server
-        const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
-        const response = await fetch('/user/razorPayOrder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                amount: totalAmount, // Amount in INR
-            }),
-        });
-        console.log("free")
-        const data = await response.json();
-        console.log(data)
-        // Step 2: Check if the order was created successfully
-        if (data.orderID) {
-            console.log(data.order)
-            const options = {
-                key: data.key_id, // Your API key from Razorpay
-                 amount: data.amount, // Amount in paise
-                currency: "INR",
-                name: "Pelle Eterno",
-                description: "Order Payment",
-                order_id: data.orderID, // Order ID generated from backend
-                handler: async function (response) {
 
-                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
-                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
-                    // Step 3: Payment successful, verify the payment
-                    const paymentData = {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature,
+        rzp1.on('payment.failed', async function (response) {
+            const formData = {
+                        selectedAddress: selectedAddress,
+                        paymentMethod: selectedPaymentMethod,
+                        cartId: cartId,
+                        appliedCoupon: appliedCoupon,
+                        paymentStatus:'Failed',
+                        // razorpay_payment_id: response.razorpay_payment_id,
+                        // razorpay_order_id: response.razorpay_order_id,
+                        // razorpay_signature: response.razorpay_signature
                     };
-                  console.log("pat")
-                    // Send payment details to backend for verification
-                    const verifyResponse = await fetch('/user/verifyPayment', {
+
+                    const checkoutResponse = await fetch('/user/checkout', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(paymentData),
+                        body: JSON.stringify(formData),
                     });
 
-                    const verifyData = await verifyResponse.json();
+                    const result = await checkoutResponse.json();
 
-                    if (verifyData.success) {
-                        alert('Payment successful and verified!');
-                        // Redirect to a success page 
+                    if (result.success) {
+                      
+                        const modal = document.getElementById('orderConfirmationModal');
+                        modal.classList.remove('hidden');
+
+                      
+                        document.getElementById('closeModal').addEventListener('click', function () {
+                           
+                            modal.classList.add('hidden');
+
+                         
+                            window.location.href = '/user/order/summary';
+                        });
                     } else {
-                        alert('Payment verification failed.');
+                        alert(result.message);
+                    
                     }
-                },
-                prefill: {
-                    name: "<%= user.name %>", // Prefill with user data
-                    email: "<%= user.email %>",
-                },
-                theme: {
-                    color: "#3399cc"
-                }
-            };
 
-            // Step 4: Open Razorpay checkout form
-            const rzp1 = new Razorpay(options);
-            rzp1.open();
-
-            // Handle payment failure
-            rzp1.on('payment.failed', function (response) {
-                alert('Payment failed. Please try again.');
             });
-        } else {
-            alert(data.message); // Show error message if order creation fails
-        }
-    } catch (error) {
-        console.error('Error initiating Razorpay payment:', error);
-        alert('An error occurred. Please try again.');
+    } else {
+        alert(data.message); 
     }
+} catch (error) {
+    // console.error('Error initiating Razorpay payment:', error);
+    // alert('An error occurred. Please try again.');
+    next(error)
 }
-
+}
 </script>
-
-
-
-
-
-<script>
-
-
-</script>
-
-
 

@@ -55,11 +55,27 @@
             <div class="bg-white p-6 rounded-md shadow-md w-1/2">
                 <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
                 <div class="w-full">
-                    <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
+                    <!-- <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
                         <option value="" selected>Select a coupon code</option>
                         <% coupons.forEach(coupon => { %>
                             <option value="<%= coupon._id %>" data-discount="<%= coupon.discountValue %>" data-type="<%= coupon.discountType %>">
-                                <%= coupon.couponCode %>
+                                <%= coupon.couponCode %> <%= coupon.discountValue %> 
+                            </option>
+                        <% }) %>
+                    </select> -->
+                    <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
+                        <option value="" selected>Select a coupon code</option>
+                        
+                        <% coupons.forEach(coupon => { %>
+                            <option value="<%= coupon._id %>" 
+                                    data-discount="<%= coupon.discountValue %>" 
+                                    data-type="<%= coupon.discountType %>">
+                                <%= coupon.couponCode %> - 
+                                <% if (coupon.discountType === "percentage") { %>
+                                    <%= coupon.discountValue %>% off
+                                <% } else { %>
+                                    Rs.<%= coupon.discountValue %> off
+                                <% } %>
                             </option>
                         <% }) %>
                     </select>
@@ -294,7 +310,7 @@
     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
     const cartId = document.getElementById('cartId').value;
     const appliedCoupon = document.getElementById('appliedCoupon').value;
-    // const totalAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
+    const payAmount = parseFloat(document.getElementById('newTotalPayable').value) || originalTotalPayable;
     console.log(selectedAddress)
     console.log(selectedPaymentMethod )
     // Check if address is selected
@@ -316,6 +332,14 @@
         });
         return;
     }
+    if(selectedPaymentMethod==='Cash On Delivery' && payAmount>=1000){
+        Swal.fire({
+            icon: "warning",
+            title: "Cash On Delivery not Available for purchase below 1000.",
+            text: "Select Any Other Option"
+        });
+        return;
+    }
 
     // Proceed with order processing and wallet payment
     fetch('/user/checkout', {
@@ -328,7 +352,8 @@
             // cartTotal: totalAmount,
             selectedAddress: selectedAddress,
             cartId: cartId,
-            appliedCoupon: appliedCoupon
+            appliedCoupon: appliedCoupon,
+            paymentStatus:'Paid'
         })
     })
     .then(response => response.json())
@@ -565,7 +590,7 @@ async function processRazorpayPayment() {
                             appliedCoupon: appliedCoupon,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_order_id: response.razorpay_order_id,
-                            razorpay_signature: response.razorpay_signature
+                            razorpay_signature: response.razorpay_signature,
                         };
 
                         // Send the data using fetch API
@@ -625,43 +650,75 @@ async function processRazorpayPayment() {
             const rzp1 = new Razorpay(options);
             rzp1.open();
 
-            // Handle payment failure
-            rzp1.on('payment.failed', function (response) {
-                alert('Payment failed. Please try again.');
-                
-                Swal.fire({
-                icon: "error",
-                title: "Payment Failed",
-                text: "Payment failed. Switching to Cash on Delivery."
+
+            rzp1.on('payment.failed', async function (response) {
+              
+            const formData = {
+                        selectedAddress: selectedAddress,
+                        paymentMethod: selectedPaymentMethod,
+                        cartId: cartId,
+                        appliedCoupon: appliedCoupon,
+                        paymentStatus:'Failed',
+                        // razorpay_payment_id: response.razorpay_payment_id,
+                        // razorpay_order_id: response.razorpay_order_id,
+                        // razorpay_signature: response.razorpay_signature
+                    };
+
+                    const checkoutResponse = await fetch('/user/checkout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    });
+
+                    const result = await checkoutResponse.json();
+
+                    if (result.success) {
+                      
+                        const modal = document.getElementById('orderConfirmationModal');
+                        modal.classList.remove('hidden');
+
+                      
+                        document.getElementById('closeModal').addEventListener('click', function () {
+                           
+                            modal.classList.add('hidden');
+
+                         
+                            window.location.href = '/user/order/summary';
+                        });
+                    } else {
+                        alert(result.message);
+                    
+                    }
+
             });
-
-            // Change the payment method to Cash on Delivery
-            document.querySelector('input[name="paymentMethod"][value="Cash On Delivery"]').checked = true;
-
-            // Call the COD function
-            processWalletPayment()
-
-            });
-        } else {
-            alert(data.message); // Show error message if order creation fails
-            console.log("hllooooo")
-            Swal.fire({
-                icon: "error",
-                title: "Payment Failed",
-                text: "Payment failed. Switching to Cash on Delivery."
-            });
-
-            // Change the payment method to Cash on Delivery
-            document.querySelector('input[name="paymentMethod"][value="Cash On Delivery"]').checked = true;
-
-            // Call the COD function
-            processWalletPayment()
-        }
-    } catch (error) {
-        // console.error('Error initiating Razorpay payment:', error);
-        // alert('An error occurred. Please try again.');
-        next(error)
+    } else {
+        alert(data.message); 
     }
+} catch (error) {
+    // console.error('Error initiating Razorpay payment:', error);
+    // alert('An error occurred. Please try again.');
+    next(error)
 }
+}
+
+//             // Handle payment failure
+//             rzp1.on('payment.failed', function (response) {
+               
+               
+           
+//             });
+//         } else {
+//             alert(data.message); // Show error message if order creation fails
+          
+
+//         }
+//     } catch (error) {
+//         // console.error('Error initiating Razorpay payment:', error);
+//         // alert('An error occurred. Please try again.');
+//         next(error)
+//     }
+// }
 </script>
 

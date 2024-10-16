@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css"> -->
     <style>
         /* Inline styles for the background image */
         .box-brown {
@@ -113,79 +114,118 @@
                     <% } %>
                 </tbody>
             </table> -->
-
-            <!-- <table id="ordersTable" class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded"> -->
-                <table id="ordersTable" class=" m-10 p-5 align-items-center border border-red-900 rounded">
-                
-                  
+            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
                 <thead style="background-color: rgb(119, 45, 11); color: white;">
                     <tr>
                         <th>Order Id</th>
                         <th>Name</th>
                         <th>Payment</th>
-                        <th>Status</th>
+                        <th>Order Status</th>
+                        <th>Product Name</th>
+                        <th>Product Order Status</th>
                         <th>Price</th>
-                        <th>Action</th>
                         <th>View</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (message && message.length > 0) { %>
-                        <% for (let i = 0; i < message.length; i++) { %>
-                            <tr>
-                                <td class="px-2"><%= message[i].orderId %></td>
-                                <td class="px-8"><%= message[i].address.customerName %></td>
-                                <td class="px-20"><%= message[i].paymentMethod %></td>
-                                <td class="px-8">
-                                    <!-- <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
-                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
-                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
-                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
-                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                        </select>
-                                    </form> -->
-                                  
-                                    <form action="/admin/order/<%= message[i]._id %>/toggle-block" method="POST">
-                                        <select name="orderStatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
-                                            <option value="Pending" <%= message[i].orderStatus === 'Pending' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
-                                            <option value="Confirmed" <%= message[i].orderStatus === 'Confirmed' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Delivered' || message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
-                                            <option value="Delivered" <%= message[i].orderStatus === 'Delivered' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Cancelled' || message[i].orderStatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
-                                            <option value="Returned" <%= message[i].orderStatus === 'Returned' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
-                                            <option value="Cancelled" <%= message[i].orderStatus === 'Cancelled' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
-                                            <option value="Shipped" <%= message[i].orderStatus === 'Shipped' ? 'selected' : '' %> 
-                                                <%= message[i].orderStatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
-                                        </select>
-                                    </form>
-                                    
-                                    
-                                </td>
-                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
-                                <td class="px-8">
-                                    <a href="/admin/order/cancel?id=<%= message[i]._id %>" onclick="return confirm('Are you sure you want to delete this product?');">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </a>
-                                </td>
-                                <td class="px-8">
-                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
+
+                    <% for(const order of message) { %>
                         <tr>
-                            <td colspan="7" class="text-center">No Orders found.</td>
+
+    <td ><%= order.orderId %></td>
+    <td ><%= order.address.customerName %></td>
+    <td ><%= order.paymentMethod %></td>
+    <td ><%= order.orderStatus %></td>
+
+
+<td>
+    <ul>
+        <% for(let product of order.products){%>
+            <li><%= product.productname %></li>
+        <% } %>
+    </ul>
+</td>
+<td>
+    <ul>
+        <% for(let product of order.products){%>
+            <li>
+                <form action="/admin/order/<%= order._id %>/toggle-block" method="POST">
+                    <input type="hidden" name="productId" value="<%= product.productId._id %>">
+                    <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                        <option value="Pending" <%= product.productstatus=== 'Pending' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Delivered' || product.productstatus === 'Cancelled' || product.productstatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
+                        <option value="Confirmed" <%= product.productstatus === 'Confirmed' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Delivered' || product.productstatus=== 'Cancelled' || product.productstatus === 'Returned' ? 'disabled' : '' %>>Confirmed</option>
+                        <option value="Delivered" <%= product.productstatus === 'Delivered' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' || product.productstatus === 'Returned' ? 'disabled' : '' %>>Delivered</option>
+                        <option value="Returned" <%= product.productstatus === 'Returned' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' ? 'disabled' : '' %>>Returned</option>
+                        <option value="Cancelled" <%= product.productstatus === 'Cancelled' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                        <option value="Shipped" <%= product.productstatus === 'Shipped' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                    </select>
+                </form>
+            </li>
+        <% } %>
+    </ul>
+</td>
+<td>
+    <ul>
+        <% for(let product of order.products){%>
+            <li><%= product.productprice %></li>
+        <% } %>
+    </ul>
+</td>
+<td>
+     <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+</td>
+
+
+
                         </tr>
-                    <% } %>
+                        
+                        <!-- <tr> -->
+                            <!-- <td>
+                                <%=order.orderId%>
+                            </td> -->
+                            <!-- <td>
+                                <ul>
+                                <% for(let product of order.products){%>
+                                    <li><%= product.productname %></li>
+                                <% } %>
+                            </ul>
+                            </td> -->
+                        <!-- </tr> -->
+                    <% } %> 
                 </tbody>
             </table>
+        </div>
+        </div>
+        
             
+            <!-- Include jQuery and DataTables -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+            
+            <script>
+                $(document).ready(function() {
+                    $('#ordersTable').DataTable({
+                        "paging": true,        // Enable pagination
+                        "ordering": true,      // Enable column sorting
+                        "info": true,          // Enable table information
+                        "searching": true,     // Enable search box
+                        "autoWidth": false,    // Disable automatic column width calculation
+                        "order": [[0, "desc"]], // Default sorting on the first column (Order ID), descending
+                        "columnDefs": [
+                            { "orderable": false, "targets": [6, 7] } // Disable sorting on 'product Order Status' and 'View' button columns
+                        ]
+                    });
+                });
+            </script>
+            
+                
+                
             <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
                 <div class="bg-white p-5 rounded-md w-1/2 ">
                     <div class="flex justify-between items-center">
@@ -199,7 +239,7 @@
                         <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
                         <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
                         <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
-                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+                        <p class="text-sm"><strong>Total Price:</strong> Rs.<span id="modalTotalPrice"></span></p>
                         <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
                          <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
                         
@@ -255,33 +295,28 @@
                 <!-- <% } %>
             </div> -->
             
-            </div>
+            <!-- </div>
         
-</div>
+</div> -->
+
+
 </body>
 </html>
 
-<!-- jQuery (required by DataTables) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    
+  
+    
+  
+ 
+  
+
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-      $(document).ready(function() {
-      $('#ordersTable').DataTable({
-        "paging": true,       // Enable pagination
-        "ordering": true,     // Enable column sorting
-        "info": true,         // Display table information
-        "searching": true,    // Enable search box
-        "autoWidth": false,   // Disable automatic column width calculation
-        "order": [[ 0, "desc" ]],  // Default sorting on the first column (Order ID), in descending order
-        "columnDefs": [
-          { "orderable": false, "targets": [5, 6] }  // Disable sorting for Action and View columns
-        ]
-      });
-    });
+
 //     function openModal(order) {
 
 //     document.getElementById('modalOrderId').innerText = order.orderId;
@@ -318,6 +353,9 @@
 //     // Hide modal
 //     document.getElementById('orderModal').classList.add('hidden');
 // }
+
+
+
 function openModal(orderData) {
        
        const modal = document.getElementById('orderModal');
@@ -349,6 +387,7 @@ function openModal(orderData) {
            <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
            <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
            <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+            <p class="text-sm"><strong>Product Status:</strong>${product.productstatus}</p>
        
        </div>
    `;

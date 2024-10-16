@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         /* Inline styles for the background image */
         .box-brown {
@@ -68,7 +69,7 @@
                 <div class="col-span-1 space-y-2">
                     <h3 class="text-lg font-semibold">Order ID: <%= order.orderId %></h3>
                     <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                    <p><strong>Total Price:</strong> $<%= order.totalPayablePrice %></p>
+                    <p><strong>Total Price:</strong> Rs.<%= order.totalPayablePrice %></p>
                     <p class="text-blue-600"><strong>Order Status:</strong> <%= order.orderStatus %></p>
                 </div>
 
@@ -175,7 +176,7 @@
                                         <span class="line-through text-sm text-gray-500">₹<%= product.productprice %></span></p>
                                     <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
                                 <% } else { %>
-                                    <p><strong>Price:</strong> $<%= product.productprice %></p>
+                                    <p><strong>Price:</strong> Rs.<%= product.productprice %></p>
                                 <% } %>
                                 <% if (product.productquantity <= 0) { %>
                                     <p class="text-red-500">Product is out of stock</p>
@@ -196,12 +197,19 @@
                                                 onclick="cancelProduct(this)">Cancel</button>
                                         <% } %> 
                                         <% } %>
-                                        <% if (product.productstatus === 'Delivered') { %>
-                                            <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                                                onclick="handleReturn('<%= product._id %>')">Return</button>
-                                        <% } %>
+                                        
+                                       
                                     <% } %>
                                     <% } %>
+                                    <% if (product.productstatus === 'Delivered') { %>
+                                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                                        data-order-id="<%= order._id %>"
+                                        data-product-id="<%= product.productId._id %>"
+                                        onclick="returnProduct(this)">Return</button>
+                                    <% } %>
+                                    <%= product.productstatus %>
+                                    
+                                   
                                     <% if (order.orderStatus === 'Cancelled') { %>
                                         <p class="text-gray-500">This Order has been cancelled</p>
                                     <% } else if (order.orderStatus === 'Returned') { %>
@@ -219,17 +227,17 @@
                 
                
                 <div class="col-span-1 flex items-center justify-end gap-2">
-                    <% if (order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed') { %>
+                     <!-- <% if (order.paymentStatus === 'Unpaid' ) { %>
                     <a href="/user/order/cancel?id=<%= order._id %>" onclick="return confirm('Are you sure you want to cancel this order?');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                         Cancel
                     </a>
-               <% } %>
+               <% } %> -->
                
-            <!-- Cancel Button -->
-                  <% if (order.orderStatus === 'Delivered') { %>
-                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                               onclick="opensmallModal('<%= order._id %>')">Return</button>
-                  <% } %>
+          
+                  <% if (order.paymentStatus === 'Unpaid') { %>
+                    <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" id="payretry"
+                               onclick="payNow('<%= order._id %>')">Pay Now</button>
+                  <% } %> 
 
                     <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         View
@@ -268,7 +276,7 @@
             <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
             <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
             <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
-            <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
+            <p class="text-sm"><strong>Total Price:</strong> Rs.<span id="modalTotalPrice"></span></p>
             <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
              <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
             
@@ -310,6 +318,8 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 <script>
@@ -344,7 +354,8 @@
             <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
             <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
             <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
-            <p class="text-sm"><strong>Price:</strong> $${productPrice}</p>
+            <p class="text-sm"><strong>Price:</strong> Rs.${productPrice}</p>
+            <p class="text-sm"><strong>Product Status:</strong>${product.productstatus}</p>
         
         </div>
     `;
@@ -364,55 +375,55 @@
 
 
 
-    let currentOrderId = null;
+//     let currentOrderId = null;
 
-function opensmallModal(orderId) {
-    currentOrderId = orderId;  // Save the order ID for use in submission
-    document.getElementById('returnModal').classList.remove('hidden');
-}
+// function opensmallModal(orderId) {
+//     currentOrderId = orderId;  // Save the order ID for use in submission
+//     document.getElementById('returnModal').classList.remove('hidden');
+// }
 
-function closesmallModal() {
-    document.getElementById('returnModal').classList.add('hidden');
-}
+// function closesmallModal() {
+//     document.getElementById('returnModal').classList.add('hidden');
+// }
 
-async function submitReturn() {
-    const reason = document.getElementById('returnReason').value;
-    console.log(reason)
+// async function submitReturn() {
+//     const reason = document.getElementById('returnReason').value;
+//     console.log(reason)
     
-    if (!reason.trim()) {
-        alert('Please enter a reason for return');
-        return;
-    }
+//     if (!reason.trim()) {
+//         alert('Please enter a reason for return');
+//         return;
+//     }
 
-    // Close the modal
-    closesmallModal();
+//     // Close the modal
+//     closesmallModal();
 
-    // Make a POST request to send the reason to the backend
-    try {
-        const response = await fetch('/user/order/return', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                orderId: currentOrderId,
-                reason: reason
-            })
-        });
+//     // Make a POST request to send the reason to the backend
+//     try {
+//         const response = await fetch('/user/order/return', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 orderId: currentOrderId,
+//                 reason: reason
+//             })
+//         });
 
-        if (response.ok) {
-            console.log(response)
-            alert('Return request submitted successfully.');
-            // Optionally refresh the page or update the UI accordingly
-            location.reload();
-        } else {
-            alert('Failed to submit return request.');
-        }
-    } catch (error) {
-        console.log('Error submitting return:', error);
-        alert('An error occurred while submitting the return request.');
-    }
-}
+//         if (response.ok) {
+//             console.log(response)
+//             alert('Return request submitted successfully.');
+//             // Optionally refresh the page or update the UI accordingly
+//             location.reload();
+//         } else {
+//             alert('Failed to submit return request.');
+//         }
+//     } catch (error) {
+//         console.log('Error submitting return:', error);
+//         alert('An error occurred while submitting the return request.');
+//     }
+// }
 
 </script>
 
@@ -601,6 +612,230 @@ function handleReturn(productId) {
         alert('An error occurred while canceling the product.');
     });
 }
+
+
+
+//     const orderId = button.getAttribute('data-order-id');
+//     console.log(orderId)
+//     const productId = button.getAttribute('data-product-id');
+   
+//    console.log(productId)
+//     console.log("going")
+//     // Send a POST request using fetch to the backend API
+//     fetch(`/user/order/returnProduct`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             orderId: orderId,
+//             productId: productId
+//         })
+//     })
+//     .then(response => {
+//         console.log('Response Status:', response.status); // Log response status
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log('Response Data:', data); // Log response data
+//         if (data.success) {
+//             alert('Product successfully Returned!');
+//             // Optionally reload the page or remove the product from the UI dynamically
+//             window.location.reload(); // or update the DOM to reflect the cancellation
+//         } else {
+//             alert('Failed to return the product. Please try again.');
+//         }
+//     })
+//     .catch((error) => {
+//         console.error('Error:', error);
+//         alert('An error occurred while returning the product.');
+//     });
+// }
+
+
+
+let currentOrderId = null;
+let currentProductId=null;
+
+function returnProduct(button) {
+    currentOrderId = button.getAttribute('data-order-id');
+    currentProductId = button.getAttribute('data-product-id');
+    // currentOrderId = orderId; 
+    // currentproductId=productId // Save the order ID for use in submission
+    document.getElementById('returnModal').classList.remove('hidden');
+}
+
+function closesmallModal() {
+    document.getElementById('returnModal').classList.add('hidden');
+}
+
+async function submitReturn() {
+    const reason = document.getElementById('returnReason').value;
+    console.log(reason)
+    
+    if (!reason.trim()) {
+        alert('Please enter a reason for return');
+        return;
+    }
+
+    // Close the modal
+    closesmallModal();
+
+    // Make a POST request to send the reason to the backend
+    try {
+        const response = await fetch('/user/order/returnProduct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderId: currentOrderId,
+                productId:currentProductId,
+                reason: reason
+            })
+        });
+
+        if (response.ok) {
+            console.log(response)
+            alert('Return request submitted successfully.');
+            location.reload();
+        } else {
+            alert('Failed to submit return request.');
+        }
+    } catch (error) {
+        console.log('Error submitting return:', error);
+        alert('An error occurred while submitting the return request.');
+    }
+}
+
+
+
+
+async function payNow(orderId){
+
+    try{
+        console.log("hello kittyyyyyyy")
+    const response = await fetch('/user/retryPayment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId:orderId, // Amount in INR
+            }),
+        });
+
+
+const data = await response.json();
+
+
+if (data.orderID) {
+    const options = {
+        key: data.key_id, 
+        amount: data.amount, 
+        name: "Pelle Eterno",
+        description: "Order Payment",
+        order_id: data.orderID,
+        handler: async function (response) {
+           
+            const paymentData = {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+            };
+
+            // Send payment details to backend for verification
+            const verifyResponse = await fetch('/user/verifyPayment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(paymentData),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+                alert('Payment successful and verified!');
+
+           
+                const formData = {
+                    orderId:orderId,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature,
+                };
+
+             
+                const checkoutResponse = await fetch('/user/paymentRetryStatus', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await checkoutResponse.json();
+
+                if (result.success) {
+                  //button invisible
+                  document.getElementById('payretry').style.display = 'none';
+                  
+                } else {
+                    alert(result.message);
+                    Swal.fire({
+                     icon: "error",
+                     title: "Payment Failed",
+                     text: "Payment failed."
+                      });
+
+                }
+            } else {
+                alert('Payment verification failed.');
+              
+            }
+        },
+        prefill: {
+            name: "<%= user.name %>", 
+            email: "<%= user.email %>",
+        },
+        theme: {
+            color: "#3399cc"
+        }
+    };
+
+   
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+
+
+    rzp1.on('payment.failed', async function (response) {
+        Swal.fire({
+                     icon: "error",
+                     title: "Payment Failed",
+                     text: "Payment failed."
+                      })
+
+    });
+} else {
+    Swal.fire({
+                     icon: "error",
+                     title: "Payment Failed",
+                     text: data.message
+                      })
+
+}
+} catch (error) {
+
+    Swal.fire({
+    icon: "error",
+    title: "Payment Failed",
+    text: error.message || error.toString(),
+});
+
+}
+}
+
 
 </script>
 

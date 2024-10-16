@@ -6,7 +6,7 @@ import Product from '../../model/productModel.mjs'
 
 
 
-export const orderList = async (req, res) => {
+export const orderList = async (req, res,next) => {
     try {
         if (!req.session.isUser) {
             return res.redirect('/user/home');
@@ -46,7 +46,8 @@ export const orderList = async (req, res) => {
             currentPage: page,
             totalPages: totalPages,
             light: req.flash(),
-            query:req.query
+            query:req.query,
+            user
         });
     } catch (error) {
         console.log(`error from admin product ${error}`);
@@ -54,7 +55,7 @@ export const orderList = async (req, res) => {
     }
 };
 
-export const userorderCancel = async (req, res) => {
+export const userorderCancel = async (req, res,next) => {
     try {
         console.log("haha")
       const orderId = req.query.id;
@@ -318,7 +319,7 @@ export const userorderReturn = async (req, res, next) => {
 };
 
 
-export const userProductCancel = async (req, res) => {
+export const userProductCancel = async (req, res,next) => {
     try {
         console.log("reach");
         const { orderId, productId } = req.body; 
@@ -394,6 +395,8 @@ console.log('Product Value:', productValue);
 
         
         await order.save();
+        
+        updateOrderStatus(order);
 
         return res.status(200).json({ success: 'Product cancelled and refund credited to wallet successfully' });
     } catch (error) {
@@ -405,3 +408,233 @@ console.log('Product Value:', productValue);
           //next(error)
     }
 };
+
+
+export const userProductReturn = async (req, res, next) => {
+  try {
+      console.log("reach");
+      const { orderId, productId, reason } = req.body;
+      console.log(req.body);
+
+      // Find the order and populate product information
+      const order = await Order.findById(orderId).populate('products.productId');
+      if (!order) {
+          return res.status(404).json({ error: 'Order not found' });
+      }
+
+      // Find the product in the order
+      const product = order.products.find(item => item.productId.equals(productId));
+      if (!product) {
+          return res.status(404).json({ error: 'Product not found in this order' });
+      }
+
+      // Check if the product has already been returned
+      if (product.productstatus === 'Returned') {
+          return res.status(400).json({ error: 'This product has already been returned' });
+      }
+
+      // Calculate refund logic
+      const totalOrderValue = order.products.reduce((total, item) => total + (item.productprice * item.productquantity), 0);
+      const productValue = product.productprice * product.productquantity;
+      const discountShare = (order.discountApplied / totalOrderValue) * productValue;
+      const refundAmount = productValue - discountShare;
+
+      console.log('Order Discount:', order.discountApplied);
+      console.log('Total Order Value:', totalOrderValue);
+      console.log('Product Value:', productValue);
+      console.log('Refund Amount:', refundAmount);
+
+      // Process refund for Razorpay if payment method is razorpay
+      if (order.paymentMethod === 'razorpay') {
+          if (!order.razorpayPaymentId) {
+              return res.status(400).json({ message: "Razorpay payment ID not found for this order" });
+          }
+
+          try {
+              await razorpayInstance.payments.refund(order.razorpayPaymentId, {
+                  amount: refundAmount * 100, // Amount in paisa
+                  speed: 'normal',
+              });
+              console.log("Refund successful in Razorpay");
+          } catch (error) {
+              return res.status(500).json({ error: 'Error processing Razorpay refund' });
+          }
+      }
+
+      // Update wallet balance
+      let wallet = await Wallet.findOne({ userID: order.customerId });
+      if (!wallet) {
+          wallet = new Wallet({
+              userID: order.customerId,
+              balance: 0,
+              transaction: [],
+          });
+      }
+      wallet.balance += refundAmount;
+      wallet.transaction.push({
+          walletAmount: refundAmount,
+          orderId: order.orderId,
+          transactionType: 'Credited',
+          transactionDescription: 'Product Returned',
+          transactionDate: new Date(),
+      });
+      await wallet.save();
+
+      // Update product inventory after return
+      const productDetails = await Product.findById(productId);
+      if (productDetails) {
+          productDetails.productQuantity += product.productquantity;
+          await productDetails.save();
+      }
+
+      // Update product status in the order
+      product.productstatus = 'Returned';
+      product.returnProductReason = reason;
+      product.returnedDate = Date.now();
+
+      // Save the updated order
+      await order.save();
+
+      // Call function to update the overall order status
+      updateOrderStatus(order);
+
+      return res.status(200).json({ success: 'Product returned and refund credited to wallet successfully' });
+  } catch (error) {
+      console.log(`Error returning product: ${error.message}`);
+      return res.status(500).json({ error: 'An error occurred while processing the return' });
+  }
+};
+
+
+// export const userProductReturn = async (req, res,next) => {
+//   try {
+//       console.log("reach");
+//       const { orderId, productId,reason } = req.body; 
+//       console.log(req.body)
+//       const order = await Order.findById(orderId).populate('products.productId');
+
+//       if (!order) {
+//           return res.status(404).json({ error: 'Order not found' });
+//       }
+
+//       const product = order.products.find(item => item.productId.equals(productId));
+//       if (!product) {
+//           return res.status(404).json({ error: 'Product not found in this order' });
+//       }
+
+//       if (product.productstatus === 'Returned') {
+//           return res.status(400).json({ error: 'This product has already been returned' });
+//       }
+
+    
+     
+
+   
+//       const totalOrderValue = order.products.reduce((total, item) => {
+//           return total + (item.productprice * item.productquantity);
+//       }, 0);
+
+    
+//       const productValue = product.productprice * product.productquantity;
+//       const discountShare = (order.discountApplied / totalOrderValue) * productValue;
+      
+//       console.log('Order Discount:', order.discountApplied);
+//       console.log('Total Order Value:', totalOrderValue);
+//       console.log('Product Value:', productValue);
+
+     
+//       const refundAmount = productValue - discountShare;
+
+     
+      
+     
+//      if (order.paymentMethod === 'razorpay') {
+//           if (!order.razorpayPaymentId) {
+//                  return res.status(400).send({ message: "Razorpay payment ID not found for this order" });
+//           }
+//           await razorpayInstance.payments.refund(order.razorpayPaymentId, {
+//               amount: refundAmount * 100, 
+//               speed: 'normal',
+//           });
+//             console.log("refund successful in razorpay")
+//      }
+         
+//         let wallet = await Wallet.findOne({ userID: order.customerId });
+//       if (!wallet) {
+//           wallet = new Wallet({
+//               userID: order.customerId,
+//               balance: 0,
+//               transaction: [],
+//           });
+//       }
+//       wallet.balance += refundAmount;
+//       wallet.transaction.push({
+//           walletAmount: refundAmount,
+//           orderId: order.orderId,
+//           transactionType: 'Credited',
+//           transactionDescription: 'Product Returned',
+//           transactionDate: new Date(),
+//       });
+//       await wallet.save();
+
+      
+//       const productDetails = await Product.findById(productId);
+//       if (productDetails) {
+//           productDetails.productQuantity += product.productquantity;
+//           await productDetails.save();
+//       }
+         
+//           product.productstatus = 'Returned';
+//           product.returnProductReason = reason;  
+//           product.returnedDate=Date.now();
+
+          
+      
+//       await order.save();
+//       updateOrderStatus(order);
+
+
+//       return res.status(200).json({ success: 'Product cancelled and refund credited to wallet successfully' });
+//   } catch (error) {
+    
+//       console.log(`Error cancelling product: ${JSON.stringify(error, null, 2)}`);
+//   // req.flash('error', 'An error occurred while cancelling the product');
+//   // return res.status(500).json({ error: 'An error occurred while cancelling the product' });
+  
+//         //next(error)
+//   }
+// };
+
+
+
+function updateOrderStatus(order) {
+  const productStatuses = order.products.map(product => product.productstatus);
+
+  // Check if all products have the same status
+  const allReturned = productStatuses.every(status => status === 'Returned');
+  const allCancelled = productStatuses.every(status => status === 'Cancelled');
+  const allDelivered = productStatuses.every(status => status === 'Delivered');
+  const allPending = productStatuses.every(status => status === 'Pending');
+  const allShipped = productStatuses.every(status => status === 'Shipped');
+  
+  // Set order status based on product statuses
+  if (allReturned) {
+      order.orderStatus = 'Returned';
+  } else if (allCancelled) {
+      order.orderStatus = 'Cancelled';
+  } else if (allDelivered) {
+      order.orderStatus = 'Delivered';
+  } else if (allPending) {
+      order.orderStatus = 'Pending';
+  } else if (allShipped) {
+      order.orderStatus = 'Shipped';
+  } else {
+      // If some products are in other states (e.g., Confirmed, Shipped, Cancelled, Delivered)
+      order.orderStatus = 'Confirmed';
+  }
+
+  // Save the updated order in the database
+  return order.save()
+      .then(() => console.log('Order status updated successfully'))
+      .catch(err => console.error('Error updating order status:', err));
+}

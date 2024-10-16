@@ -582,11 +582,11 @@ export const userhome=async(req,res)=>{
     try{
           const sessionuser=req.session.isUser
           const viewproduct= await Product.find({isDeleted:false}).limit(4);
-          console.log(viewproduct);
+        //   console.log(viewproduct);
           const recentproduct = await Product.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(4);
-          console.log(recentproduct);
+        //   console.log(recentproduct);
           const productgreen= await Product.findOne({productName:'Spencer-Green'});
-          console.log(productgreen);
+        //   console.log(productgreen);
           const productcase= await Product.findOne({productName:'CARDO'});
           const productCollection=await Category.find({isActive:true});
           res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash(),query:req.query});

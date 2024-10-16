@@ -178,24 +178,29 @@ form.addEventListener('submit', (e) => {
     isValid = false;
   }
 
+
+  // const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=*]).{8,16}$/;
   // Password validation
-  if (password.value !== confirmpassword.value) {
-    confirmPasswordError.textContent = 'Passwords must match';
-    isValid = false;
-  } else if (password.value === '' || password.value == null || password.value === "password") {
-    passwordError.textContent = 'Enter a valid password';
-    isValid = false;
-  } else if (password.value.length < 8 || password.value.length > 15) {
+  if (password.value.length < 8 || password.value.length > 15) {
     passwordError.textContent = 'Password must be between 8 and 15 characters';
     isValid = false;
   } else if (!password.value.match(/^[A-Za-z0-9*#@%]{8,16}$/)) {
     passwordError.textContent = 'Password must contain letters, numbers, and special characters (*, #, @, %)';
     isValid = false;
+  } else if (password.value === '' || password.value == null || password.value === "password") {
+    passwordError.textContent = 'Enter a valid password';
+    isValid = false;
   }
+  // } if (!passwordPattern.test(password)) {
+  //       errorMessage.textContent = 'Password must be 8-16 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.';
+  //       errorMessage.style.display = 'block';
+  //       return false;
+  //   }
 
   if (!isValid) {
     e.preventDefault();  // Prevent form submission if validation fails
   }
+
 });
 
           </script>
