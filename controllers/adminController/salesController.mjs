@@ -30,7 +30,22 @@ const getDateRange = (filter) => {
                 $lte: now.endOf('week').toDate()
             }
         };
-    }
+    }else if (filter === 'thisDay') {
+        dateRange = {
+            createdAt: {
+                $gte: now.startOf('day').toDate(),   
+                $lte: now.endOf('day').toDate()      
+            }
+        };
+    } else if (filter === 'custom' && customDate) {
+        // Assuming customDate is provided in a valid date format
+        dateRange = {
+            createdAt: {
+                $gte: moment(customDate).startOf('day').toDate(),  // Start of the custom day
+                $lte: moment(customDate).endOf('day').toDate()      // End of the custom day
+            }
+        };
+    } 
 
     return dateRange;
 };
