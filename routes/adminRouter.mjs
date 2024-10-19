@@ -1,7 +1,7 @@
 import express from "express";
 const admin_router=express();
 
-import { admin, adminhome, adminlogin, adminlogout, adminverify } from "../controllers/adminController/adminController.mjs";
+import { admin, admindashBoardFilter, adminhome, adminlogin, adminlogout, adminverify } from "../controllers/adminController/adminController.mjs";
 import isAdmin from "../middleware/adminsession.mjs";
 import { admincategory, admincategoryAdd, admincategoryaddform, admincategoryeditform, admincategorypost, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
 import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete, adminproducteditform, adminproductsearch, adminproductupdate, pst } from "../controllers/adminController/productController.mjs";
@@ -20,11 +20,12 @@ admin_router.set('views','./views/admin');
 
 // admin_router.use(express.static('public'));
 
- admin_router.get('/try',check)
+admin_router.get('/try',check)
 admin_router.get('/',admin)
 admin_router.get("/login",adminlogin);
 admin_router.post("/login",adminverify);
 admin_router.get("/home",adminhome);
+admin_router.post("/home/filter",admindashBoardFilter)
 
 admin_router.get("/category",isAdmin, admincategory);
 admin_router.get("/category/add",isAdmin,admincategoryaddform);

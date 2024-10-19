@@ -55,6 +55,10 @@ const orderSchema = new mongoose.Schema({
         },
         returnedDate:{
             type:Date,
+        },
+        couponDiscount:{
+            type:Number,
+            default:0
         }
     }],
     totalQuantity: {

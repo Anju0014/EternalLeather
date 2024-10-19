@@ -63,7 +63,7 @@
             
                 <div class="bg-gray-100 p-4 rounded-lg shadow-lg w-64 text-center">
                     <p class="text-lg font-semibold">Total Products Sold</p>
-                    <p class="text-2xl font-bold text-green-500"><%= deliveredOrderCount %></p>
+                    <p class="text-2xl font-bold text-green-500"><%= deliveredProductCount %></p>
                 </div>
             
        
@@ -74,181 +74,9 @@
             </div>
             
       
-            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
-                <a href="/admin/sales/downloadExcel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Download Excel</a>
-                <a href="/admin/sales/downloadPdf" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Download PDF</a>
-            </div>
-             -->
-             <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
-                <div class="relative inline-block">
-                    <button id="downloadButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
-                        Download Sales Report
-                    </button>
-                    <div id="dropdownMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
-                        <a href="/admin/sales/downloadExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download Excel</a>
-                        <a href="/admin/sales/downloadPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download PDF</a>
-                    </div>
-                </div>
-            </div> -->
-            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
-                <div class="relative inline-block">
-                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
-                        Download Sales Report
-                    </button>
-                    <div id="dropdownSalesMenu" class="absolute hidden  bg-white shadow-lg rounded-lg mt-2 w-full">
-                        <a href="/admin/sales/downloadExcel"id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download Excel</a>
-                        <a href="/admin/sales/downloadPdf" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Download PDF</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="report-filters flex justify-start gap-4 mt-4">
-                          <div class="relative inline-block">
-                    <label for="filterOrders" class="block text-gray-700 text-sm font-bold mb-2">Filter by Date:</label>
-                    <select id="filterOrders" class="bg-white border border-gray-300 text-gray-900 py-2 px-4 pr-8 rounded-lg shadow-md focus:outline-none focus:border-indigo-500">
-                        <option value="all">All Time</option>
-                        <option value="thisYear">This Year</option>
-                        <option value="thisMonth">This Month</option>
-                        <option value="thisWeek">This Week</option>
-                    </select>
-                </div>
-            </div>
-            
-    
-                <table id="ordersTable" class=" m-10  p-5 align-items-center border border-red-900 rounded">
-                <thead style="background-color: rgb(119, 45, 11); color: white;">
-                    <tr>
-                        <th>Order Id</th>
-                        <th>Name</th>
-                        <th>Payment</th>
-                        <th>Status</th>
-                        <th>Price</th>
-                    
-                        <th>View</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (message && message.length > 0) { %>
-                        <% for (let i = 0; i < message.length; i++) { %>
-                            <tr>
-                                <td class="px-2"><%= message[i].orderId %></td>
-                                <td class="px-8"><%= message[i].address.customerName %></td>
-                                <td class="px-20"><%= message[i].paymentMethod %></td>
-                                <td class="px-8"><%= message[i].orderStatus %></td>
-                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
-                                <td class="px-8">
-                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="7" class="text-center">No Orders found.</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-             -->
-
-             <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
-                <div class="relative inline-block">
-                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md" onclick="toggleDropdown()">
-                        Download Sales Report
-                    </button>
-                    <div id="dropdownSalesMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
-                        <a href="#" id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('excel')">Download Excel</a>
-                        <a href="#" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('pdf')">Download PDF</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="report-filters flex justify-start gap-4 mt-4">
-          
-                <div class="relative inline-block">
-                    <label for="filterOrders" class="block text-gray-700 text-sm font-bold mb-2">Filter by Date:</label>
-                    <select id="filterOrders" class="bg-white border border-gray-300 text-gray-900 py-2 px-4 pr-8 rounded-lg shadow-md focus:outline-none focus:border-indigo-500">
-                        <option value="all">All Time</option>
-                        <option value="thisYear">This Year</option>
-                        <option value="thisMonth">This Month</option>
-                        <option value="thisWeek">This Week</option>
-                    </select>
-                </div>
-            </div>
-            
-            <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
-                <thead style="background-color: rgb(119, 45, 11); color: white;">
-                    <tr>
-                        <th>Order Id</th>
-                        <th>Name</th>
-                        <th>Payment</th>
-                        <th>Status</th>
-                        <th>Price</th>
-                        <th>View</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (message && message.length > 0) { %>
-                        <% for (let i = 0; i < message.length; i++) { %>
-                            <tr>
-                                <td class="px-2"><%= message[i].orderId %></td>
-                                <td class="px-8"><%= message[i].address.customerName %></td>
-                                <td class="px-20"><%= message[i].paymentMethod %></td>
-                                <td class="px-8"><%= message[i].orderStatus %></td>
-                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
-                                <td class="px-8">
-                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="6" class="text-center">No Orders found.</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-            
-            <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center max-height-[250px] z-50">
-                <div class="bg-white p-5 rounded-md w-1/2 ">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-semibold">Order Details</h3>
-                        <button onclick="closeModal()" class="text-red-500 font-bold">&times;</button>
-                    </div>
-                    <hr>
-                    <div id="modalContent" class="max-height-[200px]">
-                        
-                        <p class="text-sm"><b>Order ID:</b> <span id="modalOrderId"></span></p>
-                        <p class="text-sm"><strong>Order Date:</strong> <span id="modalOrderDate"></span></p> 
-                        <p class="text-sm"><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
-                        <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
-                        <p class="text-sm"><strong>Total Price:</strong> $<span id="modalTotalPrice"></span></p>
-                        <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
-                         <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
-                        
-                    </div>
-                     <div class="mt-4"> 
-                    
-                        <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                            Download
-                        </button>
-                    </div>
-                </div>
-            </div>  -->
-            <!-- <div class="download-buttons flex justify-end gap-4 mt-4">
-                <div class="relative inline-block">
-                    <button id="downloadSalesButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md" onclick="toggleDropdown()">
-                        Download Sales Report
-                    </button>
-                    <div id="dropdownSalesMenu" class="absolute hidden bg-white shadow-lg rounded-lg mt-2 w-full">
-                        <a href="#" id="downloadSalesExcel" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('excel')">Download Excel</a>
-                        <a href="#" id="downloadSalesPdf" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="downloadReport('pdf')">Download PDF</a>
-                    </div>
-                </div>
-            </div> -->
-
             <div class="relative inline-block  flex justify-end">
                 <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600">
-                    Sales Report
+                    Download Sales Report
                 </button>
                 <div class="absolute hidden mt-10 w-48 bg-white rounded-md shadow-lg z-10 group-hover:block">
                     <div class="py-1">
@@ -270,8 +98,15 @@
                     <option value="thisMonth">This Month</option>
                     <option value="thisWeek">This Week</option>
                     <option value="thisYear">This Year</option>
+                    <option value="custom">Enter a Date</option>
                 </select>
+                <div id="customDateContainer" style="display: none;">
+                    <label for="customDate">Select Date</label>
+                    <input type="date" id="customDate" name="customDate" class="text-gray-700 text-sm font-bold mb-2">
+                </div>
+
                 <button type="submit" class="bg-red-900 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">Apply Filter</button>
+            
             </form>
 
 <br>
@@ -294,29 +129,35 @@
             <table id="ordersTable" class="m-10 p-5 align-items-center border border-red-900 rounded">
                 <thead style="background-color: rgb(119, 45, 11); color: white;">
                     <tr>
-                        <th>Order Id</th>
+                        <!-- <th>Order Id</th>
                         <th>Name</th>
                         <th>Payment</th>
                         <th>Status</th>
                         <th>Price</th>
-                        <th>View</th>
+                        <th>View</th> -->
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (message && message.length > 0) { %>
-                        <% for (let i = 0; i < message.length; i++) { %>
-                            <tr>
-                                <td class="px-2"><%= message[i].orderId %></td>
-                                <td class="px-8"><%= message[i].address.customerName %></td>
-                                <td class="px-20"><%= message[i].paymentMethod %></td>
-                                <td class="px-8"><%= message[i].orderStatus %></td>
-                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
-                                <td class="px-8">
-                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
+                   
+                 <% if (products && products.length > 0) { %>
+                    <% products.forEach(function(product) { %>
+                        <tr>
+                            <td><%= product.orderId %></td>
+                            <td><%= product.customerName %></td>
+                            <td><%= product.productName %></td>
+                            <td><%= product.productQuantity %></td>
+                            <td><%= product.productPrice %></td>
+                            <td><%= product.productStatus %></td>
+                            
+                        </tr>
+                    <% }); %>
+                    <% } else{ %>
                         <tr>
                             <td colspan="6" class="text-center">No Orders found.</td>
                         </tr>
@@ -587,6 +428,48 @@ function openModal(orderData) {
 //     const selectedFilter = document.getElementById('filterOrders').value;
 //     fetchFilteredOrders(selectedFilter); // Fetch orders based on the selected filter
 // });
+
+// const salesReportButton = document.querySelector('button.bg-blue-500');
+// const dropdownMenu = document.querySelector('.absolute');
+
+// salesReportButton.addEventListener('click', () => {
+//     dropdownMenu.classList.toggle('hidden');
+// });
+
+// function setFilterValue() {
+//     const filterSelect = document.getElementById('filter');
+   
+//     const savedFilterValue = localStorage.getItem('selectedFilter') || 'all'; 
+   
+//     filterSelect.value = savedFilterValue;
+// }
+
+
+// document.getElementById('filterForm').addEventListener('submit', function (event) {
+//     event.preventDefault(); 
+//     const filterValue = document.getElementById('filter').value;
+   
+//     localStorage.setItem('selectedFilter', filterValue);
+  
+//     window.location.href = `/admin/sales?filter=${filterValue}`;
+// });
+
+// window.onload = setFilterValue;
+
+
+
+//     document.getElementById('generatePDF').addEventListener('click', function () {
+//         const filterValue = document.getElementById('filter').value;
+//         window.location.href = `/admin/sales/downloadPdf?filter=${filterValue}`;
+      
+//     });
+
+//     document.getElementById('generateExcel').addEventListener('click', function () {
+//         const filterValue = document.getElementById('filter').value;
+//         window.location.href = `/admin/sales/downloadExcel?filter=${filterValue}`;
+//     });
+
+// Handle dropdown toggle for sales report
 const salesReportButton = document.querySelector('button.bg-blue-500');
 const dropdownMenu = document.querySelector('.absolute');
 
@@ -594,45 +477,76 @@ salesReportButton.addEventListener('click', () => {
     dropdownMenu.classList.toggle('hidden');
 });
 
-// Function to set the selected filter value in localStorage
+// Set the filter value on page load (from localStorage)
 function setFilterValue() {
     const filterSelect = document.getElementById('filter');
-    // Retrieve the saved filter value from localStorage, default to 'all'
+    const customDateContainer = document.getElementById('customDateContainer');
+    const customDateInput = document.getElementById('customDate');
+   
     const savedFilterValue = localStorage.getItem('selectedFilter') || 'all'; 
-    // Set the select option to the saved value
     filterSelect.value = savedFilterValue;
+   
+    const savedCustomDate = localStorage.getItem('customDate') || ''; 
+
+    if (savedFilterValue === 'custom') {
+        customDateContainer.style.display = 'block'; 
+        customDateInput.value = savedCustomDate; 
+    } else {
+        customDateContainer.style.display = 'none'; 
+    }
 }
 
-// Function to handle form submission
+// Form submission logic
 document.getElementById('filterForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); 
     const filterValue = document.getElementById('filter').value;
-    // Store the selected filter value in localStorage
+    const customDate = document.getElementById('customDate').value;
+   
     localStorage.setItem('selectedFilter', filterValue);
-    // Redirect to the sales page with the filter applied
-    window.location.href = `/admin/sales?filter=${filterValue}`;
+
+    if (filterValue === 'custom') {
+        localStorage.setItem('customDate', customDate);
+        window.location.href = `/admin/sales?filter=custom&customDate=${customDate}`;
+    } else {
+        window.location.href = `/admin/sales?filter=${filterValue}`;
+    }
 });
 
-// Call the function to set the filter value when the page loads
+// Handle PDF generation
+document.getElementById('generatePDF').addEventListener('click', function () {
+    const filterValue = document.getElementById('filter').value;
+    const customDate = document.getElementById('customDate').value;
+
+    if (filterValue === 'custom') {
+        window.location.href = `/admin/sales/downloadPdf?filter=custom&customDate=${customDate}`;
+    } else {
+        window.location.href = `/admin/sales/downloadPdf?filter=${filterValue}`;
+    }
+});
+
+// Handle Excel generation
+document.getElementById('generateExcel').addEventListener('click', function () {
+    const filterValue = document.getElementById('filter').value;
+    const customDate = document.getElementById('customDate').value;
+
+    if (filterValue === 'custom') {
+        window.location.href = `/admin/sales/downloadExcel?filter=custom&customDate=${customDate}`;
+    } else {
+        window.location.href = `/admin/sales/downloadExcel?filter=${filterValue}`;
+    }
+});
+
+// Run the filter setup on page load
 window.onload = setFilterValue;
 
-// document.getElementById('filterForm').addEventListener('submit', function (event) {
-//         event.preventDefault(); // Prevent the default form submission
-//         const filterValue = document.getElementById('filter').value;
-//         // Redirect to the sales page with the filter applied
-//         window.location.href = `/admin/sales?filter=${filterValue}`;
+// Handle filter dropdown visibility
+document.getElementById('filter').addEventListener('change', function() {
+    const customDateContainer = document.getElementById('customDateContainer');
+    if (this.value === 'custom') {
+        customDateContainer.style.display = 'block'; 
+    } else {
+        customDateContainer.style.display = 'none';  
+    }
+});
 
-//     });
-
-    document.getElementById('generatePDF').addEventListener('click', function () {
-        const filterValue = document.getElementById('filter').value;
-        window.location.href = `/admin/sales/downloadPdf?filter=${filterValue}`;
-      
-    });
-
-    // Handle Excel generation
-    document.getElementById('generateExcel').addEventListener('click', function () {
-        const filterValue = document.getElementById('filter').value;
-        window.location.href = `/admin/sales/downloadExcel?filter=${filterValue}`;
-    });
 </script>

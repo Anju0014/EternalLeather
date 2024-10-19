@@ -803,3 +803,428 @@ function openModal(orderData) {
 }
 </script>
 
+
+
+
+ <!-- <% if (message && message.length > 0) { %>
+                        <% for (let i = 0; i < message.length; i++) { %>
+                            <tr>
+                                <td class="px-2"><%= message[i].orderId %></td>
+                                <td class="px-8"><%= message[i].address.customerName %></td>
+                                <td class="px-20"><%= message[i].paymentMethod %></td>
+                                <td class="px-8"><%= message[i].orderStatus %></td>
+                                <td class="px-8"><%= message[i].totalPayablePrice %></td>
+                                <td class="px-8">
+                                    <button onclick="openModal(<%= JSON.stringify(message[i]) %>)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %> -->
+
+
+
+
+
+
+
+                    
+
+
+
+
+
+
+
+
+
+
+
+<div class="main-content">
+    <div class="sidebar-header">
+        <h1 class="text-white">Sales Summary</h1>
+    </div>
+    <div class="stats">
+        <div class="stat-item">
+            <p>Revenue</p>
+            <h2>
+                <i class="fa-solid fa-indian-rupee-sign "></i>
+                <%= Revenue %>
+            </h2>
+            <!-- <span class="stat-change negative">-25%</span> -->
+        </div>
+        <div class="stat-item">
+            <p>Orders</p>
+            <h2>
+                <%= orderCount %>
+            </h2>
+            <!-- <span class="stat-change negative">-25%</span> -->
+        </div>
+        <div class="stat-item">
+            <p>Products Sold</p>
+            <h2>
+                <%= productCount %>
+            </h2>
+            <!-- <span class="stat-change positive">+49%</span> -->
+        </div>
+        <div class="stat-item">
+            <p>Total Customers</p>
+            <h2>
+                <%= userCount %>
+            </h2>
+            <!-- <span class="stat-change positive">+4%</span> -->
+        </div>
+    </div>
+    <div class="container chart-container my-5">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="chartTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders"
+                    type="button" role="tab" aria-controls="orders" aria-selected="true">Total Sales
+                    Count</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="revenue-tab" data-bs-toggle="tab" data-bs-target="#revenue"
+                    type="button" role="tab" aria-controls="revenue" aria-selected="false">Total
+                    Revenue</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products"
+                    type="button" role="tab" aria-controls="products" aria-selected="false">TotalProducts
+                    Sold</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="chartTabsContent">
+            <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                <canvas id="ordersChart"></canvas>
+            </div>
+            <div class="tab-pane fade" id="revenue" role="tabpanel" aria-labelledby="revenue-tab">
+                <div class="d-flex justify-content-end my-3">
+                </div>
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+                <div class="d-flex justify-content-end my-3">
+                </div>
+                <canvas id="productsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- best seller -->
+<%- include ('bestSelling') %>
+
+<%- include('footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function createChart(ctx, type, data, label) {
+            return new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: '#D5D2FF',
+                        borderColor: '#2b0a5a',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        // Fetch data from backend and update charts
+        async function fetchDataAndRenderCharts() {
+            try {
+                const response = await fetch('/admin/charts');
+                const data = await response.json();
+
+                // Create charts with fetched data
+                createChart(document.getElementById('ordersChart'), 'line', data.salesData, 'Total Sales Count');
+                createChart(document.getElementById('revenueChart'), 'bar', data.revenueData, 'Total Revenue');
+                createChart(document.getElementById('productsChart'), 'polarArea', data.productsData, 'Total Products Sold');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Initial data fetch and rendering
+        fetchDataAndRenderCharts();
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Over Time</title>
+    <!-- Include ApexCharts Library -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <!-- Chart Container -->
+    <div id="salesChart" style="max-width: 650px; margin: auto;"></div>
+
+    <script>
+        // Example order data fetched from your backend
+        const orders = [
+            {
+                totalPayablePrice: 6014,
+                createdAt: "2024-10-18T04:31:08.152Z"
+            },
+            {
+                totalPayablePrice: 5020,
+                createdAt: "2024-10-17T03:22:10.152Z"
+            },
+            {
+                totalPayablePrice: 7500,
+                createdAt: "2024-10-16T08:15:12.152Z"
+            },
+            // Add more order data as needed
+        ];
+
+        // Extract data for the chart (Date and totalPayablePrice)
+        const dates = orders.map(order => new Date(order.createdAt).toLocaleDateString());
+        const sales = orders.map(order => order.totalPayablePrice);
+
+        // ApexCharts configuration
+        const options = {
+            series: [{
+                name: 'Total Payable Price',
+                data: sales // Sales (Y-axis)
+            }],
+            chart: {
+                type: 'line',
+                height: 350,
+                zoom: {
+                    enabled: false
+                }
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            title: {
+                text: 'Total Payable Price Over Time',
+                align: 'left'
+            },
+            xaxis: {
+                categories: dates, // Dates (X-axis)
+                title: {
+                    text: 'Date'
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Total Payable Price (in $)'
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function(value) {
+                        return "$" + value;
+                    }
+                }
+            }
+        };
+
+        // Render the chart
+        var chart = new ApexCharts(document.querySelector("#salesChart"), options);
+        chart.render();
+    </script>
+</body>
+</html>
+
+
+
+
+
+async function fetchOrders() {
+    try {
+        const response = await fetch('/api/orders');
+        const orders = await response.json();
+        return orders;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return [];
+    }
+}
+
+// Call fetchOrders() and render the chart dynamically
+
+
+
+
+
+
+let orders = <%- JSON.stringify(orders) %>;
+
+// Sort orders by createdAt date in ascending order
+orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+// Extract dates and sales
+const dates = orders.map(order => new Date(order.createdAt).toLocaleDateString());
+const sales = orders.map(order => order.totalPayablePrice);
+
+// ApexCharts configuration
+var options = {
+    series: [{
+        name: 'Total Price',
+        data: sales // Sales (Y-axis)
+    }],
+    chart: {
+        type: 'line',
+        height: 350,
+        zoom: {
+            enabled: false
+        }
+    },
+    stroke: {
+        curve: 'smooth'
+    },
+    title: {
+        text: 'Total Sales Over Time',
+        align: 'left'
+    },
+    xaxis: {
+        categories: dates, // Dates (X-axis)
+        title: {
+            text: 'Time'
+        }
+    },
+    yaxis: {
+        title: {
+            text: 'Total Sales (in Rs.)'
+        }
+    },
+    tooltip: {
+        y: {
+            formatter: function(value) {
+                return "₹" + value;
+            }
+        }
+    }
+};
+
+// Render the chart
+var chart = new ApexCharts(document.querySelector("#chartline"), options);
+chart.render();
+
+
+
+
+
+
+
+
+// Function to filter orders based on selected value
+function applyFilter(filterValue) {
+    const now = new Date();
+    let filteredOrders = [];
+
+    switch (filterValue) {
+        case 'thisDay':
+            filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.createdAt);
+                return orderDate.toDateString() === now.toDateString();
+            });
+            break;
+
+        case 'thisWeek':
+            const firstDayOfWeek = new Date(now);
+            firstDayOfWeek.setDate(now.getDate() - now.getDay());
+            filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.createdAt);
+                return orderDate >= firstDayOfWeek && orderDate <= now; // Include today's orders
+            });
+            break;
+
+        case 'thisMonth':
+            filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.createdAt);
+                return orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
+            });
+            break;
+
+        case 'thisYear':
+            filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.createdAt);
+                return orderDate.getFullYear() === now.getFullYear();
+            });
+            break;
+
+        default:
+            // Show all orders
+            filteredOrders = orders;
+            break;
+    }
+
+    // Update the chart
+    updateChart(filteredOrders);
+}
+
+
+// Function to fetch orders
+async function fetchOrders() {
+    const response = await fetch('/api/orders'); // Adjust the URL to your endpoint
+    const data = await response.json();
+    return data; // Assuming the data returned is in the same format as before
+}
+
+// Function to filter orders based on selected value
+async function applyFilter(filterValue) {
+    const now = new Date();
+    let filteredOrders = [];
+
+    // Fetch new orders before filtering
+    orders = await fetchOrders();
+
+    switch (filterValue) {
+        //... (filtering logic remains unchanged)
+    }
+
+    // Update the chart
+    updateChart(filteredOrders);
+}
+
+
+document.getElementById('filter').addEventListener('change', debounce(function () {
+    // Re-render chart based on the selected filter
+    applyFilter(this.value);
+}, 300)); // Adjust the debounce time as needed
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+

@@ -658,8 +658,15 @@ export const checkoutpost = async (req, res,next) => {
     await newOrder.save();
 
     newOrder.products.forEach((product) => {
-      // Slice the last 5 characters from product._id and store it in productOrderId
+
       product.productOrderId = product._id.toString().slice(-5);
+
+      if (newOrder.discountApplied && newOrder.totalQuantity) {
+        product.couponDiscount = ((newOrder.discountApplied * product.productquantity) / newOrder.totalQuantity).toFixed(2);
+    } else {
+        product.couponDiscount = 0; 
+    }
+      // product.couponDiscount= (newOrder.discountApplied * product.productquantity)/newOrder.totalQuantity
     });
 
     const orderIdCode = newOrder._id.toString().slice(-5);

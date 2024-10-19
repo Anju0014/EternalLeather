@@ -130,14 +130,7 @@
     <form id="form" action="/admin/product/add" method="POST" enctype="multipart/form-data" class="lg:mx-56 lg:my-10 sm:mx-6 sm:my-2 px-4 bg-red-100 rounded-lg">
         <div id="error" class="text-red-900"></div>
     
-        <% if (message.error) { %>
-            <div class="text-center bg-red-500 text-white rounded mb-4"><%= message.error %></div>
-        <% } %>
-    
-        <% if (message.success) { %>
-            <div class="text-center bg-green-700 text-white rounded mb-4"><%= message.success %></div>
-        <% } %> 
-    
+       
      
         <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 mb-4 bg-red-100 rounded-lg lg:p-5 w-full">
          
@@ -210,10 +203,12 @@
         </div>
         <div id="imageContainer" style="margin-bottom:20px">  
             <div id="viewImages" class="flex flex-wrap"></div>
+            <span id="viewImagesError" class="text-red-500 text-sm"></span>
         </div>
         <div id="croppedImagesContainer" class="mb-4">
             <h3 class="text-sm font-medium text-gray-700">Cropped Images</h3>
             <div id="croppedImages" class="flex flex-wrap"></div>
+          
         </div>
     
         <button type="button" id="cropButton" style="display: none;" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Crop & Upload</button>
@@ -225,6 +220,7 @@
     
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
      const cloudinaryPreset = "ml_defaulteternal";  // Replace with your Cloudinary preset
 const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dihyb66hn/image/upload'; // Replace with your Cloudinary URL
@@ -240,7 +236,7 @@ const viewImages=document.getElementById('viewImages')
 const form = document.getElementById('form');
 
 
-// Array to store the URLs of all cropped images
+
 const croppedImageUrls = [];
 
 function validateForm() {
@@ -258,9 +254,10 @@ document.getElementById('productNameError').textContent = '';
     document.getElementById('colorError').textContent = '';
     document.getElementById('discountError').textContent = '';
     document.getElementById('categoryError').textContent = '';
+    document.getElementById('viewImagesError').textContent = '';
 
 
-// Get form field values
+
 const productName = form.productname.value.trim();
 const price = form.price.value.trim();
 const qty = form.qty.value.trim();
@@ -270,49 +267,59 @@ const discount = form.discount.value.trim();
 const category = form.category.value;
 
 
-// Validate Product Name
+
 if (productName.length < 3) {
     document.getElementById('productNameError').textContent = 'Product name must be at least 3 characters.';
     isValid = false;
 }
 
-// Validate Price
+
 if (!price || isNaN(price) || price <= 0) {
     document.getElementById('priceError').textContent = 'Price must be a positive number.';
     isValid = false;
 }
 
-// Validate Quantity
+
 if (!qty || isNaN(qty) || parseInt(qty) < 0) {
     document.getElementById('qtyError').textContent = 'Stock must be a positive integer.';
     isValid = false;
 }
 
-// Validate Variety (Type)
+
 if (variety.length < 1) {
     document.getElementById('varietyError').textContent = 'Product variety is required.';
     isValid = false;
 }
 
-// Validate Color
+
 if (color.length < 1) {
     document.getElementById('colorError').textContent = 'Color is required.';
     isValid = false;
 }
 
-// Validate Discount
+
 if (!discount || isNaN(discount) || discount < 0 || discount > 100) {
     document.getElementById('discountError').textContent = 'Discount must be between 0 and 100.';
     isValid = false;
 }
 
-// Validate Category
+
 if (!category) {
     document.getElementById('categoryError').textContent = 'Please select a product category.';
     isValid = false;
 }
 
-// Prevent form submission if invalid
+
+
+if (viewImages.children.length < 4) {
+    document.getElementById('viewImagesError').textContent = 'Please Add 4 images';
+    isValid = false;
+} else {
+
+    document.getElementById('viewImagesError').textContent = '';
+}
+
+
 if (!isValid) {
     event.preventDefault();
 }
@@ -374,27 +381,28 @@ if (!isValid) {
         // }
 
         // 3. Display error messages if validation fails
-        const errorDiv = document.getElementById('error');
-        errorDiv.innerHTML = ''; // Clear any previous errors
+        // const errorDiv = document.getElementById('error');
+        // errorDiv.innerHTML = ''; // Clear any previous errors
 
-        if (!isValid) {
-            errorMessages.forEach(msg => {
-                const errorMessage = document.createElement('p');
-                errorMessage.textContent = msg;
-                errorMessage.classList.add('text-red-500'); // Add styles to errors
-                errorDiv.appendChild(errorMessage);
-            });
-        }
+        // if (!isValid) {
+        //     errorMessages.forEach(msg => {
+        //         const errorMessage = document.createElement('p');
+        //         errorMessage.textContent = msg;
+        //         errorMessage.classList.add('text-red-500'); 
+        //         errorDiv.appendChild(errorMessage);
+        //     });
+        // }
 
         return isValid;
     }
 inputImage.addEventListener('change', (event) => {
+    try{
     const files = event.target.files;
     if (files && files.length > 0) {
-        // Clear the cropper and reset the UI
+        
         cropperContainer.style.display = 'none';
         cropButton.style.display = 'none';
-        croppedImagesContainer.innerHTML = ''; // Clear previous cropped images
+        croppedImagesContainer.innerHTML = ''; 
 
         Array.from(files).forEach((file) => {
             const reader = new FileReader();
@@ -403,7 +411,7 @@ inputImage.addEventListener('change', (event) => {
                 cropperContainer.style.display = 'block';
                 cropButton.style.display = 'inline-block';
                 
-                // Destroy the previous cropper instance if it exists
+               
                 if (cropper) cropper.destroy();
                 cropper = new Cropper(image, {
                     aspectRatio: NaN,
@@ -413,7 +421,7 @@ inputImage.addEventListener('change', (event) => {
                     cropBoxResizable: true,
                 });
 
-                // Handle the cropping and uploading process when the button is clicked
+              
                 cropButton.onclick = async () => {
                     if (!cropper) {
                         alert('Please select an image first.');
@@ -423,18 +431,25 @@ inputImage.addEventListener('change', (event) => {
                     cropper.getCroppedCanvas().toBlob(async (blob) => {
                         const formData = new FormData();
                         formData.append('file', blob);
-                        formData.append('upload_preset', cloudinaryPreset); // Use your Cloudinary preset
+                        formData.append('upload_preset', cloudinaryPreset); 
 
                         try {
                             const response = await fetch(cloudinaryUrl, { method: 'POST', body: formData });
                             const data = await response.json();
                             if (data.secure_url) {
                                 const url = data.secure_url;
+                                if(croppedImageUrls.length>=4){
+                                    
+                                    Swal.fire({
+                                    icon: "error",
+                                    title: "Image Add Error",
+                                    text: "You can add only 4 Images ."
+                              });
 
-                                // Store the uploaded image URL in the array
+                                }else{
+                              
                                 croppedImageUrls.push(url);
 
-                                // Display the image in the cropped images container
                                 const imgElement = document.createElement('img');
                                 imgElement.src = url;
                                 imgElement.style.maxWidth = '100px';
@@ -442,31 +457,49 @@ inputImage.addEventListener('change', (event) => {
                                 croppedImagesContainer.appendChild(imgElement);
                                 viewImages.appendChild(imgElement);
 
-                                // Add the cropped image URL as a hidden input
+                                
                                 const hiddenInput = document.createElement('input');
                                 hiddenInput.type = 'hidden';
                                 hiddenInput.name = 'croppedImages';
                                 hiddenInput.value = url;
                                 form.appendChild(hiddenInput);
 
-                                // Hide the cropper and reset for the next image
+                               
                                 cropperContainer.style.display = 'none';
                                 cropButton.style.display = 'none';
-                                inputImage.value = ''; // Clear the file input
+                                inputImage.value = ''; 
                                 inputImage.disabled = false;
-                            } else {
-                                alert('Failed to upload image to Cloudinary');
+                            }} else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Image Add Error",
+                                    text: "Failed to upload image to Cloudinary."
+                              });
+                              
+
                             }
                         } catch (error) {
                             console.error('Error uploading image:', error);
-                            alert('Failed to upload image to Cloudinary');
+                           
+                            Swal.fire({
+                                    icon: "error",
+                                    title: "Image Add Error",
+                                    text: "Failed to upload image to Cloudinary."
+                              });
                         }
                     }, 'image/png');
                 };
             };
-            reader.readAsDataURL(file); // Load the image file into the cropper
+            reader.readAsDataURL(file); 
         });
     }
+}catch(error){
+            Swal.fire({
+                icon: "error",
+                title: "Image Add Error",
+                text: "Add Image Properly."
+                });
+}
 });
 
 document.getElementById('submitButton').addEventListener('click', async (e) => {
@@ -474,15 +507,14 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
-            return; // Stop submission if validation fails
+            return; 
         }
 
     const formData = new FormData(form);
     
-    // Collect all cropped image URLs that were uploaded
+  
     const croppedImages = croppedImageUrls;
 
-    // Create the payload for the product data and cropped images
     const jsonPayload = {
         productname: formData.get('productname'),
         price: formData.get('price'),
@@ -492,7 +524,7 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
         discount:formData.get('discount'),
         color:formData.get('color'),
         category: formData.get('category'),
-        croppedImages, // Include the array of cropped image URLs
+        croppedImages, 
     };
 
     try {
@@ -519,5 +551,23 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
 
 
     </script>
+    <script>
+        <% if (message.error) { %>
+            Swal.fire({
+                icon: 'error',
+                title: 'An Error Occurred',
+                text: '<%= message.error %>'
+            });
+        <% } %>
+    
+        <% if (message.success) { %>
+            Swal.fire({
+                icon: 'success',
+                title: 'Product Added',
+                text: '<%= message.success %>'
+            });
+        <% } %>
+    </script>
+    
 </body>
 </html>
