@@ -229,20 +229,20 @@ export const cartincrement = async (req, res) => {
           return res.status(404).json({ message: 'Cart not found or item does not exist' });
       }
 
-      // Find the item in the cart
+      
       const cartItem = cart.items.find(item => item.productId._id.toString() === productId);
 
       if (!cartItem) {
           return res.status(404).json({ message: 'Item not found in cart.' });
       }
 
-      // Set the limits for product quantity
+      
       const minQuantity = 1;
       const maxQuantity = 4;
 
-      // Check current quantity and apply limits
+      
       if (cartItem.productCount < maxQuantity) {
-          cartItem.productCount += 1; // Increment quantity if below max
+          cartItem.productCount += 1; 
       } else {
           return res.status(400).json({ message: `Maximum quantity of ${maxQuantity} reached for this item.` });
       }
@@ -325,23 +325,23 @@ export const cartdecrement = async (req, res) => {
           return res.status(401).json({ message: 'Please log in to update the cart.' });
       }
 
-      // Find the cart first
+    
       const cart = await Cart.findOne({ userId: user._id, 'items.productId': productId }).populate('items.productId');
 
       if (!cart) {
           return res.status(404).json({ message: 'Cart not found or item does not exist' });
       }
 
-      // Find the specific item in the cart
+      
       const cartItem = cart.items.find(item => item.productId._id.toString() === productId);
 
       if (!cartItem) {
           return res.status(404).json({ message: 'Item not found in cart.' });
       }
 
-      // Check the current quantity
+      
       if (cartItem.productCount > 1) {
-          cartItem.productCount -= 1; // Decrement quantity if above minimum
+          cartItem.productCount -= 1; 
       } else {
           return res.status(400).json({ message: 'Cannot reduce quantity below 1.' });
       }
@@ -532,14 +532,30 @@ export const checkout= async (req,res,next)=>{
     const user = await User.findOne({ email: req.session.isUser });
     const userid=user._id
     const cart = await Cart.findOne({ userId:user._id }).populate('items.productId')
-    // const coupons=await Coupon.find()
+    
     const coupons = await Coupon.find({
       isActive: true,
       isDeleted: false,
       startDate: { $lte: new Date() },  
       expiryDate: { $gte: new Date() }  
   });
-    const validCoupons = coupons.filter(coupon => cart.payablePrice >= coupon.minOrderAmount);
+    
+    const validCoupons = coupons.filter(coupon => {
+      
+      if (cart.payablePrice < coupon.minOrderAmount) {
+        return false;
+      }
+
+      
+      const userCouponUsage = user.couponsUsed.find(usage => String(usage.couponId) === String(coupon._id));
+
+      
+      if (userCouponUsage && userCouponUsage.usageCount >= coupon.maxUsageCount) {
+        return false;  
+      }
+
+      return true;  
+    });
     if (!user) {
         console.log("User not found");
         return res.status(404).send("User not found");
@@ -551,10 +567,10 @@ export const checkout= async (req,res,next)=>{
   if (itemsOutOfStock) {
       return res.redirect('/user/addtocart'); 
   }
-    // //const addresses = user.address({isDeleted:false});
+
     const addresses = user.address.filter(address => !address.isDeleted);
 
-    res.render('usercheckout', { user,coupons,sessionuser, productCollection,addresses,cart,query:req.query });
+    res.render('usercheckout', { user,coupons:validCoupons,sessionuser, productCollection,addresses,cart,query:req.query });
 
     
   }catch(error){
@@ -594,7 +610,7 @@ export const checkoutpost = async (req, res,next) => {
       }}
       console.log(cart+"......mmmmmsknxn")
     if (!cart) {
-      return res.status(404).json({ success: false, message: 'Cart not found' });
+      return res.status(404).json({ success: false, message: 'Checking Details' });
     }
 
     if (!customerAddress) {
@@ -609,7 +625,33 @@ export const checkoutpost = async (req, res,next) => {
       if (!coupon || !coupon.isActive || coupon.isDeleted || new Date() > coupon.expiryDate) {
         return res.status(400).json({ success: false, message: 'Invalid or expired coupon code' });
       }
+      if (appliedCoupon && coupon) {
+        const existingCouponUsage = user.couponsUsed.find(c => c.couponId.equals(coupon._id));
 
+        if (existingCouponUsage) {
+            
+            if (existingCouponUsage.usageCount >= coupon.maxUsageCount) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Coupon usage limit exceeded. You can only use this coupon ${coupon.usageLimit} times.`
+                });
+            }
+
+            
+            existingCouponUsage.usageCount += 1;
+            existingCouponUsage.lastUsed = Date.now();
+        } else {
+            
+            user.couponsUsed.push({
+                couponId: coupon._id,
+                usageCount: 1,
+                lastUsed: Date.now()
+            });
+        }
+
+        
+        await user.save();
+    }
       if (coupon.discountType === 'percentage') {
         discount = (cart.payablePrice * coupon.discountValue) / 100;
       } else if (coupon.discountType === 'flat') {
@@ -617,9 +659,12 @@ export const checkoutpost = async (req, res,next) => {
       }
 
       cart.payablePrice = Math.max(0, cart.payablePrice - discount);
+
+      
+      await user.save();
     }
 
-    // Create and save order
+    
     const newOrder = new Order({
       customerId: user._id,
       products: cart.items.map((item) => ({
@@ -666,14 +711,14 @@ export const checkoutpost = async (req, res,next) => {
     } else {
         product.couponDiscount = 0; 
     }
-      // product.couponDiscount= (newOrder.discountApplied * product.productquantity)/newOrder.totalQuantity
+      
     });
 
     const orderIdCode = newOrder._id.toString().slice(-5);
     newOrder.orderId = orderIdCode;
     await newOrder.save();
 
-    // Wallet payment logic
+    
     if (paymentMethod === 'Wallet') {
       const wallet = await Wallet.findOne({ userID: user._id });
       // console.log(wallet)
@@ -696,19 +741,7 @@ export const checkoutpost = async (req, res,next) => {
     }
    
 await newOrder.save();
-    // Verify Razorpay payment if applicable
-    // if (paymentMethod === 'razorpay') {
-      
-    //   const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
-    //   hmac.update(razorpay_order_id + '|' + razorpay_payment_id);
-    //   const generated_signature = hmac.digest('hex');
-
-    //   if (generated_signature !== razorpay_signature) {
-    //     return res.status(400).json({ success: false, message: 'Payment verification failed' });
-    //   }
-    // }
-
-    // Update product stock
+   
     for (const item of cart.items) {
       const product = await Product.findById(item.productId);
       if (product.productQuantity < item.productCount) {
@@ -726,7 +759,6 @@ await newOrder.save();
     res.json({ success: true, message: 'Order placed successfully' });
   } catch (error) {
     console.error(error); 
-    // res.status(500).json({ success: false, message: 'Order processing failed', error: error.message });
     next(error)
    }
 };

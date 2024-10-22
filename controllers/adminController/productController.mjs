@@ -24,7 +24,7 @@ export const adminproducteditform = async (req, res) => {
         const productId = req.query.id;
         console.log(productId)
         const product = await Product.findById(productId);
-        
+
         const productCollection=await Category.find({isActive:true});
         // console.log(product)
 
@@ -71,8 +71,11 @@ export const adminproductupdate = async (req, res) => {
         if (croppedImages && croppedImages.length > 0) {
             product.productImages.push(...croppedImages);
         }
-console.log(product.productImages)
-       
+        console.log(product.productImages)
+        if(product.productImages.length!==4){
+            req.flash("error","Product Image Size is Incorrect.  Total Allowed No is 4")
+            return res.status(404).json({ message: 'Error Occured' });
+        }
         await product.save();
         console.log(product);
         req.flash("success", "Product updated successfully");
@@ -149,12 +152,11 @@ export const adminproductsearch=async(req,res)=>{
             res.redirect('/admin/product')
         }
     }catch(error){
-        //console.log(error.message)
+        console.log(error)
         next(error)
     }
 }
 
-// Delete Category
 export const adminproductdelete = async (req, res) => {
     try {
        
@@ -176,24 +178,14 @@ export const adminproductdelete = async (req, res) => {
 
 
 
-
-
-
-
-
 export const adminproduct = async (req, res) => {
     try {
         const catid = req.query.category || ''; 
         const minPrice = parseFloat(req.query.minPrice) || 0; 
-        const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; // Get the maximum price
+        const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; 
         const type = req.query.type || ''; 
         const sortstyle = req.query.sortstyle || ''; 
 
-        //const page = parseInt(req.query.page) || 1;
-        //const pageSize = 12;
-       // const skip = (page - 1) * pageSize;
-
-     
         let product;
         let totalProducts;
 
@@ -227,7 +219,7 @@ export const adminproduct = async (req, res) => {
 
         product = await Product.find(query)
             .populate('productCategory', 'categoryName')
-            .sort(sortCriteria) // Apply sorting
+            .sort(sortCriteria) 
             //.skip(skip)
             //.limit(pageSize);
 

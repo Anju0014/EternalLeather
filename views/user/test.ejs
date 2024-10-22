@@ -342,14 +342,14 @@
 <script>
       $(document).ready(function() {
         $('#ordersTable').DataTable({
-            "paging": true,       // Enable pagination
-            "ordering": true,     // Enable column sorting
-            "info": true,         // Display table information
-            "searching": true,    // Enable search box
-            "autoWidth": false,   // Disable automatic column width calculation
-            "order": [[ 0, "desc" ]],  // Default sorting on the first column (Order ID), in descending order
+            "paging": true,       
+            "ordering": true,    
+            "info": true,         
+            "searching": true,    
+            "autoWidth": false,   
+            "order": [[ 0, "desc" ]],  
             "columnDefs": [
-              { "orderable": false, "targets": [7] }  // Disable sorting for the View column (index 7)
+              { "orderable": false, "targets": [7] }  
             ]
         });
     });
@@ -426,12 +426,12 @@ function openModal(orderData) {
 });
 
 
-       // Show the modal
+       
        modal.classList.remove('hidden');
        modal.classList.add('flex');
    }
 
-   // Function to close the modal
+   
    function closeModal() {
        const modal = document.getElementById('orderModal');
        modal.classList.add('hidden');
@@ -443,7 +443,6 @@ function openModal(orderData) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
     
-        // Fetching order details from modal
         const orderId = document.getElementById('modalOrderId').innerText;
         const orderDate = document.getElementById('modalOrderDate').innerText;
         const customerName = document.getElementById('modalCustomerName').innerText;
@@ -451,7 +450,7 @@ function openModal(orderData) {
         const totalPrice = document.getElementById('modalTotalPrice').innerText;
         const orderStatus=document.getElementById('modalOrderStatus').innerText;
     
-        // Adding text content to the PDF
+    
         doc.text(`Order ID: ${orderId}`, 10, 10);
         doc.text(`Order Date: ${orderDate}`, 10, 20);
         doc.text(`Customer Name: ${customerName}`, 10, 30);
@@ -1227,4 +1226,34 @@ function debounce(func, wait) {
     };
 }
 
+
+
+
+
+
+const salesOfProducts = await Order.aggregate([
+{ $unwind: "$products" },
+{$match:{
+    productstatus:$nin['Cancelled,Returned']
+}}
+{ $group: { _id: '$products.product_id', totalQuantity: { $sum: "$products.productquantity" } } },
+{ $sort: { totalQuantity: -1 } }
+]);
+
+const productId = salesOfProducts.map(sale => sale._id);
+
+const products = await Product.find({ _id: { $in: productId } });
+
+const bestProducts = productId.map(id => products.find(product => product._id.toString() === id.toString()));
+
+const bestCategory = new Map();
+bestProducts.forEach(element => {
+if (element && element.productCollection) {
+    if (bestCategory.has(element.productCollection)) {
+        bestCategory.set(element.productCollection, bestCategory.get(element.productCollection) + 1);
+    } else {
+        bestCategory.set(element.productCollection, 1);
+    }
+}
+});
 

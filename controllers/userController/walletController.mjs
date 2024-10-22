@@ -47,18 +47,18 @@ export const checkWalletBalance = async (req, res) => {
         console.log(req.body)
         const user = await User.findOne({ email: req.session.isUser });
 
-        // Fetch user's wallet
+        
         const wallet = await Wallet.findOne({ userID: user._id });
 
         if (!wallet || wallet.balance < cartTotal) {
             return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
         }
 
-        // Sufficient balance
+        
         res.json({ success: true });
     } catch (error) {
         console.log('Error checking wallet balance:', error);
         next(error)
-        // res.status(500).json({ success: false, message: 'Internal server error' });
+    
     }
 };

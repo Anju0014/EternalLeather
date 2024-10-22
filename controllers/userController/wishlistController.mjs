@@ -40,14 +40,13 @@ catch(error){
 
 export const wishListAdd = async (req, res) => {
     try {
-      const { productId} = req.body;  // Default quantity to 1 if not provided
-    console.log("ethi");
+      const { productId} = req.body;  
+    console.log("reach");
     
       if (!productId) {
         return res.status(400).json({ message: 'Product ID is required' });
       }
   
-      // Check if user is logged in (using session or JWT)
       if (req.session && req.session.isUser) {
         try {
           const user = await User.findOne({ email: req.session.isUser });
@@ -83,13 +82,13 @@ export const wishListAdd = async (req, res) => {
               });
             }
   
-            // Save the updated cart
+
             await userWishList.save();
   
             return res.status(200).json({ message: 'Product added to WishList' });
   
           } else {
-            // If no cart exists for the user, create a new one
+            
             const newWishList = new WishList({
               userId: user._id,
               items: [{
@@ -99,7 +98,7 @@ export const wishListAdd = async (req, res) => {
               }]
             });
   
-            // Save the new cart
+            
             await newWishList.save();
   
             return res.status(200).json({ message: 'Product added to WishList' });

@@ -1,6 +1,6 @@
 
 
- <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4">
+ <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4 h-screen">
     <h1 class="text-2xl font-extrabold text-gray-800">Your Cart</h1>
     <% if(cart && cart.items. length >0) { %>
     <div class="grid md:grid-cols-3 gap-4 mt-8">
@@ -42,22 +42,7 @@
                         </div>
 
                      <div class="flex items-center gap-3">
-    <!--<button type="button" 
-        class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-        onclick="decrementQuantity('<%= item.productId._id %>')" 
-        <% if (item.productCount <= 1) { %> disabled <% } %>>
-        -
-    </button>
-
-    <span id="product-count-<%= item.productId._id %>" class="font-bold text-sm leading-[18px]"><%= item.productCount %></span>
-
-    <button type="button" 
-        class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-        onclick="incrementQuantity('<%= item.productId._id %>')"
-        <% if (item.productCount >= 4) { %> disabled <% } %>>
-        +
-    </button> -->
-    <!-- Decrement Button -->
+   
 <button type="button" 
 id="decrement-button-<%= item.productId._id %>"
 class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
@@ -65,10 +50,10 @@ onclick="decrementQuantity('<%= item.productId._id %>')">
 -
 </button>
 
-<!-- Product Count Display -->
+
 <span id="product-count-<%= item.productId._id %>" class="font-bold text-sm leading-[18px]"><%= item.productCount %></span>
 
-<!-- Increment Button -->
+
 <button type="button" 
 id="increment-button-<%= item.productId._id %>"
 class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
@@ -83,30 +68,6 @@ onclick="incrementQuantity('<%= item.productId._id %>')">
 </div>
 
 
-                        <!-- <div class="flex items-center gap-3">
-            
-                            <button type="button" 
-                                class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-                                onclick="decrementQuantity('<%= item.productId._id %>')" 
-                                <%= (item.productCount <= 1) ? 'disabled' : '' %>>
-                                -
-                            </button>
-
-                            <span id="product-count-<%= item.productId._id %>" class="font-bold text-sm leading-[18px]"><%= item.productCount %></span>
-
-                       
-                            <button type="button" 
-                                class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-                                onclick="incrementQuantity('<%= item.productId._id %>')"
-                                <%= (item.productCount >= 4) ? 'disabled' : '' %>>
-                                +
-                            </button>
-                        
-                           
-                            <% if (item.productCount <= 1 || item.productCount >= 4) { %>
-                                <span class="text-sm">Min: 1 & Max: 4</span>
-                            <% } %>
-                        </div> -->
                         
                     </div>
                 </div>
@@ -185,66 +146,7 @@ onclick="incrementQuantity('<%= item.productId._id %>')">
 
 <script>
     
-// function incrementQuantity(productId) {
-//     fetch(`/user/cart/increment/${productId}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.message === 'Quantity incremented') {
-       
-//             console.log(data.cart.items.productcount)  
-//         } else {
-//             alert('Failed to update quantity');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error incrementing quantity:', error);
-//     });
-// }
 
-// function incrementQuantity(productId) {
-//     fetch(`/user/cart/increment/${productId}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.message === 'Quantity incremented') {
-//             // Assuming data.cart.items is an array, find the specific item
-//             const updatedItem = data.cart.items.find(item => item.productId._id === productId);
-//             if (updatedItem) {
-//                 console.log(updatedItem.productCount);  // Log the updated product count
-
-//                 // Update the UI to reflect the new product count
-//                 const productCountElement = document.getElementById(`product-count-${productId}`);
-//                 if (productCountElement) {
-//                     productCountElement.innerHTML = updatedItem.productCount; // Update the displayed count
-//                 }
-
-//                 const productPrice = updatedItem.productId.productPrice;
-//                 const productDiscount = updatedItem.productId.productDiscount || 0;
-//                 const newTotalPrice = (productPrice - (productPrice * (productDiscount / 100))) * updatedItem.productCount;
-
-//                 const productPriceElement = document.getElementById(`product-price-${updatedItem.productId._id}`);
-//                 if (productPriceElement) {
-//                     productPriceElement.innerHTML = `Rs. ${newTotalPrice.toFixed(2)}`; // Update the displayed price
-//                 }
-
-//             }
-//         } else {
-//             alert('Failed to update quantity');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error incrementing quantity:', error);
-//     });
-// }
 function incrementQuantity(productId) {
     fetch(`/user/cart/increment/${productId}`, {
         method: 'POST',
@@ -258,7 +160,7 @@ function incrementQuantity(productId) {
             const updatedItem = data.cart.items.find(item => item.productId._id === productId);
             if (updatedItem) {
                 const productCountElement = document.getElementById(`product-count-${updatedItem.productId._id}`);
-                productCountElement.innerHTML = updatedItem.productCount; // Update count
+                productCountElement.innerHTML = updatedItem.productCount;
 
      
                 updateButtonStates(updatedItem.productId._id, updatedItem.productCount);
@@ -269,7 +171,7 @@ function incrementQuantity(productId) {
 
                 const productPriceElement = document.getElementById(`product-price-${updatedItem.productId._id}`);
                 if (productPriceElement) {
-                    productPriceElement.innerHTML = `Rs. ${newTotalPrice.toFixed(2)}`; // Update the displayed price
+                    productPriceElement.innerHTML = `Rs. ${newTotalPrice.toFixed(2)}`; 
                 }
                 updateCartSummary(data.cart);
                 console.log("hellooooo")
@@ -341,26 +243,7 @@ function decrementQuantity(productId) {
     });
 }
 
-// function decrementQuantity(productId) {
-//     fetch(`/user/cart/decrement/${productId}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.message === 'Quantity decremented') {
-           
-//             window.location.reload(); 
-//         } else {
-//             alert('Failed to update quantity');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error decrementing quantity:', error);
-//     });
-// }
+
 
     function deleteCartItem(productId) {
         fetch(`/user/addtocart/delete/${productId}`, {

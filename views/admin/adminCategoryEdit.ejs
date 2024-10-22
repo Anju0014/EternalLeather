@@ -9,9 +9,9 @@
     <script src='https://kit.fontawesome.com/fc2e75786e.js' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap" rel="stylesheet">
     <style>
-        /* Inline styles for the background image */
+    
         .box-brown {
-            /* background-image: #e3c7b4; */
+        
             background-image: linear-gradient(to right,#FFE0CA, #964820)
         }
         .box-dash{
@@ -19,7 +19,7 @@
 
         }
         .text-brown {
-            color: #250201; /* Brown color */
+            color: #250201; 
         }
          .sevillana-title {
             font-family: 'Sevillana', cursive;
@@ -71,7 +71,7 @@
 
 
 
-            <!-- Submit Button -->
+            
             <button type="submit" class="w-full bg-black text-white mt-4 font-bold py-2 px-4 rounded-lg">
                Update Category
             </button>
@@ -86,14 +86,14 @@
         const errorElement = document.getElementById('error');
     
         form.addEventListener('submit', (e) => {
-            let messages = []; // Array to hold error messages
+            let messages = []; 
     
-            // Validation for empty fields
+            
             if (catname.value === '' || catname.value == null) {
                 messages.push('Please fill in all fields.');
             }
     
-            // Frontend validation for catname: min length 3, and no spaces
+            
             if (catname.value.length < 3) {
                 messages.push('Category name must be at least 3 characters long.');
             } else if (catname.value.length>15){
@@ -103,10 +103,9 @@
             }
 
     
-            // If there are messages, prevent form submission and show all error messages
             if (messages.length > 0) {
-                e.preventDefault(); // Prevent form submission
-                errorElement.innerText = messages.join(', '); // Display all messages as a single string
+                e.preventDefault(); 
+                errorElement.innerText = messages.join(', '); 
             } 
         });
     </script>

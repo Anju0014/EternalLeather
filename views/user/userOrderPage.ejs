@@ -242,6 +242,12 @@
                     <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         View
                     </button>
+                    <!-- <% if (order.products.some(product => product.productstatus === 'Delivered')) { %> 
+                        <button onclick="downloadInvoice" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Download Invoice
+                        </button>
+                    <% } %> -->
+                    
                 </div>
             </div>
         <% }); %>
@@ -278,12 +284,13 @@
             <p class="text-sm"><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
             <p class="text-sm"><strong>Total Price:</strong> Rs.<span id="modalTotalPrice"></span></p>
             <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
+            <p class="text-sm hidden"><strong>Payment Status:</strong> <span id="modalPaymentStatus"></span></p>
              <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
             
         </div>
          <div class="mt-4"> 
         
-            <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            <button id="downloadButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 hidden">
                 Download
             </button>
         </div>
@@ -334,6 +341,7 @@
         const modalPrice = document.getElementById('modalTotalPrice');
         const modalPayment = document.getElementById('modalPaymentMethod');
         const orderStatus=document.getElementById('modalOrderStatus');
+        const orderPaymentStatus=document.getElementById('modalPaymentStatus');
        
         modalOrderId.innerText = orderData.orderId;
         modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
@@ -341,9 +349,10 @@
         modalPrice.innerText=orderData.totalPayablePrice;
         modalPayment.innerText=orderData.paymentMethod;
         modalOrderStatus.innerText=orderData.orderStatus;
+        modalPaymentStatus.innerText=orderData.paymentStatus;
 
     
-        modalProducts.innerHTML = '';  
+        modalProducts.innerHTML = '';   
         orderData.products.forEach(product => {
   
     const productPrice = product.productprice;
@@ -354,13 +363,17 @@
             <img src="${product.productimage}" alt="${product.productname}" width="50" height="50">
             <p class="text-sm"><strong>Product Name:</strong> ${product.productname}</p>
             <p class="text-sm"><strong>Quantity:</strong> ${product.productquantity}</p>
-            <p class="text-sm"><strong>Price:</strong> Rs.${productPrice}</p>
-            <p class="text-sm"><strong>Product Status:</strong>${product.productstatus}</p>
+            <p class="text-sm"><strong>Price:</strong> Rs.${product.productprice}</p>
+            <p class="text-sm"><strong>Product Status:</strong> ${product.productstatus}</p>
         
         </div>
     `;
-});
 
+});
+       
+if (orderData.paymentStatus === 'Paid') { 
+    document.getElementById('downloadButton').classList.remove('hidden');
+} 
 
         // Show the modal
         modal.classList.remove('hidden');
@@ -456,13 +469,15 @@ document.getElementById('downloadButton').addEventListener('click', async functi
     for (const productElement of productElements) {
         const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
         const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
-        const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+        const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split(": Rs.")[1];
         const productImage = productElement.querySelector('img').src;
+        const productStatus=productElement.querySelector('p:nth-child(5)').innerText.split(": ")[1];
 
         // Add product details (name, price, quantity) to PDF
         doc.text(`Product Name: ${productName}`, 90, yOffset);
         doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
         doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+        doc.text(`Status: ${productStatus}`, 90, yOffset + 30);
 
         try {
             // Convert image URL to base64 and add to PDF
@@ -678,10 +693,10 @@ async function submitReturn() {
         return;
     }
 
-    // Close the modal
+    
     closesmallModal();
 
-    // Make a POST request to send the reason to the backend
+    
     try {
         const response = await fetch('/user/order/returnProduct', {
             method: 'POST',
@@ -721,7 +736,7 @@ async function payNow(orderId){
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                orderId:orderId, // Amount in INR
+                orderId:orderId,
             }),
         });
 
@@ -744,7 +759,7 @@ if (data.orderID) {
                 razorpay_signature: response.razorpay_signature,
             };
 
-            // Send payment details to backend for verification
+            
             const verifyResponse = await fetch('/user/verifyPayment', {
                 method: 'POST',
                 headers: {
@@ -756,8 +771,14 @@ if (data.orderID) {
             const verifyData = await verifyResponse.json();
 
             if (verifyData.success) {
-                alert('Payment successful and verified!');
-
+                // alert('Payment successful and verified!');
+ 
+                Swal.fire({ 
+                icon: "Sucess",
+                title: "Payment Successfully Completed.",
+                // text: "Select one"
+            });
+                        
            
                 const formData = {
                     orderId:orderId,
@@ -791,8 +812,14 @@ if (data.orderID) {
 
                 }
             } else {
-                alert('Payment verification failed.');
+                // alert('Payment verification failed.');
               
+                Swal.fire({
+                icon: "error",
+                title: "Payment verification failed.",
+                // text: "Select one"
+            });
+                        
             }
         },
         prefill: {

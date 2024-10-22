@@ -296,7 +296,7 @@ function openModal(orderData) {
         for (const productElement of productElements) {
             const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
             const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
-            const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("$")[1];
+            const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split("Rs")[1];
             const productImage = productElement.querySelector('img').src;
     
             // Add product details (name, price, quantity) to PDF
@@ -341,135 +341,12 @@ function openModal(orderData) {
     
    
     </script>
-    <!-- <script>
-        // JavaScript to toggle the dropdown menu visibility
-        const downloadSalesButton = document.getElementById('downloadSalesButton');
-        const dropdownSalesMenu = document.getElementById('dropdownSalesMenu');
-    
-        downloadSalesButton.addEventListener('click', () => {
-            dropdownSalesMenu.classList.toggle('hidden');
-        });
-    
-        // Hide dropdown if clicked outside
-        document.addEventListener('click', (event) => {
-            if (!downloadSalesButton.contains(event.target) && !dropdownSalesMenu.contains(event.target)) {
-                dropdownSalesMenu.classList.add('hidden');
-            }
-        });
-        
-        </script>
-   -->
-
-   
-<script>
-// function toggleDropdown() {
-//     const dropdown = document.getElementById('dropdownSalesMenu');
-//     dropdown.classList.toggle('hidden');
-// }
-
-// function downloadReport(type) {
-//     const filterValue = document.getElementById('filterOrders').value;
-//     const baseUrl = `/admin/sales/download${type.charAt(0).toUpperCase() + type.slice(1)}`;
-    
-//     // Redirect to the download URL with the selected filter
-//     const downloadUrl = filterValue === 'all' ? baseUrl : `${baseUrl}?filter=${filterValue}`;
-    
-//     // Close the dropdown after selecting
-//     document.getElementById('dropdownSalesMenu').classList.add('hidden');
-    
-//     // Redirect to download
-//     window.location.href = downloadUrl;
-// }
-</script>
-<script>
-// Function to fetch orders based on the selected filter
-// async function fetchFilteredOrders(filter) {
-//     try {
-//         const response = await fetch(`/admin/sales?filter=${filter}`); // Adjust the URL based on your backend routing
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         const data = await response.json(); // Expecting JSON response
-
-//         // Update the table with the new data
-//         updateOrdersTable(data);
-//     } catch (error) {
-//         console.error('Error fetching filtered orders:', error);
-//     }
-// }
-
-// Function to update the orders table
-// function updateOrdersTable(orders) {
-//     const tbody = document.querySelector('#ordersTable tbody');
-//     tbody.innerHTML = ''; // Clear existing rows
-
-//     if (orders && orders.length > 0) {
-//         orders.forEach(order => {
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td class="px-2">${order.orderId}</td>
-//                 <td class="px-8">${order.address.customerName}</td>
-//                 <td class="px-20">${order.paymentMethod}</td>
-//                 <td class="px-8">${order.orderStatus}</td>
-//                 <td class="px-8">${order.totalPayablePrice}</td>
-//                 <td class="px-8">
-//                     <button onclick="openModal(${JSON.stringify(order)})" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-//                 </td>
-//             `;
-//             tbody.appendChild(row);
-//         });
-//     } else {
-//         tbody.innerHTML = '<tr><td colspan="6" class="text-center">No Orders found.</td></tr>';
-//     }
-// }
-
-// Add event listener to the apply button
-// document.getElementById('applyFilterButton').addEventListener('click', () => {
-//     const selectedFilter = document.getElementById('filterOrders').value;
-//     fetchFilteredOrders(selectedFilter); // Fetch orders based on the selected filter
-// });
-
-// const salesReportButton = document.querySelector('button.bg-blue-500');
-// const dropdownMenu = document.querySelector('.absolute');
-
-// salesReportButton.addEventListener('click', () => {
-//     dropdownMenu.classList.toggle('hidden');
-// });
-
-// function setFilterValue() {
-//     const filterSelect = document.getElementById('filter');
-   
-//     const savedFilterValue = localStorage.getItem('selectedFilter') || 'all'; 
-   
-//     filterSelect.value = savedFilterValue;
-// }
-
-
-// document.getElementById('filterForm').addEventListener('submit', function (event) {
-//     event.preventDefault(); 
-//     const filterValue = document.getElementById('filter').value;
-   
-//     localStorage.setItem('selectedFilter', filterValue);
   
-//     window.location.href = `/admin/sales?filter=${filterValue}`;
-// });
 
-// window.onload = setFilterValue;
+   
 
+<script>
 
-
-//     document.getElementById('generatePDF').addEventListener('click', function () {
-//         const filterValue = document.getElementById('filter').value;
-//         window.location.href = `/admin/sales/downloadPdf?filter=${filterValue}`;
-      
-//     });
-
-//     document.getElementById('generateExcel').addEventListener('click', function () {
-//         const filterValue = document.getElementById('filter').value;
-//         window.location.href = `/admin/sales/downloadExcel?filter=${filterValue}`;
-//     });
-
-// Handle dropdown toggle for sales report
 const salesReportButton = document.querySelector('button.bg-blue-500');
 const dropdownMenu = document.querySelector('.absolute');
 
@@ -477,7 +354,7 @@ salesReportButton.addEventListener('click', () => {
     dropdownMenu.classList.toggle('hidden');
 });
 
-// Set the filter value on page load (from localStorage)
+/
 function setFilterValue() {
     const filterSelect = document.getElementById('filter');
     const customDateContainer = document.getElementById('customDateContainer');
@@ -496,7 +373,7 @@ function setFilterValue() {
     }
 }
 
-// Form submission logic
+
 document.getElementById('filterForm').addEventListener('submit', function (event) {
     event.preventDefault(); 
     const filterValue = document.getElementById('filter').value;
@@ -512,7 +389,7 @@ document.getElementById('filterForm').addEventListener('submit', function (event
     }
 });
 
-// Handle PDF generation
+
 document.getElementById('generatePDF').addEventListener('click', function () {
     const filterValue = document.getElementById('filter').value;
     const customDate = document.getElementById('customDate').value;
@@ -524,7 +401,7 @@ document.getElementById('generatePDF').addEventListener('click', function () {
     }
 });
 
-// Handle Excel generation
+
 document.getElementById('generateExcel').addEventListener('click', function () {
     const filterValue = document.getElementById('filter').value;
     const customDate = document.getElementById('customDate').value;
@@ -536,10 +413,10 @@ document.getElementById('generateExcel').addEventListener('click', function () {
     }
 });
 
-// Run the filter setup on page load
+
 window.onload = setFilterValue;
 
-// Handle filter dropdown visibility
+
 document.getElementById('filter').addEventListener('change', function() {
     const customDateContainer = document.getElementById('customDateContainer');
     if (this.value === 'custom') {

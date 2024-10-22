@@ -63,28 +63,28 @@
 
 <div class="w-full flex flex-wrap justify-center m-5 space-y-5">
     <% if (message && message.length > 0) { %>
-        <% message.forEach((coupon) => { %>
+        <% message.forEach((couponData) => { %>
             <div class="container border-2 border-dashed border-gray-300 p-6 rounded-lg shadow-lg m-2 max-w-md bg-white">
-                <% if(coupon.discountType==="percentage"){ %>
+                <% if(couponData.coupon.discountType==="percentage"){ %>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-gray-800 mb-4">Limited Time Offer!</div>
-                    <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"><%= coupon.discountValue%> %</span> on your next purchase!</div>
+                    <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"><%= couponData.coupon.discountValue%> %</span> on your next purchase!</div>
                 </div>
                 <% }else{ %>
                     <div class="text-center">
                         <div class="text-2xl font-bold text-gray-800 mb-4">Limited Time Offer!</div>
-                        <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"> Rs <%= coupon.discountValue%></span> on your next purchase!</div>
+                        <div class="text-lg text-gray-600 mb-6">Save <span class="text-gray-800 font-extrabold"> Rs <%= couponData.coupon.discountValue%></span> on your next purchase!</div>
                     </div>
                 <% } %>
                 <div class="bg-red-900 text-white p-4 rounded-lg mb-4 flex items-center justify-center">
-                    <span class="text-xl font-mono tracking-wider"><%= coupon.couponCode %></span>
+                    <span class="text-xl font-mono tracking-wider"><%= couponData.coupon.couponCode %></span>
                 </div>
                 <!-- <div class="text-center mb-6">
                     <button class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600">Copy Code</button>
                 </div> -->
                 <div class="text-sm text-gray-500 text-center">
-                    <p>Expires on <span class="font-semibold text-gray-800"><%= coupon.expiryDate.toLocaleDateString()  %></span></p>
-                    <p>Usage Limit<span></span></p>
+                    <p>Expires on <span class="font-semibold text-gray-800"><%= couponData.coupon.expiryDate.toLocaleDateString()  %></span></p>
+                    <p>Usage Limit <span class="font-medium"><%= couponData.remainingUsage %></span></p>
                     <p>Terms and conditions apply.</p>
                 </div>
             </div>

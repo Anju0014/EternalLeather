@@ -26,7 +26,7 @@ export const checkoutpost = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Invalid address selected' });
       }
   
-      // Verify Razorpay payment signature
+      
       if (paymentMethod === 'Razorpay') {
         const secret = 'your_razorpay_secret'; 
         const generatedSignature = crypto
@@ -39,7 +39,7 @@ export const checkoutpost = async (req, res) => {
         }
       }
   
-      // Coupon logic
+      
       let discount = 0;
       let coupon;
       if (appliedCoupon) {
@@ -58,7 +58,7 @@ export const checkoutpost = async (req, res) => {
         cart.payablePrice = Math.max(0, cart.payablePrice - discount);
       }
   
-      // Wallet payment logic
+      
       if (paymentMethod === 'Wallet') {
         const wallet = await Wallet.findOne({ userID: user._id });
         if (!wallet || wallet.balance < cart.payablePrice) {
@@ -76,7 +76,7 @@ export const checkoutpost = async (req, res) => {
         await wallet.save();
       }
   
-      // Create and save order
+      
       const newOrder = new Order({
         customerId: user._id,
         products: cart.items.map(item => ({
@@ -112,7 +112,6 @@ export const checkoutpost = async (req, res) => {
       newOrder.orderId = orderIdCode;
       await newOrder.save();
   
-      // Update product stock
       for (const item of cart.items) {
         const product = await Product.findById(item.productId);
         if (product.productQuantity < item.productCount) {
@@ -140,15 +139,15 @@ export const checkoutpost = async (req, res) => {
 
 export const paymentRender = async (req, res) => {
     try {
-        const totalAmount = req.body.amount; // The amount received from the client
-        console.log("Received Amount: " + totalAmount); // Log the received amount
+        const totalAmount = req.body.amount; 
+        console.log("Received Amount: " + totalAmount);
 
         if (!totalAmount) {
             return res.status(400).json({ error: "Amount parameter is missing" });
         }
 
         const options = {
-            amount: totalAmount * 100, // Amount in paise
+            amount: totalAmount * 100, 
             currency: "INR",
             receipt: "receipt#1"
         };
@@ -157,20 +156,20 @@ export const paymentRender = async (req, res) => {
             console.log("hiiii")
             if (error) {
                 console.log("....." + totalAmount+"flu444333")
-                console.error("Failed to create order:", error); // Log the full error object
-                return res.status(500).json({ error: `Failed to create order: ${JSON.stringify(error)}` }); // Return the error as JSON
+                console.error("Failed to create order:", error); 
+                return res.status(500).json({ error: `Failed to create order: ${JSON.stringify(error)}` }); 
             }
             console.log(order.id)
             return res.status(200).json({
                 orderID: order.id,
-                amount: order.amount, // Send back the amount
-                key_id: process.env.RAZORPAY_KEY_ID // Include key_id for frontend use
+                amount: order.amount, 
+                key_id: process.env.RAZORPAY_KEY_ID 
             });
         });
     } catch (error) {
         console.error(`Error on orders in checkout: ${error}`);
         return res.status(500).json({ error: 'Internal server error' });
-        // next(error)
+        
     }
 };
 
@@ -182,7 +181,7 @@ export const paymentVerify = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
   
     
-    const key_secret = process.env.RAZORPAY_KEY_SECRET; // Key secret from Razorpay
+    const key_secret = process.env.RAZORPAY_KEY_SECRET; 
 
     const generated_signature = crypto
         .createHmac('sha256', key_secret)
@@ -204,19 +203,19 @@ export const paymentVerify = async (req, res) => {
 export const userPaymentRetry = async (req, res) => {
   try {
     console.log("reeedddsffsf")
-      const orderId = req.body.orderId; // The amount received from the client
+      const orderId = req.body.orderId; 
       const order = await Order.findById(orderId).populate('products.productId');
       const totalAmount= order.totalPayablePrice;
       console.log("kkkmkncb")
 
-      console.log("Received Amount: " + totalAmount); // Log the received amount
+      console.log("Received Amount: " + totalAmount); 
 
       if (!totalAmount) {
           return res.status(400).json({ error: "Amount parameter is missing" });
       }
 
       const options = {
-          amount: totalAmount * 100, // Amount in paise
+          amount: totalAmount * 100, 
           currency: "INR",
           receipt: "receipt#1"
       };
@@ -225,14 +224,14 @@ export const userPaymentRetry = async (req, res) => {
           console.log("hiiii")
           if (error) {
               console.log("....." + totalAmount+"flu444333")
-              console.error("Failed to create order:", error); // Log the full error object
-              return res.status(500).json({ error: `Failed to create order: ${JSON.stringify(error)}` }); // Return the error as JSON
+              console.error("Failed to create order:", error); 
+              return res.status(500).json({ error: `Failed to create order: ${JSON.stringify(error)}` }); 
           }
           console.log(order.id)
           return res.status(200).json({
               orderID: order.id,
-              amount: order.amount, // Send back the amount
-              key_id: process.env.RAZORPAY_KEY_ID // Include key_id for frontend use
+              amount: order.amount, 
+              key_id: process.env.RAZORPAY_KEY_ID 
           });
       });
   } catch (error) {

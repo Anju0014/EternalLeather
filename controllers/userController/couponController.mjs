@@ -7,32 +7,38 @@ export const couponList = async (req, res) => {
         if (!req.session.isUser) {
             return res.redirect('/user/home');
         }
-
+        
         const page = parseInt(req.query.page) || 1;
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
 
-        // Fetch user by email
-        const user = await User.findOne({ email: req.session.isUser });
+        const coupons = await Coupon.find();
+        const user = await User.findOne({ email: req.session.isUser }).populate('couponsUsed.couponId');
 
-        // Ensure the user exists
+     
         if (!user) {
             return res.status(404).send('User not found');
         }
        
         console.log(user)
-        // Fetch orders with pagination
-        // const orders = await Order.find({ customerId: user._id })
-        //     .populate('productCategory', 'categoryName')
-        //     .skip(skip)
-        //     .limit(pageSize);
-        const coupons = await Coupon.find()
-    // .populate('customerId', 'name email')
-    // .populate('products.productId')
-    // .sort({ createdAt: -1 }) 
-    .skip(skip)
-    .limit(pageSize);
-
+      
+        
+    const couponData = coupons.map(coupon => {
+        const userCouponUsage = user.couponsUsed.find(
+          usedCoupon => String(usedCoupon.couponId._id) === String(coupon._id)
+        );
+  
+        
+        const remainingUsage = userCouponUsage
+          ? Math.max(0, coupon.maxUsageCount - userCouponUsage.usageCount)
+          : coupon.maxUsageCount;
+  
+        return {
+          coupon,
+          userUsage: userCouponUsage ? userCouponUsage.usageCount : 0,
+          remainingUsage: remainingUsage, 
+        };
+      });
 
         
         console.log('Fetched Coupons:', coupons);
@@ -43,7 +49,7 @@ export const couponList = async (req, res) => {
         const totalPages = Math.ceil(totalOrders / pageSize);
 
         res.render('userCoupon', {
-            message: coupons,
+            message: couponData,
             currentPage: page,
             totalPages: totalPages,
             light: req.flash(),

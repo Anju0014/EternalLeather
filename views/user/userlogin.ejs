@@ -67,7 +67,7 @@
                 <br>
                 <div class="flex space-x-2">
                 <div class="w-full bg-white text-black font-normal py-2 px-4 rounded-lg flex items-center space-x-2"><a href="/auth/google"><i class="fa-brands fa-google" style="color: #be5427;"></i> Login with Google</a></div>
-                <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="#"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Login with Facebook</a></div>
+                <!-- <div class="w-full bg-white text-black font-normal py-2 px-4 m-1 rounded-lg flex items-center space-x-2"><a href="#"><i class="fab fa-facebook-f" style="color: #be5427;"></i> Login with Facebook</a></div> -->
                 </div>
                 </form>
 
@@ -106,7 +106,7 @@ form.addEventListener('submit', (e) => {
 
     let messages = [];
 
-    // Validate email
+    
     if (email.value === '' || email.value == null) {
         emailError.innerText = "Email is required";
         messages.push("Email is required");
@@ -115,7 +115,7 @@ form.addEventListener('submit', (e) => {
         messages.push("Enter a valid email address");
     }
 
-    // Validate password
+    
     if (password.value === '' || password.value == null || password.value === "password") {
         passwordError.innerText = "Enter a valid password";
         messages.push("Enter a valid password");
@@ -127,7 +127,7 @@ form.addEventListener('submit', (e) => {
         messages.push('Valid Password is required');
     }
 
-    // Prevent form submission if there are errors
+    
     if (messages.length > 0) {
         e.preventDefault();
     }

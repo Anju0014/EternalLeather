@@ -180,24 +180,24 @@
         document.getElementById('offerTypeError').textContent = '';
         document.getElementById('discountValueError').textContent = '';
 
-        // Validate Offer Name
+        
         const offerName = document.getElementById('offerName').value.trim();
         if (offerName.length < 5) {
             document.getElementById('offerNameError').textContent = 'Offer name must be at least 5 characters long';
             isValid = false;
         }
 
-        // Validate Offer Field (Assuming you have a specific validation for this)
+        
         const offerType = document.getElementById('offerType').value.trim();
         if (offerType.length < 3) {
             document.getElementById('offerTypeError').textContent = 'Offer field must be at least 3 characters long';
             isValid = false;
         }
 
-        // Validate Discount Value
+        
         const discountValue = document.getElementById('discountValue').value;
-        if (discountValue <= 0 || discountValue > 95) {
-            document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 95';
+        if (discountValue <= 0 || discountValue > 20) {
+            document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 20';
             isValid = false;
         }
 

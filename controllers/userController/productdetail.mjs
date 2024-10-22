@@ -29,7 +29,7 @@ export const userproductview = async (req, res) => {
     try {
         const catid = req.query.category || ''; 
         const minPrice = parseFloat(req.query.minPrice) || 0; 
-        const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_SAFE_INTEGER; 
+        const maxPrice = parseFloat(req.query.maxPrice) || 5000; 
         const type = req.query.type || ''; 
         const sortstyle = req.query.sortstyle || ''; 
 
@@ -78,7 +78,7 @@ export const userproductview = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / pageSize);
         const productCollection = await Category.find({ isActive: true });
 
-        // Pass the filter values to the view for rendering
+    
         res.render('userAllProducts', {
             product,
             currentPage: page,
@@ -86,10 +86,10 @@ export const userproductview = async (req, res) => {
             productCollection,
             sessionuser: req.session.isUser,
             catid,
-            minPrice,    // Include minPrice
-            maxPrice,    // Include maxPrice
-            type,        // Include type
-            sortstyle,   // Include sortstyle
+            minPrice,    
+            maxPrice,    
+            type,        
+            sortstyle,   
             query: req.query
         });
     } catch (error) {
@@ -139,72 +139,4 @@ export const userproductcategorywise= async(req,res)=>{
 
 
 
-// export const userproductview = async (req, res) => {
-//     try {
-//         const catid = req.query.id;
-//         const page = parseInt(req.query.page) || 1;
-//         const pageSize = 12;
-//         const skip = (page - 1) * pageSize;
 
-//         const { sortstyle } = req.query;
-
-//         let sortCriteria = {};
-
-//         // Define sorting criteria
-//         if (sortstyle === 'lowToHigh') {
-//             sortCriteria = { effectivePrice: 1 }; // Sort by effective price ascending
-//         } else if (sortstyle === 'highToLow') {
-//             sortCriteria = { effectivePrice: -1 }; // Sort by effective price descending
-//         }
-
-//         // Base query to find products
-//         let matchCondition = { isDeleted: false };
-//         if (catid) {
-//             matchCondition.productCategory = catid;
-//         }
-
-//         // Use aggregation to calculate effective price based on discount percentage
-//         const product = await Product.aggregate([
-//             { $match: matchCondition }, // Filter products based on category and deleted status
-//             {
-//                 $addFields: {
-//                     effectivePrice: {
-//                         $cond: {
-//                             if: { $gt: ["$discount", 0] },  // Check if there's a discount
-//                             then: {
-//                                 $subtract: [
-//                                     "$productPrice",
-//                                     { $multiply: ["$productPrice", { $divide: ["$discount", 100] }] } // Apply percentage discount
-//                                 ]
-//                             }, // Discounted price formula
-//                             else: "$productPrice"  // No discount, use original price
-//                         }
-//                     }
-//                 }
-//             },
-//             { $sort: sortCriteria },  // Sort by effective price
-//             { $skip: skip },  // Skip for pagination
-//             { $limit: pageSize }  // Limit results per page
-//         ]);
-
-//         // Calculate total products count (without pagination)
-//         const totalProducts = await Product.countDocuments(matchCondition);
-
-//         const totalPages = Math.ceil(totalProducts / pageSize);
-
-//         // Fetch all active categories
-//         const productCollection = await Category.find({ isActive: true });
-
-//         res.render('userAllProducts', {
-//             product,
-//             currentPage: page,
-//             totalPages,
-//             productCollection,
-//             sessionuser: req.session.isUser,
-//             catid,
-//             query: req.query
-//         });
-//     } catch (error) {
-//         console.error(error);
-//     }
-// };

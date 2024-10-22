@@ -73,7 +73,7 @@
 
 
 
-            <!-- Submit Button -->
+        
             <button type="submit" class="w-full bg-black text-white mt-4 font-bold py-2 px-4 rounded-lg">
                 Add Category
             </button>
@@ -88,9 +88,9 @@
         const errorElement = document.getElementById('error');
     
         form.addEventListener('submit', (e) => {
-            let messages = []; // Array to hold error messages
+            let messages = []; 
     
-            // Validation for empty fields
+        
             if (catname.value === '' || catname.value == null) {
                 messages.push('Please fill in all fields.');
             }
@@ -106,7 +106,7 @@
 
             
             if (messages.length > 0) {
-                e.preventDefault(); // Prevent form submission
+                e.preventDefault(); 
                 errorElement.innerText = messages.join(', '); 
             } 
         });

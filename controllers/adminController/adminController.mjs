@@ -105,20 +105,20 @@ export const adminhome = async (req, res,next) => {
     }
 
 
-    const orderCount = await Order.countDocuments(); // Total number of orders
-    const productCollection = await Category.find({ isActive: true }); // Active product categories
+    const orderCount = await Order.countDocuments(); 
+    const productCollection = await Category.find({ isActive: true }); 
     const orders = await Order.find().select('totalPayablePrice createdAt');
     // const orders=await Order.find();
     const revenueResult = await Order.aggregate([
       { 
           $match: {
-              paymentStatus: 'Paid' // Only include orders with paymentStatus as 'Paid'
+              paymentStatus: 'Paid' 
           }
       },
-      { $unwind: "$products" }, // Deconstruct products array
+      { $unwind: "$products" }, 
       { 
           $match: {
-              "products.productstatus": { $nin: ['Cancelled', 'Returned'] } // Filter by product status
+              "products.productstatus": { $nin: ['Cancelled', 'Returned'] } 
           }
       },
       { 
@@ -127,11 +127,11 @@ export const adminhome = async (req, res,next) => {
               total: { 
                 $sum: { 
                   $subtract: [
-                      { $multiply: [ "$products.productprice", "$products.productquantity" ] }, // productprice * productquantity
-                      { $ifNull: ["$products.couponDiscount", 0] } // Subtract couponDiscount
+                      { $multiply: [ "$products.productprice", "$products.productquantity" ] }, 
+                      { $ifNull: ["$products.couponDiscount", 0] } 
                   ]
               }
-              } // Calculate total as productprice - couponDiscount
+              } 
           } 
       }
   ]);
@@ -140,32 +140,33 @@ export const adminhome = async (req, res,next) => {
   const Revenue = revenueResult.length > 0 ? revenueResult[0].total.toFixed(2) : 0;
 
   const productCount = await Order.aggregate([
-  { $unwind: "$products" }, // Deconstruct products array
+  { $unwind: "$products" }, 
   { 
       $match: {
-          "products.productstatus": { $nin: ['Cancelled', 'Returned'] }, // Filter by product status
+          "products.productstatus": { $nin: ['Cancelled', 'Returned'] }, 
           
       }
   },
   { 
       $group: { 
           _id: null, 
-          total: { $sum: "$products.productquantity" } // Calculate total quantity
+          total: { $sum: "$products.productquantity" } 
       } 
   }
 ]);
-const deliveredProductCount = await Order.aggregate([
-  { $unwind: "$products" }, // Deconstruct products array
+const deliveredProductCountx = await Order.aggregate([
+  { $unwind: "$products" }, 
   { 
       $match: {
-          "products.productstatus": 'Delivered', // Match products that are delivered
+          "products.productstatus": 'Delivered', 
           
       }
   }
-]).length;
+]);
+const deliveredProductCount=deliveredProductCountx.length
         
    const category= await Category.find();
-  //  console.log(category)
+  
  
 
 const categoryProductCount=await Category.aggregate([
@@ -185,7 +186,57 @@ const categoryProductCount=await Category.aggregate([
   }}
   
 ]);
-// console.log("llalla")
+
+console.log("loooolloollooo");
+
+const salesOfProducts = await Order.aggregate([
+  { $unwind: "$products" },
+  {
+    $match: {
+      productstatus: { $nin: ['Cancelled', 'Returned'] }  
+    }
+  },
+  {
+    $group: {
+      _id: '$products.productId',  
+      totalQuantity: { $sum: "$products.productquantity" } 
+    }
+  },
+  { $sort: { totalQuantity: -1 } } ,
+  
+]);
+
+console.log("hoooooohiiii")
+// console.log(salesOfProducts)
+const productId = salesOfProducts.map(value => value._id);
+
+const products = await Product.find({ _id: { $in: productId } }). populate('productCategory', 'categoryName');
+
+
+let bestProducts = productId.map(id => products.find(product => product._id.toString() === id.toString()));
+// console.log(bestProducts);
+
+const freq={};
+bestProducts.forEach(product => {
+  const category = product.productCategory.categoryName; 
+
+  if (freq[category]) {
+      freq[category]++;
+  } else {
+      freq[category] = 1;
+  }
+});
+
+const sortedCategories = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+const bestCategories = sortedCategories.slice(0, 5);
+bestCategories.forEach(([category, count]) => {
+  console.log(`Category: ${category}, Sales: ${count}`);
+});
+
+
+bestProducts=bestProducts.slice(0, 5); 
+console.log("llalla")
+// console.log(salesOfCategory)
 // console.log(categoryProductCount);
 // console.log("hoooooohiiii")
 
@@ -195,8 +246,11 @@ const categoryProductCount=await Category.aggregate([
       productCount: productCount[0]?.total || 0, 
       orderCount,
       orders,
+      products:bestProducts,
+      bestCategories,
       deliveredProductCount,
       categoryProductCount,
+      
     });
   } catch (error) {
     console.log(`error from admin home ${error}`);
@@ -241,160 +295,6 @@ export const adminlogout = async (req, res) => {
   }
 };
 
-
-// const home = async (req, res) => {
-//   try {
-//       const orderCount = await orderSchema.countDocuments();
-//       const userCount = await userSchema.countDocuments();
-
-//       const revenueResult = await orderSchema.aggregate([
-//           {
-//               $match: {
-//                   orderStatus: { $in: ['Shipped', 'Delivered'] }
-//               }
-//           },
-//           {
-//               $group: {
-//                   _id: null,
-//                   total: { $sum: "$totalPrice" }
-//               }
-//           }
-//       ]);
-//       const Revenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
-
-//       const product = await orderSchema.aggregate([
-//           {
-//               $group: {
-//                   _id: null,
-//                   total: { $sum: "$totalQuantity" }
-//               }
-//           }
-//       ]);
-//       const productCount = product.length > 0 ? product[0].total : 0;
-//       // const productCount = await orderSchema.find({
-//       //     orderStatus: { $in: ['Pending', 'Shipped', 'Delivered'] }
-//       // }).count();
-      
-
-//       // Find the best seller
-//       const productSale = await orderSchema.aggregate([
-//           { $unwind: "$products" },
-//           { $group: { _id: '$products.product_id', totalQuantity: { $sum: "$products.product_quantity" } } },
-//           { $sort: { totalQuantity: -1 } }
-//       ]);
-
-//       const productId = productSale.map(sale => sale._id);
-
-//       const products = await productSchema.find({ _id: { $in: productId } });
-
-//       const bestProducts = productId.map(id => products.find(product => product._id.toString() === id.toString()));
-
-//       const bestCategory = new Map();
-//       bestProducts.forEach(element => {
-//           if (element && element.productCollection) {
-//               if (bestCategory.has(element.productCollection)) {
-//                   bestCategory.set(element.productCollection, bestCategory.get(element.productCollection) + 1);
-//               } else {
-//                   bestCategory.set(element.productCollection, 1);
-//               }
-//           }
-//       });
-
-//       res.render('admin/home', {
-//           title: "Home",
-//           orderCount,
-//           userCount,
-//           Revenue,
-//           productCount,
-//           bestProducts,
-//           bestCategory
-//       });
-//   } catch (error) {
-//       console.log(`error from home ${error}`);
-//   }
-// };
-
-// const salesChart = async (req,res)=>{
-//   try {
-//       const orders = await orderSchema.find({
-//           orderStatus: { $in: ['Pending','Shipped','Delivered'] }
-//       });
-
-//       let salesData = Array.from({ length: 12 }, () => 0);
-//       let revenueData = Array.from({ length: 12 }, () => 0);
-//       let productsData = Array.from({ length: 12 }, () => 0);
-
-//       orders.forEach(order => {
-//           const month = order.createdAt.getMonth();
-//           revenueData[month] += order.totalPrice;
-//           for(product of order.products){
-//               productsData[month] += order.totalQuantity;
-//           }
-//       });
-
-//       const Orders = await orderSchema.find({})
-
-//       Orders.forEach(order => {
-//           const month = order.createdAt.getMonth();
-//           salesData[month]++
-//       })
-
-//       res.json({
-//           salesData,
-//           revenueData,
-//           productsData
-//       });
-//   } catch (error) {
-//       console.error('Error fetching data:', error);
-//       res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// }
-
-
-
-
-// function applyFilter(filterValue,orders) {
-//   const now = new Date();
-//   let filteredOrders = [];
-
-//   switch (filterValue) {
-//       case 'thisDay':
-//           filteredOrders = orders.filter(order => {
-//               const orderDate = new Date(order.createdAt);
-//               return orderDate.toDateString() === now.toDateString();
-//           });
-//           break;
-
-//       case 'thisWeek':
-//           const firstDayOfWeek = new Date(now);
-//           firstDayOfWeek.setDate(now.getDate() - now.getDay());
-//           filteredOrders = orders.filter(order => {
-//               const orderDate = new Date(order.createdAt);
-//               return orderDate >= firstDayOfWeek && orderDate <= now; // Include today's orders
-//           });
-//           break;
-
-//       case 'thisMonth':
-//           filteredOrders = orders.filter(order => {
-//               const orderDate = new Date(order.createdAt);
-//               return orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
-//           });
-//           break;
-
-//       case 'thisYear':
-//           filteredOrders = orders.filter(order => {
-//               const orderDate = new Date(order.createdAt);
-//               return orderDate.getFullYear() === now.getFullYear();
-//           });
-//           break;
-
-//       default:
-//           // Show all orders
-//           filteredOrders = orders;
-//           break;
-//   }
-//   return filteredOrders;
-// }
 
 
 

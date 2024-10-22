@@ -1,144 +1,4 @@
-<!-- <div>
-  <div class="mt-4  bg-red-50 p-6 shadow-lg w-full  max-w-sm rounded-2xl font-[sans-serif] mx-80">
-    <div class="flex flex-col items-center">
-      <div class="min-h-[110px]">
-        <img src='https://res.cloudinary.com/dihyb66hn/image/upload/v1726720095/kj7s5mf1qjknbfjad1wt.png' class="w-28 h-28 rounded-full" />
-      </div>
-  
-      <div class="mt-4 text-center">
-        <p class="text-lg text-gray-800 font-bold"><%= user.name %></p>
-        <p class="text-sm text-gray-500 mt-1"><%= user.email %></p>
-      </div>
-    </div>
-  </div>
 
-
-  <div id="" class="bg-red-50 p-6 w-full shadow-md rounded-md m-5 mx-32" >
-    <div class="flex justify-end">
-     <button id="passwordchange" class="text-right">Change your Password <i class="fa-solid fa-pen-to-square"></i></button></div>
-   
-<form id="passwordForm" class="p-4 bg-gray-50 rounded-lg hidden">
-  <div class="mb-4">
-    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
-    <input type="password" id="currentPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter current password">
-    <span id="currentPasswordError" class="text-red-500 text-sm"></span>
-  </div>
-
-  <div class="mb-4">
-    <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
-    <input type="password" id="newPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter new password">
-    <span id="newPasswordError" class="text-red-500 text-sm"></span>
-  </div>
-
-  <div class="mb-4">
-    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-    <input type="password" id="confirmPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Confirm new password">
-    <span id="confirmPasswordError" class="text-red-500 text-sm"></span>
-  </div>
-
-  <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent text-white bg-indigo-600 hover:bg-indigo-700">Submit</button>
-</form>
-
-  </div>
-  <div id="successModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div class="bg-white rounded-lg p-6">
-      <h2 class="text-lg font-bold mb-4">Success</h2>
-      <p id="successMessage" class="mb-4"></p>
-      <button id="closeModal" class="bg-indigo-600 text-white px-4 py-2 rounded">Close</button>
-    </div>
-  </div>
-  
-
-
-
-
-
-
-  <div class="w-full mx-32 bg-red-50 p-6 rounded-lg shadow-lg">
-
-
-    <h2 class="text-2xl font-bold mb-2">Manage Your Addresses</h2>
-      <div>
-        <table class="w-4/5 m-2 p-2 align-items-center border border-red-900 rounded" >
-         
-          <table class="w-4/5  m-20 p-2 align-items-center border border-red-900 rounded" >
-            <% if (addresses && addresses.length> 0) { %>
-              <% for (let i = 0; i < addresses.length; i++) { %>
-                  <tr>
-                      <td class="px-8"><%=   i+1 %></td>
-                      <td class="px-8"><p><%=   addresses[i].contactname%>,<br><%=addresses[i].building %>,<br><%= addresses[i].street %>,
-                        <br> <%=addresses[i].city %>,<br> <%=addresses[i].state %>,<br> <%=addresses[i].country %>, <%=addresses[i].pincode %>,
-                        <br> <%=addresses[i].landMark %>,<br> <%=addresses[i].phoneno %><br><br></p></td>
-
-                      <td class="px-10"><a href="/user/profile/address/edit?id=<%= addresses[i]._id %>"><i class="fa-regular fa-pen-to-square"></i></a></td> 
-                     
-                      <td class="px-8"><a href="/user/profile/address/delete?id=<%= addresses[i]._id %>" onclick="return confirm('Are you sure you want to delete this Address?');"><i class="fa-solid fa-trash text-danger"></i></a></td>
-      
-                  </tr>
-              <% }  %>
-          <% } %>
-      </table>
-    
-      </div>
-
-    <div class="mb-6">
-      <button   class="mt-4 bg-red-900 text-white px-4 py-2 rounded-lg hover:bg-red-700" id="addressadd">Add Address</a></button>
-      
-      <form id="addressForm" class="space-y-4 hidden bg-white p-3"  action="/user/profile/address/add" method="post">
-        
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Name</label>
-          <input type="text" id="contactname"  name="contactname"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Name">
-        </div>
-    
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input type="number" id="phoneNumber" name="phoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number">
-          </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Buliding Name/ No.</label>
-          <input type="text" id="building"  name="building" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Buliding Address">
-        </div>
-
-        
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Street /Locality</label>
-          <input type="text" id="street" name="street" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Street Address">
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">City</label>
-          <input type="text" id="city" name="city"class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter city">
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Postal Code</label>
-          <input type="number" id="postalCode"   name="postalCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter postal code">
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">LandMark</label>
-          <input type="text" id="landMark" name="landMark" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter LandMark">
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">State</label>
-          <input type="text" id="state"   name="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter State">
-        </div>
-
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">Country</label>
-          <input type="text" id="country"  name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Country">
-        </div>
-
-        <button type="submit" id="addAddressBtn"  name="addAddressBtn" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Address</button>
-      </form>
-    </div>
-
-   
-  </div>
-  </div> -->
 
   <div class="container mx-auto p-4">
  
@@ -163,29 +23,7 @@
       </div>
     </div>
   </div> 
-  <!-- <div class="mt-4 bg-red-50 p-6 shadow-lg w-full max-w-sm rounded-2xl font-[sans-serif] mx-auto"></div>
-    <div class="flex flex-col items-center">
-        <div class="min-h-[110px]">
-            <img src='https://res.cloudinary.com/dihyb66hn/image/upload/v1726720095/kj7s5mf1qjknbfjad1wt.png' class="w-28 h-28 rounded-full" />
-        </div>
-        <div class="mt-4 text-center">
-            <p class="text-lg text-gray-800 font-bold"><%= user.name %></p>
-            <p class="text-sm text-gray-500 mt-1"><%= user.email %></p>
-            <p class="text-center" id="profileEdit">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </p>
-            <form id="profileForm" class="hidden" method="POST" action="/user/edit" onsubmit="return validatePhoneNumber()">
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input type="number" id="phoneno" name="phoneno" value="<%= user.phoneno %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number" oninput="validatePhoneNumber()">
-                    <span id="phonenoError" class="text-red-600 text-sm"></span>
-                    <button type="submit" class="bg-red-900 text-white px-4 py-2 mt-2 rounded-md hover:bg-red-700">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> -->
-
+ 
 
   <div class="bg-red-50 p-6 w-full shadow-md rounded-md my-5 max-w-2xl mx-auto">
     <div class="flex justify-end">
@@ -364,13 +202,7 @@
 
   <script>
   
-  // Dropdown toggle functionality
-  // document.getElementById('dropdownMenu2').addEventListener('click', function() {
-  //   const dropdownMenu2 = document.getElementById('dropdownMenu2');
-  //   dropdownMenu2.classList.toggle('hidden');
-  // });
 
-  // Toggle form visibility when "Edit" button is clicked
   document.getElementById('passwordchange').addEventListener('click', function() {
     const passwordForm = document.getElementById('passwordForm');
     passwordForm.classList.toggle('hidden'); // Toggle hidden class
@@ -385,40 +217,85 @@
   document.getElementById('passwordForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  // Clear previous error messages
+  
   document.getElementById('currentPasswordError').textContent = '';
   document.getElementById('newPasswordError').textContent = '';
   document.getElementById('confirmPasswordError').textContent = '';
   
 
-  // Grab input values
+  
   const currentPassword = document.getElementById('currentPassword').value;
   const newPassword = document.getElementById('newPassword').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
 
   let isValid = true;
-              
+
+             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[*#@%])[A-Za-z\d*#@%]{8,15}$/;
 
               if(currentPassword==='' || currentPassword == null || currentPassword === "password"){
                 document.getElementById('currentPasswordError').textContent = 'Enter a valid password';
                 isValid = false;
-              }
-      
-              if(newPassword !== confirmPassword){
+              }else if (!newPassword) {
+                document.getElementById('newPasswordError').textContent = 'Password cannot be empty. Please enter a valid password.';
+               isValid = false;
+               } else if (newPassword.toLowerCase() === 'password') {
+                document.getElementById('newPasswordError').textContent = 'Password cannot be "password". Please choose a more secure password.';
+               isValid = false;
+                 } else if (newPassword.length < 8 || newPassword.length > 15) {
+                  document.getElementById('newPasswordError').textContent = 'Password must be between 8 and 15 characters long.';
+               isValid = false;
+               } else if (!passwordPattern.test(newPassword)) {
+                document.getElementById('newPasswordError').textContent = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (*, #, @, %).'
+               isValid = false;
+               }  else if(newPassword !== confirmPassword){
                 document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
                 isValid = false;
-               }else
-                if (newPassword === '' || newPassword == null || newPassword === "password") {
-                document.getElementById('newPasswordError').textContent = 'Enter a valid password';
-                isValid=false;
-              } else
-              if (newPassword.length < 8 || newPassword.length > 15) {
-                document.getElementById('newPasswordError').textContent = 'Password must be between 8 and 15 characters';
-                 isValid = false;
-              } else if (!/^[A-Za-z0-9*#@%]+$/.test(newPassword)) {  // Adjust regex for allowed characters
-                 document.getElementById('newPasswordError').textContent = 'Password can only contain letters, numbers, and *#@%';
-                 isValid = false;
-              }
+               }else{
+                document.getElementById('newPasswordError').textContent = '';
+               }
+               
+               
+               
+//                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[*#@%])[A-Za-z\d*#@%]{8,15}$/;
+// let isValid = true;
+
+// if (!currentPassword || currentPassword === 'password') {
+//   document.getElementById('currentPasswordError').textContent = 'Enter a valid password';
+//   isValid = false;
+// } else if (!newPassword) {
+//   document.getElementById('newPasswordError').textContent = 'Password cannot be empty. Please enter a valid password.';
+//   isValid = false;
+// } else if (newPassword.toLowerCase() === 'password') {
+//   document.getElementById('newPasswordError').textContent = 'Password cannot be "password". Please choose a more secure password.';
+//   isValid = false;
+// } else if (newPassword.length < 8 || newPassword.length > 15) {
+//   document.getElementById('newPasswordError').textContent = 'Password must be between 8 and 15 characters long.';
+//   isValid = false;
+// } else if (!passwordPattern.test(newPassword)) {
+//   document.getElementById('newPasswordError').textContent = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (*, #, @, %).';
+//   isValid = false;
+// } else if (newPassword !== confirmPassword) {
+//   document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+//   isValid = false;
+// } else {
+//   document.getElementById('newPasswordError').textContent = '';
+//   document.getElementById('confirmPasswordError').textContent = '';
+// }
+
+
+               
+              //  else
+              //   if (newPassword === '' || newPassword == null || newPassword === "password") {
+              //   document.getElementById('newPasswordError').textContent = 'Enter a valid password';
+              //   isValid=false;
+              // } else
+              // if (newPassword.length < 8 || newPassword.length > 15) {
+              //   document.getElementById('newPasswordError').textContent = 'Password must be between 8 and 15 characters';
+              //    isValid = false;
+              // } else if (!/^[A-Za-z0-9*#@%]+$/.test(newPassword)) { 
+              //    document.getElementById('newPasswordError').textContent = 'Password can only contain letters, numbers, and *#@%';
+              //    isValid = false;
+              // }
 
 
 
@@ -426,7 +303,6 @@
     return; 
   }
 
-  // Submit form data through Axios if validation passes
   try {
     const response = await axios.post('/user/profile/changepassword', {
       currentPassword,
@@ -446,8 +322,14 @@
 
     
     if (response.data.success){
+      document.getElementById('currentPassword').textContent = '';
+      document.getElementById('newPassword').textContent = '';
+      document.getElementById('confirmPassword').textContent = '';
       document.getElementById('successMessage').textContent = 'Password updated successfully!';
+     
       document.getElementById('successModal').classList.remove('hidden');
+    
+  
     }
 
   } catch (error) {
@@ -463,49 +345,49 @@ document.getElementById('closeModal').addEventListener('click', function() {
 });
 
 document.getElementById('addressForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent form submission for validation check
+    e.preventDefault(); 
     
-    // Name validation
+    
     const name = document.getElementById('contactname').value;
     const nameError = document.getElementById('nameError');
-    const nameRegex = /^[A-Za-z\s]+$/; // Regex to allow letters and spaces
-    nameError.textContent = ''; // Clear previous error message
+    const nameRegex = /^[A-Za-z\s]+$/; 
+    nameError.textContent = ''; 
 
     if (!name) {
         nameError.textContent = 'Name is required.';
-        return false; // Stop submission if validation fails
+        return false; 
     } else if (!nameRegex.test(name)) {
         nameError.textContent = 'Name can only contain letters and spaces.';
         return false;
     }
 
-    // Phone number validation
+  
     const phoneNumber = document.getElementById('phoneNumber').value;
     const phoneError = document.getElementById('phoneError');
-    phoneError.textContent = ''; // Clear previous error message
+    phoneError.textContent = ''; 
 
     if (!phoneNumber) {
         phoneError.textContent = 'Phone number is required.';
-        return false; // Stop submission if validation fails
+        return false; 
     } else if (!/^\d{10}$/.test(phoneNumber)) {
         phoneError.textContent = 'Phone number must be exactly 10 digits.';
         return false;
     }
 
-    // If both validations pass, submit the form
-    e.target.submit(); // Form will be submitted if everything is valid
+  
+    e.target.submit(); 
 });
 document.addEventListener('DOMContentLoaded', function() {
       const modal = document.getElementById('flashMessageModal');
       const closeModalBtn = document.getElementById('modalCloseBtn');
       const closeX = document.getElementById('closeModal');
   
-      // Show modal if there's a flash message
+      
       <% if (message.error || message.success) { %>
         modal.classList.remove('hidden');
       <% } %>
   
-      // Close the modal when "Close" button or "X" is clicked
+      
       closeModalBtn.addEventListener('click', function() {
         modal.classList.add('hidden');
       });
@@ -517,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('profileEdit').addEventListener('click', function() {
         const profileForm = document.getElementById('profileForm');
         
-        // Toggle the "hidden" class to show/hide the form
+        
         if (profileForm.classList.contains('hidden')) {
             profileForm.classList.remove('hidden');
         } else {
@@ -530,22 +412,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const phonenoError = document.getElementById('phonenoError');
         const phoneno = phonenoInput.value;
 
-        // Reset error message
+        
         phonenoError.textContent = '';
 
-        // Validate the length of the phone number
+        
         if (phoneno.length !== 10) {
             phonenoError.textContent = 'Phone number must be 10 digits long.';
-            return false; // Prevent form submission
+            return false; 
         }
 
-        // Check if the number is numeric
+        
         if (!/^\d+$/.test(phoneno)) {
             phonenoError.textContent = 'Phone number must be numeric.';
-            return false; // Prevent form submission
+            return false; 
         }
 
-        return true; // Allow form submission
+        return true; 
     }
   </script>
 

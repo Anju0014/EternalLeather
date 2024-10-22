@@ -36,7 +36,7 @@ export const admincategoryaddform = async (req, res) => {
   };
   
 
-  // Adjust the path to your category schema model
+
 
 export const admincategoryAdd = async (req, res) => {
     try {
@@ -80,14 +80,12 @@ export const admincategoryeditform = async (req, res) => {
         res.render('adminCategoryEdit', { category, message: req.flash() }); 
     } catch (error) {
         console.log(`Error fetching category for edit: ${error}`);
-        // req.flash("error", "An error occurred while fetching the category");
-        // return res.redirect('/admin/category');
+     
         next(error);
     }
 };
 
 
-// Update Category
 export const admincategoryupdate = async (req, res) => {
     try {
         const categoryId = req.body.id; 
@@ -109,8 +107,7 @@ export const admincategoryupdate = async (req, res) => {
         
     } catch (error) {
         console.log(`Error updating category: ${error}`);
-        // req.flash("error", "An error occurred while updating the category");
-        // return res.redirect(`/admin/category/edit/${req.params.id}`);
+      
         next(error);
     }
 };

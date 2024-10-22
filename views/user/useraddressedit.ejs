@@ -119,36 +119,36 @@
 <script>
   
 document.getElementById('editAddressForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent form submission for validation check
+    e.preventDefault(); 
     
-    // Name validation
+    
     const name = document.getElementById('contactname').value;
     const nameError = document.getElementById('nameError');
-    const nameRegex = /^[A-Za-z\s]+$/; // Regex to allow letters and spaces
-    nameError.textContent = ''; // Clear previous error message
+    const nameRegex = /^[A-Za-z\s]+$/; 
+    nameError.textContent = ''; 
 
     if (!name) {
         nameError.textContent = 'Name is required.';
-        return false; // Stop submission if validation fails
+        return false; 
     } else if (!nameRegex.test(name)) {
         nameError.textContent = 'Name can only contain letters and spaces.';
         return false;
     }
 
-    // Phone number validation
+    
     const phoneNumber = document.getElementById('phoneNumber').value;
     const phoneError = document.getElementById('phoneError');
-    phoneError.textContent = ''; // Clear previous error message
+    phoneError.textContent = ''; 
 
     if (!phoneNumber) {
         phoneError.textContent = 'Phone number is required.';
-        return false; // Stop submission if validation fails
+        return false; 
     } else if (!/^\d{10}$/.test(phoneNumber)) {
         phoneError.textContent = 'Phone number must be exactly 10 digits.';
         return false;
     }
 
-    // If both validations pass, submit the form
-    e.target.submit(); // Form will be submitted if everything is valid
+    
+    e.target.submit(); 
 });
 </script>

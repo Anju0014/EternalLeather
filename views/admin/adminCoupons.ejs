@@ -99,22 +99,22 @@
         </table>
     </div>
     
-    <!-- jQuery (required by DataTables) -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
+    
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     
     <script>
         $(document).ready(function() {
             $('#couponTable').DataTable({
-                "paging": true,        // Enable pagination
-                "ordering": true,      // Enable column sorting
-                "info": true,          // Display table info
-                "searching": true,     // Enable search box
-                "autoWidth": false,    // Disable automatic column width calculation
-                "order": [[ 0, "asc" ]],  // Default sorting by the first column (SL.No), ascending order
+                "paging": true,        
+                "ordering": true,      
+                "info": true,          
+                "searching": true,     
+                "autoWidth": false,    
+                "order": [[ 0, "asc" ]],  
                 "columnDefs": [
-                    { "orderable": false, "targets": [] }  // Disable sorting for Edit and Delete columns
+                    { "orderable": false, "targets": [] } 
                 ]
             });
         });

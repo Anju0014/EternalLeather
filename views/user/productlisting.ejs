@@ -17,81 +17,13 @@
        
    <div>
 
-       <!-- Sorting Dropdown -->
-<!-- <div class="mb-4 my-2 text-center">
-    <label for="sort" class="block text-sm  text-gray-700">Sort By: Price</label>
-    <select id="sort" class="mt-1 block w-fit pl-3 mx-2 pr-10 py-2 text-base text-center border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-      <option value="lowToHigh">Low to High</option>
-      <option value="highToLow">High to Low</option>
-    </select>
-  </div> -->
-
-
-
-   <!-- <form action="/user/allproducts" method="GET" class="bg-black py-2">
-<select name="sortstyle" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
-        <option value="">Sort By</option> 
-        <option value="lowToHigh">Price: Low to High</option>
-        <option value="highToLow">Price: High to Low</option>
-        <option value="aToZ">Name: A to Z</option>
-        <option value="zToA">Name: Z to A</option>
-    </select>
-</form>  -->
-    
-    <!-- <form action="/user/allproducts" method="GET" class="p-4 bg-red-200 rounded-md"> 
-    <label for="category" class="block text-sm font-medium text-white">Category:</label>
-    <select name="category" id="category" class="bg-white border rounded px-2 py-1 mb-2 w-full">
-        <option value="">All Categories</option>
-        <% productCollection.forEach(function (category) { %>
-            <option value="<%= category._id %>"><%= category.categoryName %></option>
-        <% }); %>
-    </select>
-
-    
-    <label for="minPrice" class="block text-sm font-medium text-white">Min Price:</label>
-    <input type="number" name="minPrice" id="minPrice" placeholder="0" class="border rounded px-2 py-1 mb-2 w-full">
-
-  
-    <label for="maxPrice" class="block text-sm font-medium text-white">Max Price:</label>
-    <input type="number" name="maxPrice" id="maxPrice" placeholder="5000" class="border rounded px-2 py-1 mb-2 w-full">
-
-   
-    <label for="type" class="block text-sm font-medium text-white">Type:</label>
-    <select name="type" id="type" class="bg-white border rounded px-2 py-1 mb-2 w-full">
-        <option value="">All Types</option>
-        <option value="Wallet">Wallet</option>
-        <option value="File Holder">File Holder</option>
-        <option value="Gadget Holder">Gadget Holder</option>
-
-
-
-        
-    </select>
-
-   
-    <label for="sortstyle" class="block text-sm font-medium text-white">Sort By:</label>
-    <select name="sortstyle" id="sortstyle" class="bg-white border rounded px-2 py-1 mb-2 w-full">
-        <option value="">Sort By</option>
-        <option value="lowToHigh">Price: Low to High</option>
-        <option value="highToLow">Price: High to Low</option>
-        <option value="aToZ">Name: A to Z</option>
-        <option value="zToA">Name: Z to A</option>
-        <option value="recent">New Arrivals</option>
-        <option value="ratings">Ratings</option>
-
-    </select>
-
-    <button type="submit" class="bg-red-900 text-white py-2 px-4 rounded hover:bg-red-600 mt-2 w-full">Apply Filters</button>
-</form>
-
-   </div>  -->
 
    <form action="/user/allproducts" method="GET" class="p-4 bg-red-200 rounded-md"> 
     <label for="category" class="block text-sm font-medium text-white">Category:</label>
     <select name="category" id="category" class="bg-white border rounded px-2 py-1 mb-2 w-full">
         <option value="">All Categories</option>
         <% productCollection.forEach(function (category) { %>
-            <option value="<%= category._id %>" <%= category._id === catid ? 'selected' : '' %>>
+            <option value="<%= category._id %>" <%= String(category._id) === String(catid) ? 'selected' : '' %>>
                 <%= category.categoryName %> 
             </option>  
         <% }); %>

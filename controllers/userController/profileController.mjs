@@ -38,14 +38,14 @@ export const userdata = async (req, res) => {
             return res.redirect('/user/home');
         }
 
-        //const addresses = user.address({isDeleted:false});
+        
         const addresses = user.address.filter(address => !address.isDeleted);
         
         res.render('userprofile', { sessionuser, productCollection, addresses, user ,message:req.flash(),query:req.query});
     } catch (error) {
         console.log(`Error in userdata function: ${error}`);
         next(error)
-        // return res.redirect('/user/home');
+    
     }
 };
 
@@ -65,7 +65,7 @@ export const useredit = async (req, res) => {
     }catch(error){
         console.log(error)
         next(error)
-        // res.redirect('/user/profile')
+        
     }
 }
 export const userchangepassword= async (req,res)=>{
@@ -81,7 +81,7 @@ export const userchangepassword= async (req,res)=>{
         return res.status(404).json({ error: 'User not found' });
     }
 
-    // Compare plain text currentPassword with stored hashed password
+    
     const passwordMatch = await bcrypt.compare(currentPassword, user.password); 
     console.log('Password match:', passwordMatch);
 
@@ -96,7 +96,7 @@ export const userchangepassword= async (req,res)=>{
     user.password = snewpassword;
     console.log("Updated password", user.password);
 
-    // Save the updated user information
+    
     await user.save();
 
     return res.status(200).json({ success: true, message: 'Password updated successfully' });
@@ -110,7 +110,7 @@ export const userchangepassword= async (req,res)=>{
 }
 export const addressAdd = async (req, res) => {
     try {
-         // Getting user ID from query parameter
+         
         const user = await User.findOne({email:req.session.isUser});
 
         if (!user) {
@@ -118,7 +118,7 @@ export const addressAdd = async (req, res) => {
             return res.redirect('/user/home');
         }
 
-        // Creating a new address object
+        
         const newAddress = {
             contactname: req.body.contactname,  
             country: req.body.country,
@@ -201,10 +201,6 @@ export const useraddressdelete = async (req, res) => {
         const address = user.address.id(addressId);
 
 
-
-        //const addresses = user.address({isDeleted:false});
-        //const addresses = user.address.filter(address => !address.isDeleted);
-        
        
        res.render('useraddressedit',{sessionuser,productCollection,address,query:req.query})
     } catch (error) {
@@ -216,7 +212,7 @@ export const useraddressdelete = async (req, res) => {
 };
   
 
-// In your controller file
+
 
 export const editAddress = async (req, res) => {
     try {

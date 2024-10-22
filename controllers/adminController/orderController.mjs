@@ -31,22 +31,10 @@ export const adminorders= async (req, res) => {
  
 };
 
-// Delete Category
+
 export const adminorderCancel = async (req, res) => {
     try {
-        // const categoryId = req.query.id;
-        // console.log(req.query.id);
-
-        // const category = await Category.findByIdAndDelete(categoryId);
-        // console.log(category)
-
-        // // if (!category) {
-        // //     req.flash("error", "Category not found");
-        // //     return res.redirect('/admin/category');
-        // // }
-
-        // req.flash("success", "Category deleted successfully");
-        // res.redirect('/admin/category');
+      
         console.log(req.url)
     const order = await Order.findByIdAndUpdate(req.query.id,{
         isCancelled: true,
@@ -56,49 +44,11 @@ export const adminorderCancel = async (req, res) => {
 
     } catch (error) {
         console.log(`Error deleting product: ${error}`);
-        // req.flash("error", "An error occurred while cancelling the order");
-        // res.redirect('/admin/order');
+     
         next(error)
     }
    
 };
-
-// export const adminorderupdate= async (req, res) => {
-//     try{
-//     const { id } = req.params;
-//     const { orderStatus } = req.body; 
-//     const order = await Order.findById(id);
-
-//     if (!order) {
-//     //     return res.status(404).send('User not found');
-//     res.redirect('/admin/order')
-//     }
-
-    
-//     order.orderStatus = orderStatus
-//     if(orderStatus==="Cancelled"){
-//        order.isCancelled=true
-//     }else {
-//         order.isCancelled = false;
-//     }
-//     if(orderStatus==="Delivered"){
-//         order.deliveredDate= Date.now();
-//     }
-//     if(orderStatus==="Returned"){
-//         order.returnedDate=Date.now();
-//     }
-//     await order.save();
-
-//     res.redirect('/admin/order'); 
-// }catch (error) {
-//     console.error('Error toggling block status:', error);
-//     // res.status(500).send('Internal Server Error');
-//     next(error)
-// }
-// }
-
-
-
 
 export const adminorderupdate= async (req, res,next) => {
     try {
@@ -207,14 +157,14 @@ export const adminorderupdate= async (req, res,next) => {
 function updateOrderStatus(order) {
     const productStatuses = order.products.map(product => product.productstatus);
   
-    // Check if all products have the same status
+
     const allReturned = productStatuses.every(status => status === 'Returned');
     const allCancelled = productStatuses.every(status => status === 'Cancelled');
     const allDelivered = productStatuses.every(status => status === 'Delivered');
     const allPending = productStatuses.every(status => status === 'Pending');
     const allShipped = productStatuses.every(status => status === 'Shipped');
     
-    // Set order status based on product statuses
+    
     if (allReturned) {
         order.orderStatus = 'Returned';
     } else if (allCancelled) {
@@ -226,11 +176,10 @@ function updateOrderStatus(order) {
     } else if (allShipped) {
         order.orderStatus = 'Shipped';
     } else {
-        // If some products are in other states (e.g., Confirmed, Shipped, Cancelled, Delivered)
         order.orderStatus = 'Confirmed';
     }
   
-    // Save the updated order in the database
+    
     return order.save()
         .then(() => console.log('Order status updated successfully'))
         .catch(err => console.error('Error updating order status:', err));

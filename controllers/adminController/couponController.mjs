@@ -30,35 +30,6 @@ export const adminCouponAddform=async(req,res)=>{
     }
 }
 
-// export const adminCouponAdd = async (req, res) => {
-//     const { couponCode, discountType, discountValue, startDate, expiryDate, maxUsageCount, minOrderAmount } = req.body;
-
-//     try {
-//         const existingCoupon = await Coupon.findOne({ couponCode });
-//         if (existingCoupon) {
-//             return res.status(400).json({ message: 'Coupon code already exists' });
-//         }
-
-//         const newCoupon = new Coupon({
-//             couponCode,
-//             discountType,
-//             discountValue,
-//             startDate,
-//             expiryDate,
-//             maxUsageCount,
-//             minOrderAmount
-//         });
-
-//         await newCoupon.save();
-//         req.flash("success", "Coupon added successfully");
-//         return res.status(200).json({ message: 'Coupon added successfully' });
-//     } catch (error) {
-//         console.error('Error adding coupon:', error);
-//         req.flash("error", "An error occurred while adding the product");
-//         res.status(500).json({ message: 'Error adding coupon' });
-
-//     }
-// };
 
 
 export const adminCouponAdd = async (req, res) => {
@@ -67,20 +38,20 @@ export const adminCouponAdd = async (req, res) => {
     try {
         const { couponCode, discountType, discountValue, startDate, expiryDate, maxUsageCount, minOrderAmount } = req.body;
         console.log(req.body)
-        // Check if the coupon code already exists
+
         const existingCoupon = await Coupon.findOne({ couponCode });
         if (existingCoupon) {
             req.flash("error", "Coupon code already exists");
             return res.status(400).json({ message: 'Coupon code already exists' });
         }
        
-        // Validate that expiry date is after start date
+        
         if (new Date(expiryDate) <= new Date(startDate)) {
             req.flash("error", "Expiry date must be after the start date");
             return res.status(400).json({ message: 'Expiry date must be after the start date' });
         }
 
-        // Create a new coupon
+        
         const newCoupon = new Coupon({
             couponCode,
             discountType,
@@ -103,8 +74,7 @@ export const adminCouponAdd = async (req, res) => {
     } catch (error) {
        
         console.log(`error from admin coupons ${error}`);
-    //     req.flash("error", "An error occurred while adding the coupon");
-    //  res.redirect('/admin/coupon')
+
          next(error);
     }
 };
