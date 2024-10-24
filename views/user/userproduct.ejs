@@ -10,8 +10,8 @@
   <h1 class="text-center font-serif font-semibold">MOST LOVED DESIGNS</h1>
   <div class="flex flex-wrap justify-around m-5">
     <% viewproduct.forEach(product => { %>
-      <div class="w-40 md:w-40 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
-        <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-52 h-40 object-cover rounded-lg"></a> <!-- Changed width and height -->
+      <div class="w-full md:w-1/5 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
+        <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-full h-auto object-cover rounded-lg"></a> <!-- Changed width and height -->
         <h6 class="text-sm font-serif font-semibold mt-2"><%= product.productName %></h6>
         <div>
           <% if(product.productDiscount > 0) { %>

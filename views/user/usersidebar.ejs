@@ -25,6 +25,7 @@
             </a>
         </ul>
     </div>
+    <% if(!user.googleID){ %>
     <div class="p-4">
         <ul class="text-brown">
             <a href="/user/profile" class="flex items-center">
@@ -33,6 +34,7 @@
             </a>
         </ul>
     </div>
+    <%} %>
     <div class="p-4">
         <ul class="text-brown">
             <a href="/user/profile/coupons" class="flex items-center">

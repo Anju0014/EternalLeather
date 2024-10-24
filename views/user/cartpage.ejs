@@ -1,6 +1,6 @@
 
 
- <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4 h-screen">
+ <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4 h-screen ">
     <h1 class="text-2xl font-extrabold text-gray-800">Your Cart</h1>
     <% if(cart && cart.items. length >0) { %>
     <div class="grid md:grid-cols-3 gap-4 mt-8">
@@ -35,9 +35,9 @@
                                     Rs. <%= item.productId.productPrice %>
                                 </h3>
                             <% } %>
-                            <% if(item.productId.productQuantity<=0) { %>
+                            <!-- <% if(item.productId.productQuantity<=0) { %>
                                 <h4 class="text-red-500">Product is out of Stock</h4>
-                            <% } %>
+                            <% } %> -->
 
                         </div>
 
@@ -46,7 +46,7 @@
 <button type="button" 
 id="decrement-button-<%= item.productId._id %>"
 class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-onclick="decrementQuantity('<%= item.productId._id %>')">
+onclick="decrementQuantity('<%= item.productId._id %>')" <% if (item.productCount <= 1) { %> disabled <% } %>>
 -
 </button>
 
@@ -57,14 +57,21 @@ onclick="decrementQuantity('<%= item.productId._id %>')">
 <button type="button" 
 id="increment-button-<%= item.productId._id %>"
 class="flex items-center justify-center w-6 h-6 bg-red-400 text-white outline-none rounded-full"
-onclick="incrementQuantity('<%= item.productId._id %>')">
+onclick="incrementQuantity('<%= item.productId._id %>')" <% if (item.productCount >= 4) { %> disabled <% } %>>
 +
 </button>
 
    
-    <% if (item.productCount <= 1 || item.productCount >= 4) { %>
-        <span class="text-sm">Min: 1 & Max: 4</span>
+<span id="stock-message-<%= item.productId._id %>" class="text-sm">
+    <% if (item.productCount >= item.productId.productQuantity) { %>
+        <span class="text-red-500">Product is out of stock</span>
+    <% } else { %>
+        In stock: <%= item.productId.productQuantity %>
     <% } %>
+</span>
+
+
+
 </div>
 
 
@@ -75,7 +82,7 @@ onclick="incrementQuantity('<%= item.productId._id %>')">
                 <div class="ml-auto flex flex-col">
                     <div class="flex items-start gap-4 justify-end">
                       
-                        <button><i class="fa-regular fa-heart"></i></button>
+                        <!-- <button><i class="fa-regular fa-heart"></i></button> -->
                         
                         <button onclick="deleteCartItem('<%= item.productId._id %>')"><i class="fa-solid fa-trash" style="color: #e30d23;"></i></button>
 
@@ -132,15 +139,19 @@ onclick="incrementQuantity('<%= item.productId._id %>')">
                 <img src='https://readymadeui.com/images/american-express.webp' alt="card3" class="w-10 object-contain" />
             </div>
         </div>
+        
         <% } else{ %>
             <div class="m-5 p-3 text-center">
                 <h3>Your cart is Empty</h3>
-               <a href="/user/home"> <button type="button" class="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md">Continue Shopping  </button></a>
+               <a href="/user/home"> <button type="button" class="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md">Continue Shopping  </button></a></div>
         <% } %>
 
 
 </div> 
-</div>
+
+<!-- </div> -->
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
@@ -172,6 +183,16 @@ function incrementQuantity(productId) {
                 const productPriceElement = document.getElementById(`product-price-${updatedItem.productId._id}`);
                 if (productPriceElement) {
                     productPriceElement.innerHTML = `Rs. ${newTotalPrice.toFixed(2)}`; 
+                }
+
+
+                const stockMessageElement = document.getElementById(`stock-message-${updatedItem.productId._id}`);
+                if (updatedItem.productCount >= updatedItem.productId.productQuantity) {
+                    stockMessageElement.innerHTML = "Product is out of stock";
+                    stockMessageElement.classList.add("text-red-500");
+                } else {
+                    stockMessageElement.innerHTML = `In stock: ${updatedItem.productId.productQuantity}`;
+                    stockMessageElement.classList.remove("text-red-500");
                 }
                 updateCartSummary(data.cart);
                 console.log("hellooooo")
@@ -216,7 +237,7 @@ function decrementQuantity(productId) {
             if (updatedItem) {
                 const productCountElement = document.getElementById(`product-count-${updatedItem.productId._id}`);
                 productCountElement.innerHTML = updatedItem.productCount; // Update count
-
+                
        
                 updateButtonStates(updatedItem.productId._id, updatedItem.productCount);
 
@@ -228,6 +249,15 @@ function decrementQuantity(productId) {
                 const productPriceElement = document.getElementById(`product-price-${updatedItem.productId._id}`);
                 if (productPriceElement) {
                     productPriceElement.innerHTML = `Rs. ${newTotalPrice.toFixed(2)}`; // Update the displayed price
+                }
+                
+                const stockMessageElement = document.getElementById(`stock-message-${updatedItem.productId._id}`);
+                if (updatedItem.productCount >= updatedItem.productId.productQuantity) {
+                    stockMessageElement.innerHTML = "Product is out of stock";
+                    stockMessageElement.classList.add("text-red-500");
+                } else {
+                    stockMessageElement.innerHTML = `In stock: ${updatedItem.productId.productQuantity}`;
+                    stockMessageElement.classList.remove("text-red-500");
                 }
             }
                 

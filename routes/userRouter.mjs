@@ -1,5 +1,5 @@
 import express from "express";
-import {  passwordchange, passwordnew, resendOtp, useremail, userhome, userlanding, userlogin, userlogout, userregister, usersearch, usersignup, userverify, verifyOtp, } from "../controllers/userController/userController.mjs";
+import {  checkOtpForgot, emailpasswordchange, passwordchange, passwordnew, resendOtp, useremail, userforgotresendOtp, userhome, userlanding, userlogin, userlogout, userregister, usersearch, usersignup, userverify, verifyOtp, } from "../controllers/userController/userController.mjs";
 import { googleauth, googleAuthCallback } from "../controllers/userController/userauthController.mjs";
 import isUser from "../middleware/userSession.mjs";
 import { userproductdetail, userproductview } from "../controllers/userController/productdetail.mjs";
@@ -29,8 +29,15 @@ user_router.get('/',userlanding)
 
 user_router.get('/user/login',userlogin);
 user_router.post('/user/login',userverify);
+// user_router.get('/user/forgotpassword',useremail);
+// user_router.post('/user/forgotpassword',passwordchange);
+
+
 user_router.get('/user/forgotpassword',useremail);
-user_router.post('/user/forgotpassword',passwordchange);
+user_router.post('/user/forgotpassword',emailpasswordchange);
+user_router.post('/user/otpforgotpassword', checkOtpForgot)
+user_router.post('/user/resendforgotOtp',userforgotresendOtp)
+
 
 
 user_router.post('/user/renewpassword',passwordnew)

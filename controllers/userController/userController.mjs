@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         user: 'eternalleather09@gmail.com', 
-        pass: 'efsq yiti dhcb ellq',  
+        pass: 'awda kocx ukzd hvuf',  
     },
 });
 
@@ -70,6 +70,134 @@ export const useremail=async(req,res)=>{
         next(error)
     }
 }
+
+
+
+export const emailpasswordchange = async (req, res, next) => {
+    try {
+        const email = req.body.email;
+
+        // Save OTP and expiration in session
+        req.session.registrationData = {
+            email: req.body.email,
+            otpExpires: Date.now() + 1 * 60 * 1000, // 1 minute expiry
+            otp: crypto.randomInt(100000, 999999).toString(), // Generate 6-digit OTP
+        };
+
+        const { otp, otpExpires } = req.session.registrationData;
+
+        console.log(`Generated OTP: ${otp}, Expires at: ${otpExpires}`);
+
+        // Mail options for nodemailer
+        const mailOptions = {
+            from: 'eternalleather09@gmail.com',
+            to: email,
+            subject: 'Email Verification',
+            text: `Your OTP is ${otp}. It will expire in 1 minute.`,
+        };
+
+        // Use async/await to send the email and wait for response
+        await transporter.sendMail(mailOptions);
+        console.log('OTP sent successfully.');
+
+        // Render the OTP page and calculate time remaining for expiration
+        res.render('userotpforgotpassword', {
+            user: req.session.registrationData.email,
+            message: req.flash(),
+            otpExpires: otpExpires - Date.now(), // Time remaining
+        });
+    } catch (error) {
+        console.error(`Error in emailpasswordchange: ${error}`);
+        next(error); // Pass the error to the error handler middleware
+    }
+};
+
+
+export const forgotpasswordpage= async(req,res,next)=>{
+    try{
+        res.render('forgotpassword',{user:req.session.registrationData.email})
+    }catch(error){
+        next(error)
+    }
+}
+
+export const checkOtpForgot= async (req, res, next) => {
+    try {
+        const { otp } = req.body;
+        const sessionData = req.session.registrationData;
+
+        if (!sessionData) {
+            req.flash("error", "Session expired. Please try again.");
+            return res.redirect('/user/login');
+        }
+
+        console.log("Received OTP from user:", otp);
+        console.log("Stored OTP in session:", sessionData.otp);
+        console.log("OTP Expiration Time:", sessionData.otpExpires);
+        console.log("Current Time:", Date.now());
+
+   
+        if (otp === sessionData.otp && Date.now() < sessionData.otpExpires) {
+                res.render('forgotpassword',{user:req.session.registrationData.email})
+           
+            req.flash("success", "Otp Verified.");
+            
+        } else {
+            req.flash("error", "Invalid OTP or OTP expired.");
+          
+            return res.render('userotpforgotpassword', {
+                user: req.session.registrationData.email,
+                message: req.flash(),
+                otpExpires: sessionData.otpExpires - Date.now()
+            });
+        }
+    } catch (error) {
+        console.error("Error verifying OTP:", error);
+        next(error);
+    }
+};
+
+
+export const userforgotresendOtp= async (req, res, next) => {
+    try {
+        const sessionData = req.session.registrationData;
+
+        if (!sessionData) {
+            req.flash("error", "Session expired. Please register again.");
+            return res.redirect('/user/signup');
+        }
+
+        const newOtp = crypto.randomInt(100000, 999999).toString();
+        sessionData.otp = newOtp; 
+        sessionData.otpExpires = Date.now() + 1 * 60 * 1000; 
+        const mailOptions = {
+            from: 'eternalleather09@gmail.com',
+            to: sessionData.email,
+            subject: 'Resend OTP - Email Verification',
+            text: `Your new OTP is ${newOtp}. It will expire in 1 minute.`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email:', error);
+                return res.status(500).send('Error resending OTP');
+            }
+            console.log('OTP resent:', info.response);
+            req.flash('success', 'New OTP has been sent to your email.');
+            return res.render('userotpforgotpassword', {
+                user: req.session.registrationData,
+                message: req.flash(),
+                otpExpires: sessionData.otpExpires - Date.now()
+            });
+        });
+    } catch (error) {
+        console.log('Error resending OTP:', error);
+        next(error);
+    }
+};
+
+
+
 export const passwordchange=async(req,res)=>{
     try{
 
@@ -93,11 +221,14 @@ export const passwordnew= async(req,res)=>{
         if(!userExist){
             req.flash("error", "Invalid Email");
             console.log(1)
+            req.session.registrationData=null;
             res.redirect('/user/login')
         }else{
             userExist.password=snewpassword;
             console.log(2)
             await userExist.save();
+            req.session.registrationData=null
+            req.flash("success","Password Changed Successfully")
             res.redirect('/user/login')
         }
 

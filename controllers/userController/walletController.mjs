@@ -3,7 +3,7 @@ import Wallet from '../../model/walletModel.mjs'
 import Cart from '../../model/cartModel.mjs'
 
 
-export const walletView = async (req, res) => {
+export const walletView = async (req, res,next) => {
     try {
         if (!req.session.isUser) {
             return res.redirect('/user/home');
@@ -29,18 +29,23 @@ export const walletView = async (req, res) => {
             wallet = new Wallet({ userID: user._id, balance: 0, transaction: [] });
             await wallet.save();
         }
+        wallet.transaction.sort((a, b) => new Date(a.date) - new Date(b.date));
+        console.log(wallet);
         res.render('userWallet', {
             message: wallet,
-  
             light: req.flash(),
-            query:req.query
+            query:req.query,
+            user
         });
     } catch (error) {
         console.log(`error from user Wallet${error}`);
         next(error)
     }
 };
-export const checkWalletBalance = async (req, res) => {
+
+
+
+export const checkWalletBalance = async (req, res,next) => {
     try {
         console.log("reac reac")
         const { paymentMethod, cartTotal } = req.body;

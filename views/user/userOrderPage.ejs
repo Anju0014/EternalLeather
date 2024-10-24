@@ -207,7 +207,7 @@
                                         data-product-id="<%= product.productId._id %>"
                                         onclick="returnProduct(this)">Return</button>
                                     <% } %>
-                                    <%= product.productstatus %>
+                                    <!-- <%= product.productstatus %> -->
                                     
                                    
                                     <% if (order.orderStatus === 'Cancelled') { %>
@@ -285,7 +285,9 @@
             <p class="text-sm"><strong>Total Price:</strong> Rs.<span id="modalTotalPrice"></span></p>
             <p class="text-sm"><strong>Order Status:</strong> <span id="modalOrderStatus"></span></p>
             <p class="text-sm hidden"><strong>Payment Status:</strong> <span id="modalPaymentStatus"></span></p>
-             <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+            <p class="text-xs hidden"><strong>Address:</strong> <span id="modalAddress"></span></p>
+            <div id="modalProducts" class="max-h-96 overflow-y-auto"></div>
+
             
         </div>
          <div class="mt-4"> 
@@ -342,6 +344,7 @@
         const modalPayment = document.getElementById('modalPaymentMethod');
         const orderStatus=document.getElementById('modalOrderStatus');
         const orderPaymentStatus=document.getElementById('modalPaymentStatus');
+        const address= document.getElementById('modalAddress');
        
         modalOrderId.innerText = orderData.orderId;
         modalOrderDate.innerText = new Date(orderData.createdAt).toLocaleDateString();
@@ -350,7 +353,28 @@
         modalPayment.innerText=orderData.paymentMethod;
         modalOrderStatus.innerText=orderData.orderStatus;
         modalPaymentStatus.innerText=orderData.paymentStatus;
+       
+        // const address= orderData.address;
 
+        const building = orderData.address.building;
+    const street = orderData.address.street;
+    const city = orderData.address.city;
+    const country = orderData.address.country;
+    const pincode = orderData.address.pincode;
+    const landMark = orderData.address.landMark;
+
+
+    const addressLines = [
+        ` ${building}`,
+        ` ${street}`,
+        ` ${city}`,
+        ` ${country}`,
+        ` Pincode: ${pincode}`,
+        landMark ? ` Landmark: ${landMark}` : '',
+    ].filter(line => line);
+
+
+    modalAddress.innerText=addressLines;
     
         modalProducts.innerHTML = '';   
         orderData.products.forEach(product => {
@@ -442,9 +466,22 @@ if (orderData.paymentStatus === 'Paid') {
 
 
 <script>
+
 document.getElementById('downloadButton').addEventListener('click', async function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+
+
+
+
+
+    // Set font size for headings
+    doc.setFontSize(20); // Size for heading
+    // Adding the heading
+    doc.text('Pelle Eterno', doc.internal.pageSize.getWidth() / 2, 10, { align: 'center' });
+
+    // Set font size for other contents
+    doc.setFontSize(10); // Smaller size for other text content
 
     // Fetching order details from modal
     const orderId = document.getElementById('modalOrderId').innerText;
@@ -452,54 +489,69 @@ document.getElementById('downloadButton').addEventListener('click', async functi
     const customerName = document.getElementById('modalCustomerName').innerText;
     const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
     const totalPrice = document.getElementById('modalTotalPrice').innerText;
-    const orderStatus=document.getElementById('modalOrderStatus').innerText;
+    const orderStatus = document.getElementById('modalOrderStatus').innerText;
+    const address = document.getElementById('modalAddress').innerText;
 
     // Adding text content to the PDF
-    doc.text(`Order ID: ${orderId}`, 10, 10);
-    doc.text(`Order Date: ${orderDate}`, 10, 20);
-    doc.text(`Customer Name: ${customerName}`, 10, 30);
-    doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
-    doc.text(`Total Price: ${totalPrice}`, 10, 50);
+    doc.text(`Order ID: ${orderId}`, 10, 20);
+    doc.text(`Order Date: ${orderDate}`, 10, 30);
+    doc.text(`Customer Name: ${customerName}`, 10, 40);
+    doc.text(`Payment Method: ${paymentMethod}`, 10, 50);
     doc.text(`Order Status: ${orderStatus}`, 10, 60);
+    doc.text(`Total Price: Rs. ${totalPrice}`, 10, 70);
+
+    // Handle multi-line address
+    const addressLines = doc.splitTextToSize(`Address: ${address}`, 180);
+    doc.text(addressLines, 10, 80);
+
+    // Create table for product details
+    const startY = 100; // Starting Y position for the table
+    const colWidths = [20, 60, 30, 30, 30]; // Column widths for Image, Product Name, Price, Quantity, and Status
+
+    // Table headers
+    doc.text("Image", 10, startY);
+    doc.text("Product Name", 40, startY);
+    doc.text("Price", 100, startY);
+    doc.text("Quantity", 130, startY);
+    doc.text("Status", 160, startY);
 
     // Fetch product details from modalProducts div
     const productElements = document.querySelectorAll('#modalProducts .product-details');
-
-    let yOffset = 70; // Initial Y position for product details and images
+    let yOffset = startY + 20; // Y position for product rows
     for (const productElement of productElements) {
         const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
         const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
         const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split(": Rs.")[1];
         const productImage = productElement.querySelector('img').src;
-        const productStatus=productElement.querySelector('p:nth-child(5)').innerText.split(": ")[1];
+        const productStatus = productElement.querySelector('p:nth-child(5)').innerText.split(": ")[1];
 
-        // Add product details (name, price, quantity) to PDF
-        doc.text(`Product Name: ${productName}`, 90, yOffset);
-        doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
-        doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
-        doc.text(`Status: ${productStatus}`, 90, yOffset + 30);
-
+        // Add product image first
         try {
-            // Convert image URL to base64 and add to PDF
+            // Convert image URL to base64 and add to PDF with reduced size
             const base64Img = await getBase64ImageFromURL(productImage);
-            // Adding image to PDF at (x, y, width, height)
-            doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+            // Adding image to PDF at (x, y, width, height) - Adjusted size to 20x20
+            doc.addImage(base64Img, 'JPEG', 10, yOffset - 10, 20, 20);
         } catch (error) {
             console.error('Error loading image', error);
         }
 
-        yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+        // Add product details to PDF table
+        doc.text(productName, 40, yOffset);
+        doc.text(`Rs. ${productPrice}`, 100, yOffset);
+        doc.text(productQuantity, 130, yOffset);
+        doc.text(productStatus, 160, yOffset);
+
+        yOffset += 30; // Adjust Y position for the next product
     }
 
     // Save the generated PDF
     doc.save('order-details.pdf');
 });
 
-// Function to convert image URL to base64
+// Helper function to convert image URL to base64
 async function getBase64ImageFromURL(url) {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
+    const res = await fetch(url);
+    const blob = await res.blob();
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);
@@ -508,37 +560,198 @@ async function getBase64ImageFromURL(url) {
     });
 }
 
-function closeModal() {
-    document.getElementById('productModal').classList.add('hidden');
-}
 
-function handleCancel(productId) {
-    // Example of sending an AJAX request to cancel the product
-    fetch(`/order/cancel/${productId}`, {
-        method: 'POST'
-    }).then(response => {
-        if (response.ok) {
-            alert('Product canceled successfully');
-            // Optionally, reload the page or update the UI
-        }
-    }).catch(error => {
-        console.error('Error canceling product:', error);
-    });
-}
 
-function handleReturn(productId) {
-    // Example of sending an AJAX request to return the product
-    fetch(`/order/return/${productId}`, {
-        method: 'POST'
-    }).then(response => {
-        if (response.ok) {
-            alert('Product returned successfully');
-            // Optionally, reload the page or update the UI
-        }
-    }).catch(error => {
-        console.error('Error returning product:', error);
-    });
-}
+//     document.getElementById('downloadButton').addEventListener('click', async function () {
+//     const { jsPDF } = window.jspdf;
+//     const doc = new jsPDF();
+
+//     // Fetching order details from modal
+//     const orderId = document.getElementById('modalOrderId').innerText;
+//     const orderDate = document.getElementById('modalOrderDate').innerText;
+//     const customerName = document.getElementById('modalCustomerName').innerText;
+//     const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+//     const totalPrice = document.getElementById('modalTotalPrice').innerText;
+//     const orderStatus = document.getElementById('modalOrderStatus').innerText;
+//     const address = document.getElementById('modalAddress').innerText;
+
+//     // Adding text content to the PDF
+//     doc.text('Pelle Eterno', doc.internal.pageSize.getWidth() / 2, 10, { align: 'center' });
+//     doc.text(`Order ID: ${orderId}`, 10, 20);
+//     doc.text(`Order Date: ${orderDate}`, 10, 30);
+//     doc.text(`Customer Name: ${customerName}`, 10, 40);
+//     doc.text(`Payment Method: ${paymentMethod}`, 10, 50);
+//     doc.text(`Order Status: ${orderStatus}`, 10, 60);
+//     doc.text(`Total Price: Rs. ${totalPrice}`, 10, 70);
+
+//     // Handle multi-line address
+//     const addressLines = doc.splitTextToSize(`Address: ${address}`, 180);
+//     doc.text(addressLines, 10, 80);
+
+//     // Create table for product details
+//     const startY = 100; // Starting Y position for the table
+//     const colWidths = [60, 30, 30, 30]; // Column widths for Product Name, Price, Quantity, and Status
+
+//     // Table headers
+//     doc.text("Product Name", 10, startY);
+//     doc.text("Price", 70, startY);
+//     doc.text("Quantity", 100, startY);
+//     doc.text("Status", 130, startY);
+
+//     // Fetch product details from modalProducts div
+//     const productElements = document.querySelectorAll('#modalProducts .product-details');
+//     let yOffset = startY + 10; // Y position for product rows
+//     for (const productElement of productElements) {
+//         const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+//         const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+//         const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split(": Rs.")[1];
+//         const productImage = productElement.querySelector('img').src;
+//         const productStatus = productElement.querySelector('p:nth-child(5)').innerText.split(": ")[1];
+
+//         // Add product details to PDF table
+//         doc.text(productName, 10, yOffset);
+//         doc.text(`Rs. ${productPrice}`, 70, yOffset);
+//         doc.text(productQuantity, 100, yOffset);
+//         doc.text(productStatus, 130, yOffset);
+
+//         try {
+//             // Convert image URL to base64 and add to PDF with reduced size
+//             const base64Img = await getBase64ImageFromURL(productImage);
+//             // Adding image to PDF at (x, y, width, height) - Reduced size to 30x30
+//             doc.addImage(base64Img, 'JPEG', 160, yOffset - 10, 30, 30);
+//         } catch (error) {
+//             console.error('Error loading image', error);
+//         }
+
+//         yOffset += 40; // Adjust Y position for the next product
+//     }
+
+//     // Save the generated PDF
+//     doc.save('order-details.pdf');
+// });
+
+// // Helper function to convert image URL to base64
+// async function getBase64ImageFromURL(url) {
+//     const res = await fetch(url);
+//     const blob = await res.blob();
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.onerror = reject;
+//         reader.readAsDataURL(blob);
+//     });
+// }
+
+
+
+
+
+
+
+
+// document.getElementById('downloadButton').addEventListener('click', async function () {
+//     const { jsPDF } = window.jspdf;
+//     const doc = new jsPDF();
+
+//     // Fetching order details from modal
+//     const orderId = document.getElementById('modalOrderId').innerText;
+//     const orderDate = document.getElementById('modalOrderDate').innerText;
+//     const customerName = document.getElementById('modalCustomerName').innerText;
+//     const paymentMethod = document.getElementById('modalPaymentMethod').innerText;
+//     const totalPrice = document.getElementById('modalTotalPrice').innerText;
+//     const orderStatus=document.getElementById('modalOrderStatus').innerText;
+
+//     // Adding text content to the PDF
+//     doc.text(`Order ID: ${orderId}`, 10, 10);
+//     doc.text(`Order Date: ${orderDate}`, 10, 20);
+//     doc.text(`Customer Name: ${customerName}`, 10, 30);
+//     doc.text(`Payment Method: ${paymentMethod}`, 10, 40);
+//     doc.text(`Total Price: ${totalPrice}`, 10, 50);
+//     doc.text(`Order Status: ${orderStatus}`, 10, 60);
+
+//     // Fetch product details from modalProducts div
+//     const productElements = document.querySelectorAll('#modalProducts .product-details');
+
+//     let yOffset = 70; // Initial Y position for product details and images
+//     for (const productElement of productElements) {
+//         const productName = productElement.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+//         const productQuantity = productElement.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+//         const productPrice = productElement.querySelector('p:nth-child(4)').innerText.split(": Rs.")[1];
+//         const productImage = productElement.querySelector('img').src;
+//         const productStatus=productElement.querySelector('p:nth-child(5)').innerText.split(": ")[1];
+
+//         // Add product details (name, price, quantity) to PDF
+//         doc.text(`Product Name: ${productName}`, 90, yOffset);
+//         doc.text(`Price: ${productPrice}`, 90, yOffset + 10);
+//         doc.text(`Quantity: ${productQuantity}`, 90, yOffset + 20);
+//         doc.text(`Status: ${productStatus}`, 90, yOffset + 30);
+
+//         try {
+//             // Convert image URL to base64 and add to PDF
+//             const base64Img = await getBase64ImageFromURL(productImage);
+//             // Adding image to PDF at (x, y, width, height)
+//             doc.addImage(base64Img, 'JPEG', 10, yOffset, 50, 50); // Adjust x, y, width, height as needed
+//         } catch (error) {
+//             console.error('Error loading image', error);
+//         }
+
+//         yOffset += 60; // Adjust Y position for next product (adjust height as per your content)
+//     }
+
+//     // Save the generated PDF
+//     doc.save('order-details.pdf');
+// });
+
+// // Function to convert image URL to base64
+// async function getBase64ImageFromURL(url) {
+//     const response = await fetch(url);
+//     const blob = await response.blob();
+
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.onerror = reject;
+//         reader.readAsDataURL(blob);
+//     });
+// }
+
+// function closeModal() {
+//     document.getElementById('productModal').classList.add('hidden');
+// }
+
+// function handleCancel(productId) {
+//     // Example of sending an AJAX request to cancel the product
+//     fetch(`/order/cancel/${productId}`, {
+//         method: 'POST'
+//     }).then(response => {
+//         if (response.ok) {
+//             alert('Product canceled successfully');
+//             // Optionally, reload the page or update the UI
+//         }
+//     }).catch(error => {
+//         console.error('Error canceling product:', error);
+//     });
+// }
+
+// function handleReturn(productId) {
+//     // Example of sending an AJAX request to return the product
+//     fetch(`/order/return/${productId}`, {
+//         method: 'POST'
+//     }).then(response => {
+//         if (response.ok) {
+//             alert('Product returned successfully');
+//             // Optionally, reload the page or update the UI
+//         }
+//     }).catch(error => {
+//         console.error('Error returning product:', error);
+//     });
+// }
+
+
+
+
+
+
 
 // function cancelProduct(orderId, productId) {
 //     console.log("reached")
@@ -612,11 +825,15 @@ function handleReturn(productId) {
         console.log('Response Status:', response.status); // Log response status
         return response.json();
     })
-    .then(data => {
+    .then( async data => {
         console.log('Response Data:', data); // Log response data
         if (data.success) {
-            alert('Product successfully canceled!');
-            // Optionally reload the page or remove the product from the UI dynamically
+               await Swal.fire({ 
+                icon: "success",
+                title: 'Product successfully canceled!',
+                // text: "Select one"
+            });
+         
             window.location.reload(); // or update the DOM to reflect the cancellation
         } else {
             alert('Failed to cancel the product. Please try again.');
@@ -712,7 +929,12 @@ async function submitReturn() {
 
         if (response.ok) {
             console.log(response)
-            alert('Return request submitted successfully.');
+            // alert('Return request submitted successfully.');
+            await Swal.fire({ 
+                icon: "success",
+                title: "Return Successfully Completed.",
+                // text: "Select one"
+            });
             location.reload();
         } else {
             alert('Failed to submit return request.');
@@ -773,13 +995,13 @@ if (data.orderID) {
             if (verifyData.success) {
                 // alert('Payment successful and verified!');
  
-                Swal.fire({ 
-                icon: "Sucess",
+                 await Swal.fire({ 
+                icon: "success",
                 title: "Payment Successfully Completed.",
                 // text: "Select one"
             });
                         
-           
+            
                 const formData = {
                     orderId:orderId,
                     razorpay_payment_id: response.razorpay_payment_id,
@@ -801,6 +1023,7 @@ if (data.orderID) {
                 if (result.success) {
                   //button invisible
                   document.getElementById('payretry').style.display = 'none';
+                  window.location.reload();
                   
                 } else {
                     alert(result.message);

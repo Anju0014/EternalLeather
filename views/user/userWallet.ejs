@@ -61,7 +61,7 @@
             <span class="ml-2 text-xl">My Wallet</span></div>
             <!-- <span ><%= message.balance %></span> -->
             <% if (message && message.balance) { %>
-                <span class='font-bold'><%= message.balance %></span>
+                <span class='font-bold'><%= message.balance.toFixed(2) %></span>
               <% } else { %>
                 <span>Balance not available</span>
               <% } %>
@@ -123,6 +123,7 @@
             paging: true,    // Enable pagination
             searching: true, // Enable search bar
             ordering: true,  // Enable sorting
+            order: [[5, 'des']], 
             info: true       // Display table info (e.g., "Showing 1 to 10 of 50 entries")
         });
     });

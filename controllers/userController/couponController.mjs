@@ -53,7 +53,8 @@ export const couponList = async (req, res) => {
             currentPage: page,
             totalPages: totalPages,
             light: req.flash(),
-            query:req.query
+            query:req.query,
+            user
         });
     } catch (error) {
         console.log(`error from admin coupon${error}`);
