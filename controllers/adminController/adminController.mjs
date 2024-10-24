@@ -4,8 +4,8 @@ import Order from "../../model/orderModel.mjs";
 import moment from 'moment'
 import Product from "../../model/productModel.mjs"
 
-const adminEmail = "anjum1495pkr@gmail.com";
-const adminPassword = "anjuanju";
+const adminEmail = process.env.ADMINEMAIL;
+const adminPassword = process.env.ADMINPASSWORD;
 
 
 export const admin = async (req, res) => {
