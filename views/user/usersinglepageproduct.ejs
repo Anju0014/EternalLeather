@@ -213,8 +213,7 @@
     
 document.getElementById('add-to-cart').addEventListener('click', function () {
     const productId = '<%= product._id %>';
-    // const productPrice= '<%= product.productPrice %>'
-    // const discountPrice='<%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %> ' // Assuming EJS renders this correctly
+ 
     
     let quantity = 1;  // You can make this dynamic if necessary
 
@@ -226,9 +225,9 @@ document.getElementById('add-to-cart').addEventListener('click', function () {
         },
         body: JSON.stringify({ productId: productId, productCount: quantity })  // Include quantity if needed
     })
-    .then(response => response.json())  // Parse response as JSON
+    .then(response => response.json())  
     .then(data => {
-        // Show the modal with appropriate message
+        
         console.log(data)
         const cartModal = document.getElementById('cart-modal');
         const showMessage = document.getElementById('show-message');
@@ -243,10 +242,10 @@ document.getElementById('add-to-cart').addEventListener('click', function () {
             console.log(showMessage.textContent)
         }
 
-        cartModal.style.display = 'block';  // Show the modal
+        cartModal.style.display = 'block'; 
     })
     .catch(error => {
-        console.error('Error:', error);  // Handle any errors
+        console.error('Error:', error);  
     });
 });
 

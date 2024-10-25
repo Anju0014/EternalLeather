@@ -26,6 +26,7 @@ passport.use(
            })
                await user.save()
            }
+           req.session.isUser= email;
                done(null, user)
            } catch (err) {
                console.log(`error during google authentication: ${err}`)
