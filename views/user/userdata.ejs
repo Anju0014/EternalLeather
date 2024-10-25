@@ -12,7 +12,7 @@
         <p class="text-sm text-gray-500 mt-1"><%= user.email %></p>
         <p class="text-center" id="profileEdit"><i class="fa-solid fa-pen-to-square"></i></p>
         <!-- <form id="profileForm" class="hidden"> -->
-           <form id="profileForm" class="hidden" method="POST" action="/user/profile/edit" onsubmit="return validatePhoneNumber()">
+          <form id="profileForm" class="hidden" method="POST" action="/user/profile/edit" onsubmit="return validatePhoneNumber()">
           <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Phone Number</label>
             <input type="number" id="phoneno" name="phoneno" value="<%=user.phoneno %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Phone Number" oninput="validatePhoneNumber()">
@@ -334,25 +334,61 @@ document.getElementById('addressForm').addEventListener('submit', function(e) {
     }
     e.target.submit(); 
 });
+
+// document.addEventListener('DOMContentLoaded', function() {
+//       const modal = document.getElementById('flashMessageModal');
+//       const closeModalBtn = document.getElementById('modalCloseBtn');
+//       const closeX = document.getElementById('closeModal');
+  
+      
+//       <% if (message.error || message.success) { %>
+//         modal.classList.remove('hidden');
+//       <% } %>
+  
+      
+//       closeModalBtn.addEventListener('click', function() {
+//         modal.classList.add('hidden');
+//       });
+  
+//       closeX.addEventListener('click', function() {
+//         modal.classList.add('hidden');
+//       });
+//     });
+
+
 document.addEventListener('DOMContentLoaded', function() {
-      const modal = document.getElementById('flashMessageModal');
-      const closeModalBtn = document.getElementById('modalCloseBtn');
-      const closeX = document.getElementById('closeModal');
-  
-      
-      <% if (message.error || message.success) { %>
+    // Flash Message Modal Logic
+    const modal = document.getElementById('flashMessageModal');
+    const closeModalBtn = document.getElementById('modalCloseBtn');
+    const closeX = document.getElementById('closeModal');
+
+    // Show modal if there's a message
+    <% if (message.error || message.success) { %>
         modal.classList.remove('hidden');
-      <% } %>
-  
-      
-      closeModalBtn.addEventListener('click', function() {
+    <% } %>
+
+    // Close modal button logic
+    closeModalBtn?.addEventListener('click', function() {
         modal.classList.add('hidden');
-      });
-  
-      closeX.addEventListener('click', function() {
-        modal.classList.add('hidden');
-      });
     });
+    closeX?.addEventListener('click', function() {
+        modal.classList.add('hidden');
+    });
+
+    // Profile Edit Toggle Logic
+    const profileEditButton = document.getElementById('profileEdit');
+    const profileForm = document.getElementById('profileForm');
+
+    profileEditButton?.addEventListener('click', function() {
+        if (profileForm.classList.contains('hidden')) {
+            profileForm.classList.remove('hidden');
+        } else {
+            profileForm.classList.add('hidden');
+        }
+    });
+});
+
+
     document.getElementById('profileEdit').addEventListener('click', function() {
         const profileForm = document.getElementById('profileForm');
         
