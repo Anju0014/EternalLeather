@@ -3,7 +3,7 @@ const admin_router=express();
 
 import { admin, admindashBoardFilter, adminhome, adminlogin, adminlogout, adminverify } from "../controllers/adminController/adminController.mjs";
 import isAdmin from "../middleware/adminsession.mjs";
-import { admincategory, admincategoryAdd, admincategoryaddform, admincategoryeditform, admincategorypost, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
+import { admincategory, admincategoryAdd, admincategoryaddform, admincategorydelete, admincategoryeditform, admincategorypost, admincategorysearch, admincategoryupdate, check } from "../controllers/adminController/categoryController.mjs";
 import { adminproduct, adminproductadd, adminproductaddform, adminproductdelete, adminproducteditform, adminproductsearch, adminproductupdate, pst } from "../controllers/adminController/productController.mjs";
 import { upload } from "../config/cloudinaryConfig.mjs";
 import { adminuserget, adminuserpost, adminusersearch } from "../controllers/adminController/userController.mjs";
@@ -32,7 +32,7 @@ admin_router.get("/category/add",isAdmin,admincategoryaddform);
 admin_router.post("/category/add",isAdmin, admincategoryAdd);
 admin_router.get("/category/edit/",isAdmin, admincategoryeditform);
 admin_router.post("/category/edit",isAdmin, admincategoryupdate);
-//admin_router.get("/category/delete",isAdmin, admincategorydelete);
+admin_router.get("/category/delete",isAdmin, admincategorydelete);
 admin_router.post("/category/search",isAdmin,admincategorysearch);
 admin_router.post("/category/:id/toggle-block",isAdmin, admincategorypost);
 
@@ -44,7 +44,7 @@ admin_router.post("/users/:id/toggle-block",isAdmin, adminuserpost);
 admin_router.get("/product",isAdmin,adminproduct);
 admin_router.get('/products', isAdmin,adminproduct); //page
 
-admin_router.get("/product/add",upload.none(),isAdmin,adminproductaddform);
+admin_router.get('/product/add',upload.none(),isAdmin,adminproductaddform);
 admin_router.post('/product/add', isAdmin,adminproductadd);
 
 admin_router.get("/product/edit",isAdmin,adminproducteditform);

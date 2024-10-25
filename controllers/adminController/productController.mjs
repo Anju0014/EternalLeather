@@ -5,7 +5,7 @@ import cloudinary from 'cloudinary';
 
 
 
-export const adminproductaddform = async (req, res) => {
+export const adminproductaddform = async (req, res,next) => {
     try {
         const productCollection=await Category.find({isActive:true});
         res.render('adminProductAdd', { message: req.flash() ,productCollection});
@@ -19,7 +19,7 @@ export const pst=async(req,res)=>{
     res.render('addpdt')
 }
 
-export const adminproducteditform = async (req, res) => {
+export const adminproducteditform = async (req, res,next) => {
     try {
         const productId = req.query.id;
         console.log(productId)
@@ -38,7 +38,7 @@ export const adminproducteditform = async (req, res) => {
 
 
 
-export const adminproductupdate = async (req, res) => {
+export const adminproductupdate = async (req, res,next) => {
     try {
         const productId = req.body.id;
         const { productname, price, category, qty, description, deleteImages,variety, color, discount, croppedImages } = req.body;
@@ -88,7 +88,7 @@ export const adminproductupdate = async (req, res) => {
 
 
 
-export const adminproductadd = async (req, res) => {
+export const adminproductadd = async (req, res,next) => {
     try {
         const { productname, price, description, variety, discount, qty, color, category, croppedImages } = req.body;
         
@@ -126,7 +126,7 @@ export const adminproductadd = async (req, res) => {
 
 
 
-export const adminproductsearch=async(req,res)=>{
+export const adminproductsearch=async(req,res,next)=>{
     try{
         
         const name=req.body.sename;
@@ -154,7 +154,7 @@ export const adminproductsearch=async(req,res)=>{
     }
 }
 
-export const adminproductdelete = async (req, res) => {
+export const adminproductdelete = async (req, res,next) => {
     try {
        
         console.log(req.url)
@@ -174,7 +174,7 @@ export const adminproductdelete = async (req, res) => {
 
 
 
-export const adminproduct = async (req, res) => {
+export const adminproduct = async (req, res,next) => {
     try {
         const catid = req.query.category || ''; 
         const minPrice = parseFloat(req.query.minPrice) || 0; 

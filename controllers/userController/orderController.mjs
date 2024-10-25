@@ -6,7 +6,7 @@ import Category from '../../model/categoryModel.mjs'
  
 
 
-export const orderconfirm= async (req,res)=>{
+export const orderconfirm= async (req,res,next)=>{
      
     try{
         const sessionuser = req.session.isUser;

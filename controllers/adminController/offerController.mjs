@@ -3,7 +3,7 @@ import Category from '../../model/categoryModel.mjs'
 import Product from '../../model/productModel.mjs'
 
 
-export const adminOffer=async(req,res)=>{
+export const adminOffer=async(req,res,next)=>{
     try{
         if (!req.session.isAdmin) {
             return res.redirect('/admin/login');
@@ -18,7 +18,7 @@ export const adminOffer=async(req,res)=>{
     }
 }
 
-export const adminOfferAddform=async(req,res)=>{
+export const adminOfferAddform=async(req,res,next)=>{
     try{
         if (!req.session.isAdmin) {
             return res.redirect('/admin/login');
@@ -34,12 +34,10 @@ export const adminOfferAddform=async(req,res)=>{
 
 
 
-export const adminOfferAdd = async (req, res) => {
+export const adminOfferAdd = async (req, res,next) => {
     try {
         const { offerName, offerType, discountValue } = req.body;
         console.log(req.body);
-
-   
         const existingOffer = await Offer.findOne({ offerName });
         if (existingOffer) {
             console.log("Offer already exists");
@@ -47,7 +45,6 @@ export const adminOfferAdd = async (req, res) => {
             return res.status(400).json({ message: 'Offer already exists' });
         }
 
-     
         const newOffer = new Offer({
             offerName,
             offerType,
@@ -85,7 +82,7 @@ export const adminOfferAdd = async (req, res) => {
 
 
 
-export const adminOfferDelete = async (req, res) => {
+export const adminOfferDelete = async (req, res,next) => {
     try {
         const id  = req.query.id; 
         const offerToDelete = await Offer.findById(id);

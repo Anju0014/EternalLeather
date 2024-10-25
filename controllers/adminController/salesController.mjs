@@ -49,52 +49,6 @@ const getDateRange = (filter,customDate) => {
     return dateRange;
 };
 
-// export const adminSales = async (req, res, next) => {
-//     try {
-//         const orderCount = await Order.countDocuments();
-//         const productCollection = await Category.find({ isActive: true });
-        
-       
-//         const filter = req.query.filter || 'all'; 
-//         const customDate= req.query.customDate;
-//         const dateRange = getDateRange(filter,customDate);
-        
-     
-//         const revenueResult = await Order.aggregate([
-//             { $match: { orderStatus: { $in: ['Shipped', 'Delivered'] }, ...dateRange } }, 
-//             { $group: { _id: null, total: { $sum: "$totalPayablePrice" } } }
-//         ]);
-        
-//         const Revenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
-        
-       
-//         const productCount = await Order.aggregate([
-//             { $match: dateRange }, 
-//             { $group: { _id: null, total: { $sum: "$totalQuantity" } } }
-//         ]);
-        
-//         const shippedDeliveredOrders = await Order.find({
-//             orderStatus: { $in: ['Shipped', 'Delivered'] },
-//             ...dateRange 
-//         });
-        
-//         const deliveredOrderCount = await Order.find({ orderStatus: 'Delivered', ...dateRange }).countDocuments();
-
-//         res.render('adminSales', {
-//             message: shippedDeliveredOrders,
-//             light: req.flash(),
-//             productCollection,
-//             Revenue,
-//             productCount: productCount[0]?.total || 0,
-//             orderCount,
-//             deliveredOrderCount
-//         });
-//     } catch (error) {
-//         console.log(`Error while rendering sales report: ${error}`);
-//         next(error)
-       
-//     }
-// };
 
 
 export const adminSales = async (req, res, next) => {
@@ -205,78 +159,6 @@ export const adminSales = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
-// export const downloadSalesExcel = async (req, res,next) => {
-//     try {
-       
-//         const filter = req.query.filter || 'all'; 
-        
-//         const customDate= req.query.customDate;
-//         const dateRange = getDateRange(filter,customDate);
-        
-//         // const dateRange = getDateRange(filter);
-
-      
-//         const orders = await Order.find({
-//             orderStatus: { $in: ['Shipped', 'Delivered'] },
-//             ...dateRange 
-//         });
-
-//         const workbook = new ExcelJS.Workbook();
-//         const worksheet = workbook.addWorksheet('Sales Report');
-
-//         worksheet.columns = [
-//             { header: 'Order ID', key: 'orderId', width: 30 },
-//             { header: 'Customer', key: 'customerName', width: 30 },
-//             { header: 'Products', key: 'products', width: 30 }, 
-//             { header: 'Total Quantity', key: 'totalQuantity', width: 20 },
-//             {header:'Discount',key:'discountApplied',width:10},
-//             { header: 'Status', key: 'orderStatus', width: 15 },
-           
-//         ];
-
-//         for (const order of orders) {
-//             const customer = await User.findById(order.customerId); 
-//             const customerName = customer ? customer.name : 'Unknown';
-
-         
-//             const productDetails = order.products.map(product => `${product.productname} (Qty: ${product.productquantity})`).join('\n');
-
-           
-//             worksheet.addRow({
-//                 orderId: order.orderId,
-//                 customerName: customerName,
-//                 products: productDetails,
-//                 totalQuantity: order.totalQuantity,
-//                 discountApplied:order.discountApplied,
-//                 orderStatus: order.orderStatus,
-               
-//             });
-//         }
-
-//         worksheet.getColumn('products').alignment = { wrapText: true };
-//         res.setHeader(
-//             'Content-Type',
-//             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-//         );
-//         res.setHeader(
-//             'Content-Disposition',
-//             'attachment; filename=sales_report.xlsx'
-//         );
-
-//         await workbook.xlsx.write(res);
-//         res.end();
-//     } catch (error) {
-//         console.log(`Error generating Excel file: ${error}`);
-//         // res.status(500).send('Error generating Excel file');
-//         next(error)
-//     }
-// };
-
-
-
 
 
 export const downloadSalesExcel = async (req, res, next) => {
@@ -408,75 +290,6 @@ export const downloadSalesExcel = async (req, res, next) => {
 
 
 
-
-
-
-
-// export const downloadSalesPdf = async (req, res, next) => {
-//     try {
-      
-//         const filter = req.query.filter || 'all'; 
-
-//         const customDate= req.query.customDate;
-//         const dateRange = getDateRange(filter,customDate);
-        
-//         // const dateRange = getDateRange(filter);
-
-     
-//         const orders = await Order.find({
-//             orderStatus: { $in: ['Shipped', 'Delivered'] },
-//             ...dateRange
-//         });
-
-//         const doc = new PDFDocument();
-//         res.setHeader('Content-Disposition', 'attachment; filename=sales_report.pdf');
-//         res.setHeader('Content-Type', 'application/pdf');
-
-      
-//         const table = {
-//             headers: ['Order ID', 'Customer', 'Products', 'Total Quantity', 'Discount','Status'],
-//             rows: []
-//         };
-
-       
-//         for (const order of orders) {
-//             const customer = await User.findById(order.customerId); 
-//             const customerName = customer ? customer.name : 'Unknown';
-
-           
-            // const productDetails = order.products.map(product => `${product.productname} (Qty: ${product.productquantity})`).join('\n ');
-
-  
-//             table.rows.push([
-//                 order.orderId,
-//                 customerName,
-//                 productDetails,
-//                 order.totalQuantity,
-//                 order.discountApplied,
-//                 order.orderStatus
-//             ]);
-//         }
-
-//         doc.table(table, { width: 500 });
-
-      
-//         doc.pipe(res);
-//         doc.end();
-//     } catch (error) {
-//         console.log(`Error generating PDF: ${error}`);
-//         next(error)
-//         // res.status(500).send('Error generating PDF');
-//     }
-// };
-
-
-
-//
-
-
-
-
-
 export const downloadSalesPdf = async (req, res, next) => {
     try {
         const filter = req.query.filter || 'all'; 
@@ -562,10 +375,7 @@ export const downloadSalesPdf = async (req, res, next) => {
         
         doc.table(table, { width: 500 });
 
-        
-        // doc.moveDown();
-        // doc.fontSize(14).text(`Total Amount: $${grandTotalAmount.toFixed(2)}`, { align: 'right' });
-
+      
         
         doc.pipe(res);
         doc.end();

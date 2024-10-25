@@ -2,7 +2,7 @@ import Product from '../../model/productModel.mjs'
 import Category from '../../model/categoryModel.mjs'
 
 
-export const userproductdetail = async (req, res) => {
+export const userproductdetail = async (req, res,next) => {
     try {
         const id = req.params.id;
         const product = await Product.findById(id); 
@@ -25,7 +25,7 @@ export const userproductdetail = async (req, res) => {
 
 
 
-export const userproductview = async (req, res) => {
+export const userproductview = async (req, res,next) => {
     try {
         const catid = req.query.category || ''; 
         const minPrice = parseFloat(req.query.minPrice) || 0; 
@@ -103,7 +103,7 @@ export const userproductview = async (req, res) => {
 
 
 
-export const userproductcategorywise= async(req,res)=>{
+export const userproductcategorywise= async(req,res,next )=>{
    try {
         const catid= req.params.id;
         const page = parseInt(req.query.page) || 1;

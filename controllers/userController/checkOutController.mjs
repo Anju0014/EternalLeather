@@ -197,12 +197,12 @@ export const paymentVerify = async (req, res) => {
     }
   }catch(error){
     // next(error)
+    return res.status(500).json({ error: 'Error in Verification' });
   }
 };
 
 export const userPaymentRetry = async (req, res) => {
   try {
-    console.log("reeedddsffsf")
       const orderId = req.body.orderId; 
       const order = await Order.findById(orderId).populate('products.productId');
       const totalAmount= order.totalPayablePrice;

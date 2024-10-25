@@ -269,8 +269,8 @@ function validateForm() {
     }
 
     
-    if (!discount || isNaN(discount) || discount < 0 || discount > 100) {
-        document.getElementById('discountError').textContent = 'Discount must be between 0 and 100.';
+    if (!discount || isNaN(discount) || discount < 0 || discount > 50) {
+        document.getElementById('discountError').textContent = 'Discount must be between 0 and 50.';
         isValid = false;
     }
 
@@ -437,22 +437,26 @@ document.getElementById('submitButton').addEventListener('click', async (e) => {
 
 
     </script>
-     <script>
+    
         <% if (message.error) { %>
+            <script>
             Swal.fire({
                 icon: 'error',
                 title: 'An Error Occurred',
                 text: '<%= message.error %>'
             });
+        </script>
         <% } %>
     
         <% if (message.success) { %>
+            <script>
             Swal.fire({
                 icon: 'success',
                 title: 'Product Edited Successfully',
                 text: '<%= message.success %>'
             });
+        </script>
         <% } %>
-    </script>
+    
 </body>
 </html>

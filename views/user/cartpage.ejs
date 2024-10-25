@@ -1,6 +1,6 @@
 
 
- <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4 h-screen ">
+ <div class="font-sans max-w-4xl max-md:max-w-xl mx-auto p-4 min-h-screen ">
     <h1 class="text-2xl font-extrabold text-gray-800">Your Cart</h1>
     <% if(cart && cart.items. length >0) { %>
     <div class="grid md:grid-cols-3 gap-4 mt-8">
@@ -66,7 +66,7 @@ onclick="incrementQuantity('<%= item.productId._id %>')" <% if (item.productCoun
     <% if (item.productCount >= item.productId.productQuantity) { %>
         <span class="text-red-500">Product is out of stock</span>
     <% } else { %>
-        In stock: <%= item.productId.productQuantity %>
+        In stock
     <% } %>
 </span>
 
@@ -149,8 +149,8 @@ onclick="incrementQuantity('<%= item.productId._id %>')" <% if (item.productCoun
 
 </div> 
 
-<!-- </div> -->
-
+</div> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -166,7 +166,7 @@ function incrementQuantity(productId) {
         }
     })
     .then(response => response.json())
-    .then(data => {
+    .then( async data => {
         if (data.message === 'Quantity incremented') {
             const updatedItem = data.cart.items.find(item => item.productId._id === productId);
             if (updatedItem) {
@@ -191,14 +191,18 @@ function incrementQuantity(productId) {
                     stockMessageElement.innerHTML = "Product is out of stock";
                     stockMessageElement.classList.add("text-red-500");
                 } else {
-                    stockMessageElement.innerHTML = `In stock: ${updatedItem.productId.productQuantity}`;
+                    stockMessageElement.innerHTML = `In stock`;
                     stockMessageElement.classList.remove("text-red-500");
                 }
                 updateCartSummary(data.cart);
                 console.log("hellooooo")
             }
         } else {
-            alert('Failed to update quantity');
+            await Swal.fire({
+                icon:'warning',
+                text: 'Min:1 & Max:4'
+            })
+            // alert('Failed to update quantity');
         }
     })
     .catch(error => {
@@ -231,7 +235,7 @@ function decrementQuantity(productId) {
         }
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
         if (data.message === 'Quantity decremented') {
             const updatedItem = data.cart.items.find(item => item.productId._id === productId);
             if (updatedItem) {
@@ -256,8 +260,8 @@ function decrementQuantity(productId) {
                     stockMessageElement.innerHTML = "Product is out of stock";
                     stockMessageElement.classList.add("text-red-500");
                 } else {
-                    stockMessageElement.innerHTML = `In stock: ${updatedItem.productId.productQuantity}`;
-                    stockMessageElement.classList.remove("text-red-500");
+                     stockMessageElement.innerHTML = `In stock`;
+                     stockMessageElement.classList.remove("text-red-500");
                 }
             }
                 
@@ -265,7 +269,11 @@ function decrementQuantity(productId) {
                 updateCartSummary(data.cart);
             
         } else {
-            alert('Failed to update quantity');
+            // alert('Failed to update quantity');
+            await Swal.fire({
+                icon:'warning',
+                text: 'Min:1 & Max:4'
+            })
         }
     })
     .catch(error => {

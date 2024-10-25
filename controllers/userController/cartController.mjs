@@ -9,7 +9,7 @@
  
  
  
- export const cartdata= async (req,res)=>{
+ export const cartdata= async (req,res,next)=>{
   try{
     if (!req.session.isUser) {
         req.flash('error', "User is Not Found , Please Login "  )
@@ -79,7 +79,7 @@
 
 
 
-export const cartview = async (req, res) => {
+export const cartview = async (req, res,next) => {
   try {
     const { productId, quantity = 1 } = req.body;  
 
@@ -163,57 +163,6 @@ export const cartview = async (req, res) => {
 };
 
 
-
-
-
-// export const cartincrement= async (req, res) => {
-//   try {
-//       const productId = req.params.productId;
-//       const user = await User.findOne({ email: req.session.isUser });
-      
-//       if (!user) {
-//           return res.status(401).json({ message: 'Please log in to update the cart.' });
-//       }
-
-   
-//       const cart = await Cart.findOneAndUpdate(
-//           { userId: user._id, 'items.productId': productId },
-//           { $inc: { 'items.$.productCount': 1 } },  
-//           { new: true }
-//       ).populate('items.productId'); 
-
-//       if (!cart) {
-//           return res.status(404).json({ message: 'Cart not found or item does not exist' });
-//       }
-
-  
-//       let totalPrice = 0;
-//       let totalPriceWithoutDiscount = 0;
-
-//       cart.items.forEach(item => {
-//           const productPrice = item.productId.productPrice || 0;
-//           const discount = (item.productId.discountPrice || 0) / 100;
-//           const quantity = item.productCount || 0;
-
-//           const priceWithDiscount = (productPrice - (discount * productPrice)) * quantity;
-//           totalPrice += priceWithDiscount;
-//           totalPriceWithoutDiscount += productPrice * quantity;
-//       });
-
-//       cart.payablePrice = Math.round(totalPrice);
-//       cart.totalPrice = Math.round(totalPriceWithoutDiscount);
-
-  
-//       await cart.save();
-
-//       res.status(200).json({ message: 'Quantity incremented', cart });
-
-//   } catch (error) {
-//       console.error('Error incrementing quantity:', error);
-//       // res.status(500).json({ message: 'Error incrementing quantity' });
-//       next(error)
-//   }
-// };
 export const cartincrement = async (req, res) => {
   try {
       const productId = req.params.productId;
@@ -247,26 +196,7 @@ export const cartincrement = async (req, res) => {
           return res.status(400).json({ message: `Maximum quantity of ${maxQuantity} reached for this item.` });
       }
 
-      // Calculate total prices
-      // let totalPrice = 0;
-      // let totalPriceWithoutDiscount = 0;
-
-      // cart.items.forEach(item => {
-      //     const productPrice = item.productId.productPrice || 0;
-      //     const discount = (item.productId.discountPrice || 0) / 100;
-      //     const quantity = item.productCount || 0;
-
-      //     const priceWithDiscount = (productPrice - (discount * productPrice)) * quantity;
-      //     totalPrice += priceWithDiscount;
-      //     totalPriceWithoutDiscount += productPrice * quantity;
-      // });
-
-      // cart.payablePrice = Math.round(totalPrice);
-      // cart.totalPrice = Math.round(totalPriceWithoutDiscount);
-
-      // await cart.save();
-
-      
+   
       let totalPrice = 0;
       let totalPriceWithoutDiscount=0;
       let totalPriceWithDiscount=0;
@@ -346,26 +276,7 @@ export const cartdecrement = async (req, res) => {
           return res.status(400).json({ message: 'Cannot reduce quantity below 1.' });
       }
 
-      // // Calculate total prices
-      // let totalPrice = 0;
-      // let totalPriceWithoutDiscount = 0;
-
-      // cart.items.forEach(item => {
-      //     const productPrice = item.productId.productPrice || 0;
-      //     const discount = (item.productId.discountPrice || 0) / 100;
-      //     const quantity = item.productCount || 0;
-
-      //     const priceWithDiscount = (productPrice - (discount * productPrice)) * quantity;
-      //     totalPrice += priceWithDiscount;
-      //     totalPriceWithoutDiscount += productPrice * quantity;
-      // });
-
-      // cart.payablePrice = Math.round(totalPrice);
-      // cart.totalPrice = Math.round(totalPriceWithoutDiscount);
-
-      // await cart.save();
-
-
+  
       let totalPrice = 0;
       let totalPriceWithoutDiscount=0;
       let totalPriceWithDiscount=0;
@@ -415,60 +326,6 @@ export const cartdecrement = async (req, res) => {
 };
 
 
-
-// export const cartdecrement= async (req, res) => {
-//   try {
-//       const productId = req.params.productId;
-//       const user = await User.findOne({ email: req.session.isUser });
-
-//       if (!user) {
-//           return res.status(401).json({ message: 'Please log in to update the cart.' });
-//       }
-
-  
-//       const cart = await Cart.findOneAndUpdate(
-//           { userId: user._id, 'items.productId': productId },  
-//           { $inc: { 'items.$.productCount': -1 } }, 
-//           { new: true }
-//       ).populate('items.productId');
-
-//       if (!cart) {
-//           return res.status(404).json({ message: 'Cart not found or item does not exist' });
-//       }
-
-     
-//       let totalPrice = 0;
-//       let totalPriceWithoutDiscount = 0;
-
-//       cart.items.forEach(item => {
-//           const productPrice = item.productId.productPrice || 0;
-//           const discount = (item.productId.discountPrice || 0) / 100;
-//           const quantity = item.productCount || 0;
-
-//           const priceWithDiscount = (productPrice - (discount * productPrice)) * quantity;
-//           totalPrice += priceWithDiscount;
-//           totalPriceWithoutDiscount += productPrice * quantity;
-//       });
-
-//       cart.payablePrice = Math.round(totalPrice);
-//       cart.totalPrice = Math.round(totalPriceWithoutDiscount);
-
- 
-//       await cart.save();
-
-//       res.status(200).json({ message: 'Quantity decremented', cart });
-
-//   } catch (error) {
-//       console.error('Error decrementing quantity:', error);
-//       // res.status(500).json({ message: 'Error decrementing quantity' });
-//       next(error)
-//   }
-// };
-
-
-
-
-  
 
 export const cartdelete= async (req, res,next) => {
     try {

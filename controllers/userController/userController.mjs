@@ -23,12 +23,12 @@ const securePassword = async(password)=>{
 
     }catch(error){
         console.log(error.message)
-        next(error)
+        // next(error)
 
     }
 }
 
-export const userlanding=async(req,res)=>{
+export const userlanding=async(req,res,next)=>{
     try{
         res.redirect('/user/home')
     }
@@ -39,7 +39,7 @@ export const userlanding=async(req,res)=>{
 }
 
 
-export const user=async(req,res)=>{
+export const user=async(req,res,next)=>{
     try{  
         res.redirect('/user/login')
     }catch(error){
@@ -48,7 +48,7 @@ export const user=async(req,res)=>{
     }
 }
 
-export const userlogin=async(req,res)=>{
+export const userlogin=async(req,res,next)=>{
     try{  
         if(req.session.isUser){
             res.redirect('/user/home')
@@ -62,7 +62,7 @@ export const userlogin=async(req,res)=>{
     }
 }
 
-export const useremail=async(req,res)=>{
+export const useremail=async(req,res,next)=>{
     try{ 
         res.render('useremail')
     }catch(error){
@@ -88,7 +88,7 @@ export const emailpasswordchange = async (req, res, next) => {
 
         console.log(`Generated OTP: ${otp}, Expires at: ${otpExpires}`);
 
-        // Mail options for nodemailer
+        
         const mailOptions = {
             from: 'eternalleather09@gmail.com',
             to: email,
@@ -96,19 +96,19 @@ export const emailpasswordchange = async (req, res, next) => {
             text: `Your OTP is ${otp}. It will expire in 1 minute.`,
         };
 
-        // Use async/await to send the email and wait for response
+        
         await transporter.sendMail(mailOptions);
         console.log('OTP sent successfully.');
 
-        // Render the OTP page and calculate time remaining for expiration
+        
         res.render('userotpforgotpassword', {
             user: req.session.registrationData.email,
             message: req.flash(),
-            otpExpires: otpExpires - Date.now(), // Time remaining
+            otpExpires: otpExpires - Date.now(), 
         });
     } catch (error) {
         console.error(`Error in emailpasswordchange: ${error}`);
-        next(error); // Pass the error to the error handler middleware
+        next(error); 
     }
 };
 
@@ -238,7 +238,7 @@ export const passwordnew= async(req,res)=>{
 
 }
 
-export const usersignup=async(req,res)=>{
+export const usersignup=async(req,res,next)=>{
     try{
         if(req.session.isUser){
           res.redirect('/user/home')
@@ -438,7 +438,7 @@ export const userverify = async (req, res, next) => {
     }
 };
 
-export const userhome=async(req,res)=>{
+export const userhome=async(req,res,next)=>{
     
     try{
           const sessionuser=req.session.isUser
@@ -539,7 +539,7 @@ export const usersearch = async (req, res, next) => {
     }
 };
 
-export const userlogout=async(req,res)=>{
+export const userlogout=async(req,res,next)=>{
     try{
         req.session.destroy();
         res.redirect('/user/home')

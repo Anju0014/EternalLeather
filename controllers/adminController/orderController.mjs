@@ -5,7 +5,7 @@ import Product from '../../model/productModel.mjs'
 import Wallet from '../../model/walletModel.mjs'
 
 
-export const adminorders= async (req, res) => {
+export const adminorders= async (req, res,next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = 10;
@@ -32,7 +32,7 @@ export const adminorders= async (req, res) => {
 };
 
 
-export const adminorderCancel = async (req, res) => {
+export const adminorderCancel = async (req, res,next) => {
     try {
       
         console.log(req.url)
@@ -151,7 +151,7 @@ export const adminorderupdate= async (req, res,next) => {
     }   catch(error){
         console.error('Error toggling block status:', error);
  
-    next(error)
+         next(error)
 }};
 
 function updateOrderStatus(order) {

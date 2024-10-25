@@ -13,12 +13,12 @@ const securePassword = async(password)=>{
 
     }catch(error){
         console.log(error.message)
-        next(error)
+        // next(error)
 
     }
 }
 
-export const userdata = async (req, res) => {
+export const userdata = async (req, res,next) => {
     try {
         console.log(req.session.isUser)
         const sessionuser = req.session.isUser;
@@ -50,7 +50,7 @@ export const userdata = async (req, res) => {
 };
 
 
-export const useredit = async (req, res) => {
+export const useredit = async (req, res,next) => {
     try{
         const user = await User.findOne({ email: req.session.isUser });
         if (!user) {
@@ -68,7 +68,7 @@ export const useredit = async (req, res) => {
         
     }
 }
-export const userchangepassword= async (req,res)=>{
+export const userchangepassword= async (req,res,next)=>{
     try{
          const{newPassword,currentPassword}= req.body
   

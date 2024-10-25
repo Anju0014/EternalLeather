@@ -144,6 +144,13 @@
                                                                         <th
                                                                             class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                             <div class="flex cursor-pointer">
+                                                                                <span class="mr-2">SALES COUNT</span>
+                                                                            </div>
+                                                                        </th>
+
+                                                                        <th
+                                                                            class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                            <div class="flex cursor-pointer">
                                                                                 <span class="mr-2">STATUS</span>
                                                                             </div>
                                                                         </th>
@@ -174,7 +181,11 @@
                                                                         </td>
                                                                         <td
                                                                             class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                            <div class="flex text-green-500">
+                                                                            <p><%=product.totalQuantity %></p>
+                                                                        </td>
+                                                                        <td
+                                                                            class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                            <!-- <div class="flex text-green-500">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                                     class="w-5 h-5 mr-1" fill="none"
                                                                                     viewBox="0 0 24 24"
@@ -184,8 +195,12 @@
                                                                                         stroke-width="2"
                                                                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                                 </svg>
-                                                                                <p><%= product.isActive? 'Active':'InActive' %></p>
+                                                                                <p><%= product.isDeleted? 'InActive':'Active' %></p>
+                                                                            </div> -->
+                                                                            <div class="<%= product.isDeleted ? 'text-red-500' : 'text-green-500' %> flex">
+                                                                                <p><%= product.isDeleted ? 'InActive' : 'Active' %></p>
                                                                             </div>
+                                                                            
                                                                         </td>
                                                                       
                                                                     </tr>
@@ -423,6 +438,11 @@ function updateChart(filteredOrders) {
         chart: {
             height: 350,
             type: 'radialBar',
+        },
+        title:{
+            text:'Products in Each Category',
+            align:'center',
+            offsetY:20,
         },
         plotOptions: {
             radialBar: {

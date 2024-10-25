@@ -2,13 +2,12 @@
 import Category from "../../model/categoryModel.mjs";
   
 
-export const check= async (req,res)=>{
-
+export const check= async (req,res,next)=>{
    const category= await Category.find()
-   res.render('trypage',{message: category})
+   res.render('trypage',{message: category,light:req.flash()})
 }
 
-  export const admincategory=async(req,res)=>{
+  export const admincategory=async(req,res,next)=>{
     
     try{
 
@@ -18,7 +17,7 @@ export const check= async (req,res)=>{
           }
           const categories=await Category.find({ isDeleted: false }); 
           //console.log(users);
-          res.render('adminCategory',{message: categories});
+          res.render('adminCategory',{message: categories,light:req.flash()});
         
     }catch(error){
         console.log(`error from admin category ${error}`);
@@ -26,7 +25,7 @@ export const check= async (req,res)=>{
     }
 }
 
-export const admincategoryaddform = async (req, res) => {
+export const admincategoryaddform = async (req, res,next) => {
     try {
         res.render('adminCategoryAdd', { message: req.flash() });
     } catch (error) {
@@ -38,7 +37,7 @@ export const admincategoryaddform = async (req, res) => {
 
 
 
-export const admincategoryAdd = async (req, res) => {
+export const admincategoryAdd = async (req, res,next) => {
     try {
         const categoryname = req.body.catname; 
 
@@ -67,7 +66,7 @@ export const admincategoryAdd = async (req, res) => {
 
 
 
-export const admincategoryeditform = async (req, res) => {
+export const admincategoryeditform = async (req, res,next) => {
     try {
         const categoryId = req.query.id;
         const category = await Category.findById(categoryId);
@@ -86,7 +85,7 @@ export const admincategoryeditform = async (req, res) => {
 };
 
 
-export const admincategoryupdate = async (req, res) => {
+export const admincategoryupdate = async (req, res,next) => {
     try {
         const categoryId = req.body.id; 
         const { catname, status, adddate } = req.body;
@@ -112,7 +111,7 @@ export const admincategoryupdate = async (req, res) => {
     }
 };
 
-export const admincategorysearch=async(req,res)=>{
+export const admincategorysearch=async(req,res,next)=>{
     try{
         const name=req.body.sename;
         if(name){
@@ -137,27 +136,25 @@ export const admincategorysearch=async(req,res)=>{
 }
 
 
-// export const admincategorydelete = async (req, res) => {
-//     console.log(req.url)
-//     const category = await Category.findByIdAndUpdate(req.query.id,{
-//         isDeleted: true,
-//         deletedAt: new Date(),
-//       });
-//     res.redirect('/admin/category')
+export const admincategorydelete = async (req, res) => {
+    console.log(req.url)
+    const category = await Category.findByIdAndUpdate(req.query.id,{
+        isDeleted: true,
+        isActive:false,
+        deletedAt: new Date(),
+      });
+    res.redirect('/admin/category')
 
-// };
-export const admincategorypost= async (req, res) => {
+};
+
+export const admincategorypost= async (req, res,next) => {
     try{
     const { id } = req.params;
     const { isActive } = req.body; 
     const category = await Category.findById(id);
     
     console.log(category)
-    // if (!user) {
-    //     return res.status(404).send('User not found');
-    // }
 
-   
     category.isActive = isActive 
     console.log(isActive)
     await category.save();
@@ -166,6 +163,6 @@ export const admincategorypost= async (req, res) => {
 }catch (error) {
     console.error('Error toggling toggling category:', error);
     next(error);
-    // res.redirect('/admin/category')
+   
 }
 };

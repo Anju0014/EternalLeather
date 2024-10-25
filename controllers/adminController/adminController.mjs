@@ -8,7 +8,7 @@ const adminEmail = process.env.ADMINEMAIL;
 const adminPassword = process.env.ADMINPASSWORD;
 
 
-export const admin = async (req, res) => {
+export const admin = async (req, res,next) => {
   try {
     res.redirect("/admin/login");
   } catch (error) {
@@ -17,7 +17,7 @@ export const admin = async (req, res) => {
   }
 };
 
-export const adminlogin = async (req, res) => {
+export const adminlogin = async (req, res,next) => {
   try {
     if (req.session.isAdmin) {
       res.redirect("/admin/home");
@@ -30,7 +30,7 @@ export const adminlogin = async (req, res) => {
   }
 };
 
-export const adminverify = async (req, res) => {
+export const adminverify = async (req, res,next) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
@@ -39,76 +39,28 @@ export const adminverify = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, passwordHash);
 
       if (passwordMatch) {
-        // req.session.isAdmin = true;
         req.session.isAdmin = req.body.email;
         res.redirect("/admin/home");
       } else {
         req.flash("error", "Invalid Username or Password");
         res.redirect("/admin/login");
-        //res.render('adminlogin',{message:"Invalid Username or Password"});
       }
     } else {
       req.flash("error", "Invalid Username or Password");
       res.redirect("/admin/login");
     }
   } catch (error) {
-   
     console.log(`error from admin verification ${error}`);
     next(error)
   }
 };
 
-// export const adminhome = async (req, res) => {
-//   try {
-//     if (!req.session.isAdmin) {
-//       return res.redirect("/admin");
-//     }
-
-
-//     const orderCount = await Order.countDocuments(); // Total number of orders
-//     const productCollection = await Category.find({ isActive: true }); // Active product categories
-
-
-//         const revenueResult = await Order.aggregate([
-//           { $unwind: "$products" }, // Deconstruct products array
-//           { 
-//               $match: {
-//                   "products.productstatus": { $in: ['Shipped', 'Delivered'] }, // Filter by product status
-                 
-//               }
-//           },
-//           { 
-//               $group: { 
-//                   _id: null, 
-//                   total: { $sum: "$products.productprice" } // Calculate total price from products
-//               } 
-//           }
-//       ]);
-
-        
-//    const category= await Category.find();
-//    console.log(category)
-
-
-
-//     res.render("adminDashboard");
-//   } catch (error) {
-//     console.log(`error from admin home ${error}`);
-//     next(error)
-//   }
-// };
-
 export const adminhome = async (req, res,next) => {
   try {
-    if (!req.session.isAdmin) {
-      return res.redirect("/admin");
-    }
-
-
     const orderCount = await Order.countDocuments(); 
     const productCollection = await Category.find({ isActive: true }); 
     const orders = await Order.find().select('totalPayablePrice createdAt');
-    // const orders=await Order.find();
+    
     const revenueResult = await Order.aggregate([
       { 
           $match: {
@@ -179,6 +131,17 @@ const categoryProductCount=await Category.aggregate([
     foreignField:'productCategory',
     as:'Products'
   }},
+  {
+    $addFields: {
+      Products: {
+        $filter: {
+          input: '$Products',
+          as: 'product',
+          cond: { $eq: ['$$product.isDeleted', false] }
+        }
+      }
+    }
+  },
   {$project:{
     
     categoryName:1,
@@ -186,8 +149,6 @@ const categoryProductCount=await Category.aggregate([
   }}
   
 ]);
-
-console.log("loooolloollooo");
 
 const salesOfProducts = await Order.aggregate([
   { $unwind: "$products" },
@@ -206,15 +167,21 @@ const salesOfProducts = await Order.aggregate([
   
 ]);
 
-console.log("hoooooohiiii")
-// console.log(salesOfProducts)
 const productId = salesOfProducts.map(value => value._id);
 
 const products = await Product.find({ _id: { $in: productId } }). populate('productCategory', 'categoryName');
 
-
-let bestProducts = productId.map(id => products.find(product => product._id.toString() === id.toString()));
+// let bestProducts = productId.map(id => products.find(product => product._id.toString() === id.toString()));
 // console.log(bestProducts);
+let bestProducts = productId.map(id => {
+  const product = products.find(p => p._id.toString() === id.toString());
+  const salesData = salesOfProducts.find(sale => sale._id.toString() === id.toString());
+  
+  return {
+    ...product.toObject(),  
+    totalQuantity: salesData ? salesData.totalQuantity : 0
+  };
+});
 
 const freq={};
 bestProducts.forEach(product => {
@@ -235,10 +202,7 @@ bestCategories.forEach(([category, count]) => {
 
 
 bestProducts=bestProducts.slice(0, 5); 
-console.log("llalla")
-// console.log(salesOfCategory)
-// console.log(categoryProductCount);
-// console.log("hoooooohiiii")
+
 
     res.render("adminDashboard",{
       Revenue,
@@ -263,19 +227,11 @@ console.log("llalla")
 
 export const admindashBoardFilter= async (req,res,next)=>{
   try{
-    console.log("reached.....reached...................")
-    // console.log(req.body)
     const {filter}= req.body;
     console.log(filter);
-    console.log("........")
     let dateRange = getDateRange(filter);
-    console.log("{/////////}")
-
-   console.log(dateRange)
-
+    console.log(dateRange)
     const filteredOrders = await Order.find(dateRange).select('totalPayablePrice createdAt');
-    
-   
     console.log(filteredOrders);
     res.json({'success':true,filteredOrders})
 
@@ -285,7 +241,7 @@ export const admindashBoardFilter= async (req,res,next)=>{
   }
 }
 
-export const adminlogout = async (req, res) => {
+export const adminlogout = async (req, res,next) => {
   try {
     req.session.destroy();
     res.redirect("/admin/login");
@@ -294,9 +250,6 @@ export const adminlogout = async (req, res) => {
     next(error)
   }
 };
-
-
-
 
 const getDateRange = (filter) => {
   const now = moment();

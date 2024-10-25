@@ -6,7 +6,7 @@ import WishList from '../../model/wishlistModel.mjs'
 import Order from '../../model/orderModel.mjs'
 
 
-export const wishListView= async (req,res)=>{
+export const wishListView= async (req,res,next)=>{
     try{
 
     if (!req.session.isUser) {
@@ -38,7 +38,7 @@ catch(error){
 
 
 
-export const wishListAdd = async (req, res) => {
+export const wishListAdd = async (req, res,next) => {
     try {
       const { productId} = req.body;  
     console.log("reach");
@@ -120,7 +120,7 @@ export const wishListAdd = async (req, res) => {
     }
   };
   
-  export const wishListDelete= async (req, res) => {
+  export const wishListDelete= async (req, res,next) => {
     try {
         const productId = req.params.productId;
 

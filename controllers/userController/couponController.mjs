@@ -2,7 +2,7 @@
 import User from '../../model/userModel.mjs'
 import Coupon from '../../model/couponModel.mjs'
 
-export const couponList = async (req, res) => {
+export const couponList = async (req, res,next) => {
     try {
         if (!req.session.isUser) {
             return res.redirect('/user/home');

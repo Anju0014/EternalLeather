@@ -3,7 +3,7 @@ import addressSchema from "../../model/addressModel.mjs";
 
 // import addressSchema from './addressModel.mjs'; 
 
-export const addressAdd2 = async (req, res) => {
+export const addressAdd2 = async (req, res,next) => {
     try {
         const userId = req.query.user;  
         const user = await User.findById(userId);

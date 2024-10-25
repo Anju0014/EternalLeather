@@ -103,7 +103,7 @@
         </table>
     </div>
     
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -123,6 +123,27 @@
             });
         });
     </script>
+   
+        <% if (light.error) { %>
+            <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'An Error Occurred',
+                text: '<%= light.error %>'
+            });
+            </script>
+        <% } %>
     
+        <% if (light.success) { %>
+            <script>
+            Swal.fire({
+                icon: 'success',
+                
+                text: '<%= light.success %>'
+            });
+            </script>
+        <% } %>
+    
+    </script>
 </body>
 </html>

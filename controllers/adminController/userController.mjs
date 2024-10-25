@@ -1,7 +1,7 @@
 
 import User from '../../model/userModel.mjs'; 
 
-export const adminuserget= async (req, res) => {
+export const adminuserget= async (req, res,next) => {
     try {
         const users = await User.find(); 
         res.render('adminUser', { message:users }); 
@@ -13,15 +13,11 @@ export const adminuserget= async (req, res) => {
 };
 
 
-export const adminuserpost= async (req, res) => {
+export const adminuserpost= async (req, res,next) => {
     try{
     const { id } = req.params;
     const { blockStatus } = req.body; 
     const user = await User.findById(id);
-
-    // if (!user) {
-    //     return res.status(404).send('User not found');
-    // }
 
     
     user.isBlocked = blockStatus === 'block' ? true: false;
