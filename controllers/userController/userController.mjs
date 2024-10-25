@@ -251,63 +251,6 @@ export const usersignup=async(req,res)=>{
     }
 }
 
-// export const userregister=async(req,res)=>{
-//     try{
-//         const spassword= await securePassword(req.body.password)
-//         const exemail=req.body.email
-//         const userExist=await User.findOne({email:exemail});
-//         if(userExist){
-//             req.flash("error", "User Already Exists");
-//             console.log(1)
-//             res.redirect('/user/signup')
-//         }else{
-
-//           const user=new User({
-//             name:req.body.name,
-//             email:req.body.email,
-//             password:spassword,
-//             phoneno:req.body.phoneno
-//           })
-//           user.otpExpires =Date.now() + 1 * 60 * 1000;
-//           console.log(2)
-//           const otp = crypto.randomInt(100000, 999999).toString();
-//           user.otp = otp;
-//           console.log(2)
-       
-//           const savedUser=await user.save();  
-
-//           console.log(3)
-//           if(savedUser){
-//             const mailOptions = {
-//                 from: 'eternalleather09@gmail.com',
-//                 to: user.email,
-//                 subject: 'Email Verification',
-//                 text: `Your OTP is ${otp}`,
-//             };
-//         console.log(4)
-//             transporter.sendMail(mailOptions, (error, info) => {
-//                 if (error) {
-//                     return console.log(error);
-//                 }
-//                 console.log('OTP sent: ' + info.response);
-//             });
-//         console.log(5)
-          
-//             res.render('userotpverify',{user:user._id,message:req.flash(),otpExpires: user.otpExpires-Date.now()})
-
-          
-//           }
-//           else{
-//             req.flash("error", "Registration Failed");
-//             res.redirect('/user/signup')
-//           }
-//         }
-//     }catch(error){
-//         console.log(`error from user signup registration ${error}`)
-//         next(error)
-//     }
-// }
-
 export const userregister = async (req, res, next) => {
     try {
         const spassword = await securePassword(req.body.password);
@@ -500,11 +443,11 @@ export const userhome=async(req,res)=>{
     try{
           const sessionuser=req.session.isUser
           const viewproduct= await Product.find({isDeleted:false}).limit(4);
-        //   console.log(viewproduct);
+     
           const recentproduct = await Product.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(4);
-        //   console.log(recentproduct);
+       
           const productgreen= await Product.findOne({productName:'Spencer-Green'});
-        //   console.log(productgreen);
+     
           const productcase= await Product.findOne({productName:'CARDO'});
           const productCollection=await Category.find({isActive:true});
           res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash(),query:req.query});

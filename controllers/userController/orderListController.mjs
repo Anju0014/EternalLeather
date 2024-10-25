@@ -25,8 +25,8 @@ export const orderList = async (req, res,next) => {
         }
        
         console.log(user)
-     
-        const orders = await Order.find()
+        const userId=user._id
+        const orders = await Order.find({customerId:userId})
     .populate('customerId', 'name email')
     .populate('products.productId')
     .sort({ createdAt: -1 }) 

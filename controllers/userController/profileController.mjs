@@ -71,8 +71,7 @@ export const useredit = async (req, res) => {
 export const userchangepassword= async (req,res)=>{
     try{
          const{newPassword,currentPassword}= req.body
-    //      console.log(req.body)
-    //      console.log("hello")
+  
          const user = await User.findOne({ email: req.session.isUser });
 
     console.log(user);
@@ -104,9 +103,9 @@ export const userchangepassword= async (req,res)=>{
 } catch (err) {
     console.error(err);
     next(err)
-    // res.status(500).json({ error: 'Server error' });
+   
 }
-    // }
+ 
 }
 export const addressAdd = async (req, res) => {
     try {
@@ -163,7 +162,7 @@ export const useraddressdelete = async (req, res) => {
             req.flash("error", "Address not found");
             return res.redirect('/user/profile');
         }
-        // console.log(address)
+        
         address1.isDeleted=true
         await user.save();
 
@@ -202,7 +201,7 @@ export const useraddressdelete = async (req, res) => {
 
 
        
-       res.render('useraddressedit',{sessionuser,productCollection,address,query:req.query})
+       res.render('useraddressedit',{sessionuser,productCollection,address,query:req.query,user})
     } catch (error) {
       console.log('Error updating address:', error)
       req.flash("error", "'Error updating address'");

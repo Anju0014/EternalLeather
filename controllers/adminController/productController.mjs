@@ -8,7 +8,7 @@ import cloudinary from 'cloudinary';
 export const adminproductaddform = async (req, res) => {
     try {
         const productCollection=await Category.find({isActive:true});
-        res.render('adminproductAdd', { message: req.flash() ,productCollection});
+        res.render('adminProductAdd', { message: req.flash() ,productCollection});
     } catch (error) {
       console.log(`error from admin product ${error}`);
       next(error)
@@ -26,13 +26,12 @@ export const adminproducteditform = async (req, res) => {
         const product = await Product.findById(productId);
 
         const productCollection=await Category.find({isActive:true});
-        // console.log(product)
+
 
         res.render('adminproductEdit', { product, message: req.flash(),productCollection,selectedCategoryId: product.productCategory._id.toString() }); 
     } catch (error) {
         console.log(`Error fetching product for edit: ${error}`);
-        // req.flash("error", "An error occurred while fetching the product");
-        // return res.redirect('/admin/product');
+    
         next(error)
     }
 };
@@ -83,8 +82,7 @@ export const adminproductupdate = async (req, res) => {
     } catch (error) {
         console.log(`Error updating product: ${error}`);
         next(error)
-        // req.flash("error", "An error occurred while updating the product");
-        // return res.redirect(`/admin/product/edit/${req.body.id}`);
+       
     }
 };
 
@@ -121,8 +119,7 @@ export const adminproductadd = async (req, res) => {
         return res.status(200).json({ message: 'Product added successfully' });
     } catch (error) {
         console.error('Error in adding product:', error);
-    //     req.flash("error", "An error occurred while adding the product");
-    //     return res.status(500).json({ error: 'An error occurred while adding the product' });
+   
     next(error)
 }
 };
@@ -136,7 +133,7 @@ export const adminproductsearch=async(req,res)=>{
         if(name){
             const regex = new RegExp(name, 'i'); // 'i' for case-insensitive
             const user1 = await Product.find({ productName: { $regex: regex } });
-            console.log(user1)
+         
             if(user1.length>0){
                console.log("entered");
                res.render('adminProduct',{
@@ -169,8 +166,7 @@ export const adminproductdelete = async (req, res) => {
 
     } catch (error) {
         console.log(`Error deleting product: ${error}`);
-        // req.flash("error", "An error occurred while deleting the product");
-        // res.redirect('/admin/product');
+
         next(error)
     }
 
@@ -220,8 +216,7 @@ export const adminproduct = async (req, res) => {
         product = await Product.find(query)
             .populate('productCategory', 'categoryName')
             .sort(sortCriteria) 
-            //.skip(skip)
-            //.limit(pageSize);
+         
 
 
         totalProducts = await Product.countDocuments(query);
@@ -231,10 +226,9 @@ export const adminproduct = async (req, res) => {
 
         res.render('adminProduct', {
             message:product,
-            // currentPage: page,
-            // totalPages: totalPages,
+         
             productCollection,
-            // sessionuser: req.session.isUser,
+     
             catid,
             query:req.query,
             light:req.flash()

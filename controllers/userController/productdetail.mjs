@@ -29,7 +29,7 @@ export const userproductview = async (req, res) => {
     try {
         const catid = req.query.category || ''; 
         const minPrice = parseFloat(req.query.minPrice) || 0; 
-        const maxPrice = parseFloat(req.query.maxPrice) || 5000; 
+        const maxPrice = parseFloat(req.query.maxPrice) || 10000; 
         const type = req.query.type || ''; 
         const sortstyle = req.query.sortstyle || ''; 
 
