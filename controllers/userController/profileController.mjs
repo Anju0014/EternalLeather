@@ -31,6 +31,7 @@ export const userdata = async (req, res,next) => {
         }
         
         const user = await User.findOne({ email: req.session.isUser });
+        console.log(user)
         
         if (!user) {
             console.log("User not found");
@@ -252,3 +253,30 @@ export const editAddress = async (req, res) => {
     }
   };
   
+
+export const changePasswordUser2= async (req,res,next)=>{
+    try{
+        console.log(req.session.isUser)
+        const sessionuser = req.session.isUser;
+        const productCollection = await Category.find({ isActive: true });
+        
+        if (!req.session.isUser) {
+            console.log("User session is missing");
+            req.flash("error", "User is not Logged In");
+            return res.redirect('/user/home');
+        }
+        const user = await User.findOne({ email: req.session.isUser });
+        console.log(user)
+        
+        if (!user) {
+            console.log("User not found");
+            req.flash("error", "User not found");
+            return res.redirect('/user/home');
+        }
+      res.render('userPasswordChange',{sessionuser,productCollection,user})
+    }catch(error){
+        console.log(`error from userprofile password change ${error}`)
+        next(error)
+
+    }
+}

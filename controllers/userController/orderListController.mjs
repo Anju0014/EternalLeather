@@ -35,7 +35,7 @@ export const orderList = async (req, res,next) => {
 
 
         
-        console.log('Fetched Orders:', orders);
+        // console.log('Fetched Orders:', orders);
 
         
         const totalOrders = await Order.countDocuments({ customerId: user._id });
@@ -407,8 +407,6 @@ export const userProductReturn = async (req, res, next) => {
 
 function updateOrderStatus(order) {
   const productStatuses = order.products.map(product => product.productstatus);
-
-  
   const allReturned = productStatuses.every(status => status === 'Returned');
   const allCancelled = productStatuses.every(status => status === 'Cancelled');
   const allDelivered = productStatuses.every(status => status === 'Delivered');

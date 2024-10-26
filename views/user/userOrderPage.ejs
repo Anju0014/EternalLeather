@@ -48,7 +48,10 @@
       </header>
     </div>
     
-    <%- include('userbreadcrumb') %>
+    <%- include('userbreadcrumbprofile') %>
+
+
+
  
     <div class="flex justify-normal"></div>
         <div class="flex justify-items-start">
@@ -56,7 +59,7 @@
         <br>
         </div>
 
-         <div class="w-4/5 m-20 p-2 align-items-center border border-red-900 rounded">
+    <div class="w-4/5 md:m-20 mx-auto p-2  align-items-center border border-red-900 rounded">
          
 
 
@@ -64,7 +67,7 @@
 <div class="grid gap-4 mt-8 ">
     <% if (message && message.length > 0) { %>
         <% message.forEach((order) => { %>
-            <div class="grid grid-cols-3 gap-4 bg-white p-4 rounded-md shadow-lg">
+            <div class="grid grid-cols-1  md:grid-cols-3 gap-4 bg-white p-4 rounded-md shadow-lg">
                 
                 <div class="col-span-1 space-y-2">
                     <h3 class="text-lg font-semibold">Order ID: <%= order.orderId %></h3>
@@ -72,95 +75,6 @@
                     <p><strong>Total Price:</strong> Rs.<%= order.totalPayablePrice %></p>
                     <p class="text-blue-600"><strong>Order Status:</strong> <%= order.orderStatus %></p>
                 </div>
-
-                <!-- Products Section -->
-                <!-- <div class="col-span-1 space-y-4">
-                    <% order.products.forEach((product) => { %>
-                        <div class="flex gap-4">
-                            <div class="w-20 h-20">
-                                <img src="<%= product.productimage %>" alt="<%= product.productname %>" class="w-full h-full object-cover rounded-md">
-                            </div>
-                            <div>
-                                <p><strong>Product Name:</strong> <%= product.productname %></p>
-                                <p><strong>Quantity:</strong> <%= product.productquantity %></p>
-                                <% if (product.productDiscount > 0) { %>
-                                    <p><strong>Price:</strong> $<%= product.productprice - (product.productprice * (product.productDiscount / 100)) %> 
-                                        <span class="line-through text-sm text-gray-500">$<%= product.productprice %></span></p>
-                                    <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
-                                <% } else { %>
-                                    <p><strong>Price:</strong> ₹<%= product.productprice %></p>
-                                <% } %>
-                                <% if (product.productquantity <= 0) { %>
-                                    <p class="text-red-500">Product is out of stock</p>
-                                <% } %>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div> -->
-
-                <!-- <div class="col-span-1 space-y-4">
-                    <% order.products.forEach((product) => { %>
-                        <div class="flex gap-4">
-                            <div class="w-20 h-20">
-                                <img src="<%= product.productimage %>" alt="<%= product.productname %>" class="w-full h-full object-cover rounded-md">
-                            </div>
-                            <div>
-                                <p><strong>Product Name:</strong> <%= product.productname %></p>
-                                <p><strong>Quantity:</strong> <%= product.productquantity %></p>
-                                <% if (product.productDiscount > 0) { %>
-                                    <p><strong>Price:</strong> $<%= product.productprice - (product.productprice * (product.productDiscount / 100)) %> 
-                                        <span class="line-through text-sm text-gray-500">₹<%= product.productprice %></span></p>
-                                    <p class="text-sm text-red-500">Discount: <%= product.productDiscount %> %</p>
-                                <% } else { %>
-                                    <p><strong>Price:</strong> $<%= product.productprice %></p>
-                                <% } %>
-                                <% if (product.productquantity <= 0) { %>
-                                    <p class="text-red-500">Product is out of stock</p>
-                                <% } %>
-                
-                            
-                             
-                               
-                                <div class="flex gap-2 mt-2">
-                                  
-                                    <% if (order.orderStatus !=='Cancelled' && order.orderStatus !== 'Returned') { %>
-
-                                    <% if (product.productstatus === 'Pending' || product.productstatus === 'Confirmed') { %>
-                                       
-                                            <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                                            data-order-id="<%= order._id %>"
-                                            data-product-id="<%= product.productId._id %>"
-                                            onclick="cancelProduct(this)">Cancel</button>
-                                        
-                                    <% } %>
-                
-                          
-                                    <% if (product.productstatus === 'Delivered') { %>
-                                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                                            onclick="handleReturn('<%= product._id %>')">Return</button>
-                                    <% } %>
-                                    
-                                    <% } %>
-
-                                   
-                                    <% if (order.orderStatus === 'Cancelled') { %>
-                                        <p class="text-gray-500">This Order has been cancelled</p>
-                                    <% }
-                                    else if (order.orderStatus === 'Returned') { %>
-                                        <p class="text-gray-500">This Order has been returned</p>
-                                    <% }  else if (product.productstatus === 'Cancelled') { %>
-                                        <p class="text-gray-500">This product has been cancelled</p>
-                                    <% } else if (product.productstatus === 'Returned') { %>
-                                        <p class="text-gray-500">This product has been returned</p>
-                                    <% } %>
-                                    
-                                </div>
-                                
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-                 -->
 
                  <div class="col-span-1 space-y-4">
                     <% order.products.forEach((product) => { %>
@@ -182,7 +96,7 @@
                                     <p class="text-red-500">Product is out of stock</p>
                                 <% } %>
                                 
-                                <!-- Cancel and Return Buttons -->
+                              
                                 <div class="flex gap-2 mt-2">
                                     <% const excludedStatuses = ['Cancelled', 'Returned']; %>
                                     <% const validStatuses = ['Pending', 'Confirmed']; %>
@@ -226,12 +140,8 @@
                 </div>
                 
                
-                <div class="col-span-1 flex items-center justify-end gap-2">
-                     <!-- <% if (order.paymentStatus === 'Unpaid' ) { %>
-                    <a href="/user/order/cancel?id=<%= order._id %>" onclick="return confirm('Are you sure you want to cancel this order?');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                        Cancel
-                    </a>
-               <% } %> -->
+                <div class="col-span-1 flex items-center md:justify-end justify-center gap-2">
+               
                
           
                   <% if (order.paymentStatus === 'Unpaid') { %>
@@ -242,11 +152,7 @@
                     <button onclick="openModal(<%= JSON.stringify(order) %>)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         View
                     </button>
-                    <!-- <% if (order.products.some(product => product.productstatus === 'Delivered')) { %> 
-                        <button onclick="downloadInvoice" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                            Download Invoice
-                        </button>
-                    <% } %> -->
+                
                     
                 </div>
             </div>
@@ -318,9 +224,6 @@
 
          </div>
 
-
-        
-      
     </div>
     <%- include('userfooter') %>
 

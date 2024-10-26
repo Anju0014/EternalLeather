@@ -5,15 +5,21 @@ import Category from '../../model/categoryModel.mjs'
 export const userproductdetail = async (req, res,next) => {
     try {
         const id = req.params.id;
-        const product = await Product.findById(id); 
+        const product = await Product.findById(id).populate('productCategory'); 
         
         if (!product) {
             return res.status(404).send('Product not found');
         }
 
+        const relateproduct = await Product.find({
+            isDeleted: false,
+            productCategory: product.productCategory._id, 
+            _id: { $ne: product._id } 
+        }).limit(4);
+
         console.log(product);
         const productCollection = await Category.find({ isActive: true });
-        const relateproduct= await Product.find({isDeleted:false}).limit(4).skip(4);
+        // const relateproduct= await Product.find({isDeleted:false}).limit(4).skip(4);
         console.log(relateproduct);
         res.render('userproductdetail', { product,relateproduct,sessionuser:req.session.isUser,productCollection,query:req.query});
     } catch (error) {

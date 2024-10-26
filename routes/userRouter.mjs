@@ -4,7 +4,7 @@ import { googleauth, googleAuthCallback } from "../controllers/userController/us
 import isUser from "../middleware/userSession.mjs";
 import { userproductdetail, userproductview } from "../controllers/userController/productdetail.mjs";
 import { cartdata, cartdecrement, cartdelete, cartincrement, cartview, checkout, checkoutpost } from "../controllers/userController/cartController.mjs";
-import { addressAdd, editAddress, useraddressdelete, useraddressedit, userchangepassword, userdata, useredit } from "../controllers/userController/profileController.mjs";
+import { addressAdd, changePasswordUser2, editAddress, useraddressdelete, useraddressedit, userchangepassword, userdata, useredit } from "../controllers/userController/profileController.mjs";
 import { orderconfirm } from "../controllers/userController/orderController.mjs";
 import checkUser from "../middleware/checkuserSession.mjs";
 import nocache from "nocache";
@@ -74,7 +74,7 @@ user_router.post('/user/order/return',checkUser,userorderReturn)
 user_router.post('/user/order/cancelProduct',userProductCancel);
 user_router.post('/user/order/returnProduct',userProductReturn);
 
-
+user_router.get('/user/profile/changePassword',checkUser,changePasswordUser2)
 user_router.get('/user/profile/coupons',checkUser,couponList)
 user_router.get('/user/profile/wallet',checkUser,walletView)
 user_router.post('/user/wallet',checkUser,checkWalletBalance)

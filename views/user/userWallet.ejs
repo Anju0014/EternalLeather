@@ -46,7 +46,7 @@
       </header>
     </div>
     
-    <%- include('userbreadcrumb') %>
+    <%- include('userbreadcrumbprofile') %>
  
     <!-- <div class="flex justify-normal"></div> -->
     <div class="flex justify-items-start">
@@ -58,12 +58,12 @@
          <div class="bg-red-50 m-2 text-center">
             <div>
             <i class="fa-solid fa-wallet" style="color: #421a05;"></i>
-            <span class="ml-2 text-xl">My Wallet</span></div>
+            <span class="ml-2 text-xl font-semibold text-red-900">My Wallet</span></div>
             <!-- <span ><%= message.balance %></span> -->
             <% if (message && message.balance) { %>
-                <span class='font-bold'><%= message.balance.toFixed(2) %></span>
+                <span class='font-bold'>Rs. <%= message.balance.toFixed(2) %></span>
               <% } else { %>
-                <span>Balance not available</span>
+                <span>Rs. 0.00</span>
               <% } %>
          </div>
        
@@ -72,7 +72,7 @@
              <!-- <h2>Transaction History</h2> -->
              <div class="bg-red-50 m-2 text-center">
                 <div class="mt-4">
-                    <h2 class="text-lg">Transaction History</h2>
+                    <h2 class="text-lg font-semibold text-red-900">Transaction History</h2>
                     <% if (message.transaction && message.transaction.length > 0) { %>
                         <table id="transactionTable" class="min-w-full bg-white shadow-md rounded my-6">
                             <thead>

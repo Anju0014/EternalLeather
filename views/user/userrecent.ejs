@@ -5,7 +5,7 @@
     <h1 class="text-center  font-serif font-semibold">NEW ARRIVALS</h1>
   <div class="flex flex-wrap justify-between m-5">
     <% recentproduct.forEach(product=>{  %>
-      <div class="w-full md:w-1/5 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
+      <div class="w-full  sm:w-1/2  md:w-1/5 bg-gray-100 p-2 rounded-lg shadow-md mb-5">
         <a href="/user/productdetail/<%= product.id %>"><img src="<%= product.productImages[0] %>" alt="<%= product.productName %>" class="w-full h-64 object-cover rounded-lg"></a>
         <h6 class="text-sm font-serif font-semibold mt-2"><%= product.productName %></h6>
         <div>

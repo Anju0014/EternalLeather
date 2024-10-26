@@ -22,7 +22,8 @@ passport.use(
                name: profile.displayName,
                email : profile.emails[0].value,
                googleID: profile.id,
-               isVerified:true
+               isVerified:true,
+               phoneno:0
            })
                await user.save()
            }

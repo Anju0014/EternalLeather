@@ -20,7 +20,7 @@ export const couponList = async (req, res,next) => {
             return res.status(404).send('User not found');
         }
        
-        console.log(user)
+        // console.log(user)
       
         
     const couponData = coupons.map(coupon => {
@@ -41,8 +41,8 @@ export const couponList = async (req, res,next) => {
       });
 
         
-        console.log('Fetched Coupons:', coupons);
-        console.log(coupons)
+        // console.log('Fetched Coupons:', coupons);
+        // console.log(coupons)
 
         
         const totalOrders = await Coupon.countDocuments();

@@ -1,11 +1,19 @@
-<div class="box-dash">
+<!-- <div class="box-dash"> -->
+    <div>
+        <!-- Sidebar Overlay for Small Screens -->
+        <button id="sidebarToggle" class="lg:hidden fixed m-4 z-50 text-black">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden lg:hidden"></div></div>
+<div class="box-dash bg-white min-h-screen text-xs lg:text-xl lg:static lg:block lg:w-64 w-full max-w-xs hidden lg:flex flex-col z-10">
     <br>
     <br>
     <div class="p-4">
         <ul class="text-brown">
             <a href="#" class="flex items-center">
                 <i class="fa-regular fa-user"></i>
-                <span class="ml-2 text-2xl">My Account</span>
+                <span class="ml-2 text-xl lg:text-2xl">My Account</span>
             </a>
         </ul>
     </div>
@@ -28,7 +36,7 @@
     <% if(!user.googleID){ %>
     <div class="p-4">
         <ul class="text-brown">
-            <a href="/user/profile" class="flex items-center">
+            <a href="/user/profile/changePassword" class="flex items-center">
                 <i class="fa-solid fa-pen-to-square" style="color: #421a05;"></i>
                 <span class="ml-2">Change Password</span>
             </a>
@@ -79,3 +87,21 @@
         </ul>
     </div>
 
+  
+
+    <script>
+        // JavaScript for toggling sidebar on mobile screens
+        const sidebar = document.querySelector('.box-dash');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+      
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            sidebarOverlay.classList.toggle('hidden');
+        });
+      
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.add('hidden');
+            sidebarOverlay.classList.add('hidden');
+        });
+      </script>

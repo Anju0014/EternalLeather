@@ -24,35 +24,7 @@
     </div>
   </div> 
  
-<% if(!user.googleID){ %>
-  <div class="bg-red-50 p-6 w-full shadow-md rounded-md my-5 max-w-2xl mx-auto">
-    <div class="flex justify-end">
-      <button id="passwordchange" class="lg:text-right">Change your Password <i class="fa-solid fa-pen-to-square"></i></button>
-    </div>
-    <form id="passwordForm" class="p-4 bg-gray-50 rounded-lg hidden">
-    
-        <div class="mb-4">
-    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
-    <input type="password" id="currentPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter current password">
-    <span id="currentPasswordError" class="text-red-500 text-sm"></span>
-  </div>
 
-  <div class="mb-4">
-    <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
-    <input type="password" id="newPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter new password">
-    <span id="newPasswordError" class="text-red-500 text-sm"></span>
-  </div>
-
-  <div class="mb-4">
-    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-    <input type="password" id="confirmPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Confirm new password">
-    <span id="confirmPasswordError" class="text-red-500 text-sm"></span>
-  </div>
-
-      <button type="submit" class="w-full py-2 px-4 text-white bg-indigo-600 hover:bg-indigo-700">Submit</button>
-    </form>
-  </div>
-<% } %>
 
   <div class="bg-red-50 p-6 rounded-lg shadow-lg my-5 w-full max-w-4xl mx-auto">
     <h2 class="text-2xl font-bold mb-2">Manage Your Addresses</h2>
@@ -205,10 +177,7 @@
   <script>
   
 
-  document.getElementById('passwordchange').addEventListener('click', function() {
-    const passwordForm = document.getElementById('passwordForm');
-    passwordForm.classList.toggle('hidden'); // Toggle hidden class
-  });
+  
 
   document.getElementById('addressadd').addEventListener('click', function() {
     const addressForm = document.getElementById('addressForm');
@@ -216,73 +185,6 @@
   });
 
 
-  document.getElementById('passwordForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  
-  document.getElementById('currentPasswordError').textContent = '';
-  document.getElementById('newPasswordError').textContent = '';
-  document.getElementById('confirmPasswordError').textContent = '';
-  
-
-  
-  const currentPassword = document.getElementById('currentPassword').value;
-  const newPassword = document.getElementById('newPassword').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
-
-  let isValid = true;
-
-             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[*#@%])[A-Za-z\d*#@%]{8,15}$/;
-
-              if(currentPassword==='' || currentPassword == null || currentPassword === "password"){
-                document.getElementById('currentPasswordError').textContent = 'Enter a valid password';
-                isValid = false;
-              }else if (!newPassword) {
-                document.getElementById('newPasswordError').textContent = 'Password cannot be empty. Please enter a valid password.';
-               isValid = false;
-               } else if (newPassword.toLowerCase() === 'password') {
-                document.getElementById('newPasswordError').textContent = 'Password cannot be "password". Please choose a more secure password.';
-               isValid = false;
-                 } else if (newPassword.length < 8 || newPassword.length > 15) {
-                  document.getElementById('newPasswordError').textContent = 'Password must be between 8 and 15 characters long.';
-               isValid = false;
-               } else if (!passwordPattern.test(newPassword)) {
-                document.getElementById('newPasswordError').textContent = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (*, #, @, %).'
-               isValid = false;
-               }  else if(newPassword !== confirmPassword){
-                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
-                isValid = false;
-               }else{
-                document.getElementById('newPasswordError').textContent = '';
-               }
-               
-  if (!isValid) {
-    return; 
-  }
-
-  try {
-    const response = await axios.post('/user/profile/changepassword', {
-      currentPassword,
-      newPassword,
-      confirmPassword
-    })
-
-    if (response.data.success){
-      document.getElementById('currentPassword').textContent = '';
-      document.getElementById('newPassword').textContent = '';
-      document.getElementById('confirmPassword').textContent = '';
-      document.getElementById('successMessage').textContent = 'Password updated successfully!';
-      document.getElementById('successModal').classList.remove('hidden');
-    
-  
-    }
-
-  } catch (error) {
-    console.error('Error updating password:', error);
-    document.getElementById('currentPasswordError').textContent = 'Current Password is incorrect';
-
-  }
-});
 
 
 document.getElementById('closeModal').addEventListener('click', function() {
@@ -335,59 +237,25 @@ document.getElementById('addressForm').addEventListener('submit', function(e) {
     e.target.submit(); 
 });
 
-// document.addEventListener('DOMContentLoaded', function() {
-//       const modal = document.getElementById('flashMessageModal');
-//       const closeModalBtn = document.getElementById('modalCloseBtn');
-//       const closeX = document.getElementById('closeModal');
-  
-      
-//       <% if (message.error || message.success) { %>
-//         modal.classList.remove('hidden');
-//       <% } %>
-  
-      
-//       closeModalBtn.addEventListener('click', function() {
-//         modal.classList.add('hidden');
-//       });
-  
-//       closeX.addEventListener('click', function() {
-//         modal.classList.add('hidden');
-//       });
-//     });
-
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Flash Message Modal Logic
-    const modal = document.getElementById('flashMessageModal');
-    const closeModalBtn = document.getElementById('modalCloseBtn');
-    const closeX = document.getElementById('closeModal');
-
-    // Show modal if there's a message
-    <% if (message.error || message.success) { %>
+      const modal = document.getElementById('flashMessageModal');
+      const closeModalBtn = document.getElementById('modalCloseBtn');
+      const closeX = document.getElementById('closeModal');
+  
+      
+      <% if (message.error || message.success) { %>
         modal.classList.remove('hidden');
-    <% } %>
-
-    // Close modal button logic
-    closeModalBtn?.addEventListener('click', function() {
+      <% } %>
+  
+      
+      closeModalBtn.addEventListener('click', function() {
         modal.classList.add('hidden');
-    });
-    closeX?.addEventListener('click', function() {
+      });
+  
+      closeX.addEventListener('click', function() {
         modal.classList.add('hidden');
+      });
     });
-
-    // Profile Edit Toggle Logic
-    const profileEditButton = document.getElementById('profileEdit');
-    const profileForm = document.getElementById('profileForm');
-
-    profileEditButton?.addEventListener('click', function() {
-        if (profileForm.classList.contains('hidden')) {
-            profileForm.classList.remove('hidden');
-        } else {
-            profileForm.classList.add('hidden');
-        }
-    });
-});
-
 
     document.getElementById('profileEdit').addEventListener('click', function() {
         const profileForm = document.getElementById('profileForm');
