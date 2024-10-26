@@ -12,7 +12,12 @@ export const couponList = async (req, res,next) => {
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
 
-        const coupons = await Coupon.find();
+        const currentDate = new Date();
+        const coupons = await Coupon.find({
+          expiryDate: { $gt: currentDate },  
+          isActive: true,                   
+          isDeleted: false  
+    });
         const user = await User.findOne({ email: req.session.isUser }).populate('couponsUsed.couponId');
 
      

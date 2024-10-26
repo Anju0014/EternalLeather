@@ -258,7 +258,7 @@ console.log('Product Value:', productValue);
        
         const refundAmount = productValue - discountShare;
 
-       
+       if(order.paymentStatus==='Paid'){
         let wallet = await Wallet.findOne({ userID: order.customerId });
         if (!wallet) {
             wallet = new Wallet({
@@ -285,7 +285,7 @@ console.log('Product Value:', productValue);
             });
         }
 
-        
+    }
         const productDetails = await Product.findById(productId);
         if (productDetails) {
             productDetails.productQuantity += product.productquantity;

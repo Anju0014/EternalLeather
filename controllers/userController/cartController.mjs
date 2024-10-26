@@ -571,6 +571,10 @@ export const checkoutpost = async (req, res,next) => {
       
     });
 
+    if(paymentMethod==='Cash On Delivery'){
+      newOrder.paymentStatus='Unpaid'
+    }
+
     const orderIdCode = newOrder._id.toString().slice(-5);
     newOrder.orderId = orderIdCode;
     await newOrder.save();

@@ -144,7 +144,7 @@
                
                
           
-                  <% if (order.paymentStatus === 'Unpaid') { %>
+                  <% if (order.paymentStatus === 'Unpaid' && order.paymentMethod ==='razorpay' ) { %>
                     <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" id="payretry"
                                onclick="payNow('<%= order._id %>')">Pay Now</button>
                   <% } %> 
@@ -412,7 +412,8 @@ async function getBase64ImageFromURL(url) {
 </script>
 
 <script>
-    async function cancelProduct(button) {
+
+    function cancelProduct(button) {
     const orderId = button.getAttribute('data-order-id');
     const productId = button.getAttribute('data-product-id');
     fetch(`/user/order/cancelProduct`, {
@@ -429,29 +430,31 @@ async function getBase64ImageFromURL(url) {
         console.log('Response Status:', response.status); 
         return response.json();
     })
-    .then(  data => {
+    .then(data => {
         console.log('Response Data:', data); 
         if (data.success) {
-               await Swal.fire({ 
+               Swal.fire({ 
                 icon: "success",
                 title: 'Product successfully canceled!',
-               
+               confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.reload();  
             });
          
-            window.location.reload(); 
+           
         } else {
-            await Swal.fire({ 
+            Swal.fire({ 
                 icon: "error",
                 text: 'Failed to cancel the product!',
             });
          
-            // alert('Failed to cancel the product. Please try again.');
+          
         }
+        window.location.reload(); 
     })
     .catch((error) => {
         console.error('Error:', error);
-        // alert('An error occurred while canceling the product.');
-        await Swal.fire({ 
+        Swal.fire({ 
                 icon: "error",
                 text: 'An error occurred while canceling the product.!',
             });
@@ -511,8 +514,10 @@ async function submitReturn() {
                 icon: "success",
                 title: "Return Successfully Completed.",
                 // text: "Select one"
+            }).then(() => {
+                window.location.reload();  
             });
-            location.reload();
+            
         } else {
             alert('Failed to submit return request.');
         }
