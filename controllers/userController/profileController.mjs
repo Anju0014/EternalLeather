@@ -42,7 +42,7 @@ export const userdata = async (req, res,next) => {
         
         const addresses = user.address.filter(address => !address.isDeleted);
         
-        res.render('userprofile', { sessionuser, productCollection, addresses, user ,message:req.flash(),query:req.query});
+        res.render('userProfile', { sessionuser, productCollection, addresses, user ,message:req.flash(),query:req.query});
     } catch (error) {
         console.log(`Error in userdata function: ${error}`);
         next(error)
@@ -202,7 +202,7 @@ export const useraddressdelete = async (req, res) => {
 
 
        
-       res.render('useraddressedit',{sessionuser,productCollection,address,query:req.query,user})
+       res.render('userAddressEdit',{sessionuser,productCollection,address,query:req.query,user})
     } catch (error) {
       console.log('Error updating address:', error)
       req.flash("error", "'Error updating address'");

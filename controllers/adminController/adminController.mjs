@@ -22,7 +22,7 @@ export const adminlogin = async (req, res,next) => {
     if (req.session.isAdmin) {
       res.redirect("/admin/home");
     } else {
-      res.render("adminlogin", { message: req.flash() });
+      res.render("adminLogin", { message: req.flash() });
     }
   } catch (error) {
     console.error(`error from admin login ${error}`);
@@ -204,7 +204,7 @@ bestCategories.forEach(([category, count]) => {
 bestProducts=bestProducts.slice(0, 5); 
 
 
-    res.render("adminDashboard",{
+    res.render("adminDashBoard",{
       Revenue,
       productCollection,
       productCount: productCount[0]?.total || 0, 

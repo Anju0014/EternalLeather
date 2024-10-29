@@ -4,7 +4,7 @@ import Category from "../../model/categoryModel.mjs";
 
 export const check= async (req,res,next)=>{
    const category= await Category.find()
-   res.render('trypage',{message: category,light:req.flash()})
+   res.render('tryPage',{message: category,light:req.flash()})
 }
 
   export const admincategory=async(req,res,next)=>{

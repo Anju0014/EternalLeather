@@ -54,7 +54,7 @@ export const userlogin=async(req,res,next)=>{
             res.redirect('/user/home')
        }
         else{
-            res.render('userlogin', { message: req.flash() })
+            res.render('userLogin', { message: req.flash() })
         }
     }catch(error){
         console.log(`error from user login ${error}`);
@@ -64,7 +64,7 @@ export const userlogin=async(req,res,next)=>{
 
 export const useremail=async(req,res,next)=>{
     try{ 
-        res.render('useremail')
+        res.render('userEmail')
     }catch(error){
         console.log(`error from user forgot password email ${error}`);
         next(error)
@@ -101,7 +101,7 @@ export const emailpasswordchange = async (req, res, next) => {
         console.log('OTP sent successfully.');
 
         
-        res.render('userotpforgotpassword', {
+        res.render('userOtpForgotPassword', {
             user: req.session.registrationData.email,
             message: req.flash(),
             otpExpires: otpExpires - Date.now(), 
@@ -115,7 +115,7 @@ export const emailpasswordchange = async (req, res, next) => {
 
 export const forgotpasswordpage= async(req,res,next)=>{
     try{
-        res.render('forgotpassword',{user:req.session.registrationData.email})
+        res.render('forgotPassword',{user:req.session.registrationData.email})
     }catch(error){
         next(error)
     }
@@ -138,14 +138,14 @@ export const checkOtpForgot= async (req, res, next) => {
 
    
         if (otp === sessionData.otp && Date.now() < sessionData.otpExpires) {
-                res.render('forgotpassword',{user:req.session.registrationData.email})
+                res.render('forgotPassword',{user:req.session.registrationData.email})
            
             req.flash("success", "Otp Verified.");
             
         } else {
             req.flash("error", "Invalid OTP or OTP expired.");
           
-            return res.render('userotpforgotpassword', {
+            return res.render('userOtpForgotPassword', {
                 user: req.session.registrationData.email,
                 message: req.flash(),
                 otpExpires: sessionData.otpExpires - Date.now()
@@ -184,7 +184,7 @@ export const userforgotresendOtp= async (req, res, next) => {
             }
             console.log('OTP resent:', info.response);
             req.flash('success', 'New OTP has been sent to your email.');
-            return res.render('userotpforgotpassword', {
+            return res.render('userOtpForgotPassword', {
                 user: req.session.registrationData,
                 message: req.flash(),
                 otpExpires: sessionData.otpExpires - Date.now()
@@ -202,7 +202,7 @@ export const passwordchange=async(req,res)=>{
     try{
 
         const email= req.body.email;
-        res.render('forgotpassword',{user:email})
+        res.render('forgotPassword',{user:email})
     }
     catch(error){
         console.log(`error from user forgot password ${error}`)
@@ -243,7 +243,7 @@ export const usersignup=async(req,res,next)=>{
         if(req.session.isUser){
           res.redirect('/user/home')
         }else{
-          res.render('usersign',{ message: req.flash() })
+          res.render('userSign',{ message: req.flash() })
         }
     }catch(error){
         console.log(`error from user signup ${error}`)
@@ -294,7 +294,7 @@ export const userregister = async (req, res, next) => {
 
         console.log(5);
     
-        res.render('userotpverify', {
+        res.render('userOtpVerify', {
             user: req.session.registrationData,
             message: req.flash(),
             otpExpires: otpExpires - Date.now()
@@ -343,7 +343,7 @@ export const verifyOtp = async (req, res, next) => {
         } else {
             req.flash("error", "Invalid OTP or OTP expired.");
           
-            return res.render('userotpverify', {
+            return res.render('userOtpVerify', {
                 user: req.session.registrationData,
                 message: req.flash(),
                 otpExpires: sessionData.otpExpires - Date.now()
@@ -383,7 +383,7 @@ export const resendOtp = async (req, res, next) => {
             }
             console.log('OTP resent:', info.response);
             req.flash('success', 'New OTP has been sent to your email.');
-            return res.render('userotpverify', {
+            return res.render('userOtpVerify', {
                 user: req.session.registrationData,
                 message: req.flash(),
                 otpExpires: sessionData.otpExpires - Date.now()
@@ -450,7 +450,7 @@ export const userhome=async(req,res,next)=>{
      
           const productcase= await Product.findOne({productName:'CARDO'});
           const productCollection=await Category.find({isActive:true});
-          res.render('userhome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash(),query:req.query});
+          res.render('userHome',{viewproduct,recentproduct,productgreen,productcase,sessionuser,productCollection,message:req.flash(),query:req.query});
         
     }catch(error){
         console.log(`error from user home ${error}`);

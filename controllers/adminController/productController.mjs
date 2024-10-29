@@ -16,7 +16,7 @@ export const adminproductaddform = async (req, res,next) => {
 };
   
 export const pst=async(req,res)=>{
-    res.render('addpdt')
+    res.render('addPdt')
 }
 
 export const adminproducteditform = async (req, res,next) => {
@@ -28,7 +28,7 @@ export const adminproducteditform = async (req, res,next) => {
         const productCollection=await Category.find({isActive:true});
 
 
-        res.render('adminproductEdit', { product, message: req.flash(),productCollection,selectedCategoryId: product.productCategory._id.toString() }); 
+        res.render('adminProductEdit', { product, message: req.flash(),productCollection,selectedCategoryId: product.productCategory._id.toString() }); 
     } catch (error) {
         console.log(`Error fetching product for edit: ${error}`);
     

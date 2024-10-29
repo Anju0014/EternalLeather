@@ -169,64 +169,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-    //  document.getElementById('checkout-form').addEventListener('submit', async function (e) {
-    // //     e.preventDefault();
-          
-    // //     console.log("ooo")
     
-    //     const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-        
-    
-    //     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-       
-    //     const cartId = document.getElementById('cartId').value;
-    //     const appliedCoupon=document.getElementById('appliedCoupon').value
-    //     const razorpay_payment_id = document.getElementById('razorpay_payment_id').value;
-    //     const razorpay_order_id = document.getElementById('razorpay_order_id').value;
-    //     const razorpay_signature = document.getElementById('razorpay_signature').value;
-   
-    //     const formData = {
-    //         selectedAddress: selectedAddress,
-    //         paymentMethod: selectedPaymentMethod,
-    //         cartId:cartId,
-    //         appliedCoupon:appliedCoupon,
-    //         razorpay_payment_id,
-    //         razorpay_order_id,
-    //         razorpay_signature
-            
-    //     };
-
-    //     // Send the data using fetch API
-    //     const response = await fetch('/user/checkout', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(formData),
-    //     });
-
-    //     const result = await response.json();
-
-    //     if (result.success) {
-    //         const modal = document.getElementById('orderConfirmationModal');
-    // modal.classList.remove('hidden');
-
-    // // Add event listener to close the modal
-    // document.getElementById('closeModal').addEventListener('click', function() {
-    //     // Hide the modal
-    //     modal.classList.add('hidden');
-
-    //     // Redirect to the order summary page after closing the modal
-    //     window.location.href = '/user/order/summary';
-    // });
-    //         // // Redirect to the order confirmation page
-    //         // window.location.href = '/user/order/summary';
-    //     } else {
-    //         alert(result.message);
-    //     }
-    // });
-
-
     let originalTotalPayable = parseFloat('<%= cart.payablePrice %>');
     let couponApplied = false;
 

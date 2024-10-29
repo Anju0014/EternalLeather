@@ -42,10 +42,10 @@
     </style>
 </head>
 <body>
-    <%- include('adminheader') %> 
+    <%- include('adminHeader') %> 
     <div class="flex justify-normal">
         <div class="flex justify-normal">
-            <%- include('adminsidebar') %> 
+            <%- include('adminSideBar') %> 
             <br>
         </div> 
 
@@ -248,74 +248,6 @@ if (!isValid) {
     event.preventDefault();
 }
 
-        // let isValid = true;
-        // let errorMessages = [];
-
-        // // Get form field values
-        // const productName = form.productname.value.trim();
-        // const price = form.price.value.trim();
-        // const qty = form.qty.value.trim();
-        // const variety = form.variety.value.trim();
-        // const color = form.color.value.trim();
-        // const discount = form.discount.value.trim();
-        // const category = form.category.value;
-
-        // // 2. Add validation checks for each field
-
-        // // Validate Product Name
-        // if (productName.length < 3) {
-        //     errorMessages.push('Product name must be at least 3 characters.');
-        //     isValid = false;
-        // }
-
-        // // Validate Price
-        // if (!price || isNaN(price) || price <= 0) {
-        //     errorMessages.push('Price must be a positive number.');
-        //     isValid = false;
-        // }
-
-        // // Validate Quantity
-        // if (!qty || isNaN(qty) || parseInt(qty) < 0) {
-        //     errorMessages.push('Stock must be a positive integer.');
-        //     isValid = false;
-        // }
-
-        // // Validate Type (Variety)
-        // if (variety.length < 1) {
-        //     errorMessages.push('Product variety is required.');
-        //     isValid = false;
-        // }
-
-        // // Validate Color
-        // if (color.length < 1) {
-        //     errorMessages.push('Color is required.');
-        //     isValid = false;
-        // }
-
-        // // Validate Discount
-        // if (!discount || isNaN(discount) || discount < 0 || discount > 100) {
-        //     errorMessages.push('Discount must be between 0 and 100.');
-        //     isValid = false;
-        // }
-
-        // // Validate Category
-        // if (!category) {
-        //     errorMessages.push('Please select a product category.');
-        //     isValid = false;
-        // }
-
-        // 3. Display error messages if validation fails
-        // const errorDiv = document.getElementById('error');
-        // errorDiv.innerHTML = ''; // Clear any previous errors
-
-        // if (!isValid) {
-        //     errorMessages.forEach(msg => {
-        //         const errorMessage = document.createElement('p');
-        //         errorMessage.textContent = msg;
-        //         errorMessage.classList.add('text-red-500'); 
-        //         errorDiv.appendChild(errorMessage);
-        //     });
-        // }
 
         return isValid;
     }

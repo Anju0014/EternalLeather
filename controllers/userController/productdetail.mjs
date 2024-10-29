@@ -21,7 +21,7 @@ export const userproductdetail = async (req, res,next) => {
         const productCollection = await Category.find({ isActive: true });
         // const relateproduct= await Product.find({isDeleted:false}).limit(4).skip(4);
         console.log(relateproduct);
-        res.render('userproductdetail', { product,relateproduct,sessionuser:req.session.isUser,productCollection,query:req.query});
+        res.render('userProductDetail', { product,relateproduct,sessionuser:req.session.isUser,productCollection,query:req.query});
     } catch (error) {
         console.error(error);
         // res.status(500).send('Server Error');

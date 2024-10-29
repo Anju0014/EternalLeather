@@ -42,95 +42,13 @@
     </style>
 </head>
 <body>
-    <%- include('adminheader') %> 
+    <%- include('adminHeader') %> 
     <div class="flex justify-normal">
         <div class="flex justify-normal">
-            <%- include('adminsidebar') %> 
+            <%- include('adminSideBar') %> 
             <br>
         </div> 
 
-        <!-- <form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
-            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-             
-           
-              <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Offer Name</label>
-                <input type="text" id="couponCode" name="couponCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Coupon Code" required>
-                <span id="couponCodeError" class="text-red-600 text-sm"></span>
-              </div>
-          
-
-              <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Offer Field</label>
-                <input type="text" id="couponCode" name="couponCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Coupon Code" required>
-                <span id="couponCodeError" class="text-red-600 text-sm"></span>
-              </div>
-           
-          
-            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-          
-              <!-- Discount Value -->
-              <!-- <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Discount Value</label>
-                <input type="number" id="discountValue" name="discountValue" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Discount Value" required>
-                <span id="discountValueError" class="text-red-600 text-sm"></span>
-              </div>
-          
-            </div>
-          
-          
-            <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-           -->
-           
-            <!-- Submit Button -->
-            <!-- <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Coupon</button>
-          </form>
-          
-
-</div>
-</body>
-</html> -->
-<script>
-
-//           function validateForm() {
-//             let isValid = true;
-          
-//             // Clear previous error messages
-//             document.getElementById('offerNameError').textContent = '';
-//             document.getElementById('offerTypeError').textContent = '';
-//             document.getElementById('discountValueError').textContent = '';
-          
-          
-//             // Validate Coupon Code
-//             const offerName = document.getElementById('offerName').value.trim();
-//             if (couponCode.length < 5) {
-//               document.getElementById('cofferNameError').textContent = 'Coupon code must be at least 5 characters long';
-//               isValid = false;
-//             }
-          
-//             // Validate Discount Type
-//             const discountType = document.getElementById('offerType').value;
-//             if (!discountType) {
-//               document.getElementById('offerTypeError').textContent = 'Please select a discount type';
-//               isValid = false;
-//             }
-          
-//             // Validate Discount Value
-//             const discountValue = document.getElementById('discountValue').value;
-//             // if (discountValue <= 0) {
-//             //   document.getElementById('discountValueError').textContent = 'Discount value must be greater than 0';
-//             //   isValid = false;
-//             // }
-
-           
-//   if (discountValue <= 0 || discountValue > 95) {
-//     document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 95';
-//     isValid = false;
-//   }
-
-        
-//             return isValid;
-//           }
  </script>    
 
 <form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">

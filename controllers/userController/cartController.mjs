@@ -62,7 +62,7 @@
                 await cart.save();
             }
     
-    res.render('usercartview', { 
+    res.render('userCartView', { 
     
         cart, 
         productCollection, 
@@ -427,7 +427,7 @@ export const checkout= async (req,res,next)=>{
 
     const addresses = user.address.filter(address => !address.isDeleted);
 
-    res.render('usercheckout', { user,coupons:validCoupons,sessionuser, productCollection,addresses,cart,query:req.query });
+    res.render('userCheckOut', { user,coupons:validCoupons,sessionuser, productCollection,addresses,cart,query:req.query });
 
     
   }catch(error){
@@ -568,7 +568,6 @@ export const checkoutpost = async (req, res,next) => {
     } else {
         product.couponDiscount = 0; 
     }
-      
     });
 
     if(paymentMethod==='Cash On Delivery'){
@@ -578,9 +577,9 @@ export const checkoutpost = async (req, res,next) => {
     const orderIdCode = newOrder._id.toString().slice(-5);
     newOrder.orderId = orderIdCode;
     await newOrder.save();
-
     
-    if (paymentMethod === 'Wallet') {
+    
+    if (paymentMethod === 'Wallet') {  
       const wallet = await Wallet.findOne({ userID: user._id });
       // console.log(wallet)
       // if (!wallet || wallet.balance < cart.payablePrice) {
