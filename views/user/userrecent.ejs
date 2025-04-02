@@ -11,8 +11,8 @@
         <div>
           <% if(product.productDiscount > 0) { %>
               <h3 class="text-black text-sm font-serif inline-block">
-                Rs. <%= product.productPrice - (product.productPrice * (product.productDiscount / 100)) %>
-                  <del>Rs. <%= product.productPrice %></del>
+                Rs. <%= product.productPrice - (product.productPrice * (product.productDiscount / 100)).toFixed(2) %>
+                  <del>Rs. <%= product.productPrice.toFixed(2) %></del>
                  
               </h3>
           <% } else { %>
@@ -20,6 +20,12 @@
                   Rs. <%= product.productPrice %>
               </h3>
           <% } %>
+          <% if(product.productQuantity<=0){ %>
+         
+            <p class="text-red-500">Out of Stock</p>
+       <% } else { %>
+             <p class= "text-green-700 text-xs font-medium">In Stock</p>
+       <% }  %>
       </div>
       </div>
     <% }); %>

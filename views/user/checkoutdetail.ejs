@@ -1,11 +1,11 @@
 
-<div class="container mx-auto p-6">
+<div class="container mx-auto p-6 ">
     <h1 class="text-3xl font-bold mb-6">Checkout</h1>
 
     <!-- <form action="/user/checkout" method="POST" id="checkout-form" class="flex flex-col space-y-6"> -->
         
        
-        <div class="bg-white p-6 rounded-md shadow-md">
+        <div class="bg-red-50 p-6 rounded-md shadow-md">
             <h2 class="text-xl font-bold mb-4">Select Delivery Address</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <% if (addresses && addresses.length > 0) { %>
@@ -31,7 +31,7 @@
 
         <div class="flex justify-between">
          
-            <div class="bg-white p-6 rounded-md shadow-md w-1/2 mr-10">
+            <div class="bg-red-50 m-2 p-6 rounded-md shadow-md w-1/2 mr-10">
                 <h2 class="text-xl font-bold mb-4">Cart Summary</h2>
                 <input type="hidden" id="cartId" name="cartId" value="<%= cart._id %>">
                 <% cart.items.forEach(item => { %>
@@ -52,7 +52,7 @@
    
 
           
-            <div class="bg-white p-6 rounded-md shadow-md w-1/2">
+            <div class="bg-red-50 m-2 p-6 rounded-md shadow-md w-1/2">
                 <h2 class="text-xl font-bold mb-4">Apply Coupon</h2>
                 <div class="w-full">
                     <!-- <select id="couponCodeSelect" class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-2.5 border border-gray-300 rounded mb-2">
@@ -105,7 +105,7 @@
             </div>
      
       
-        <div class="bg-white p-6 rounded-md shadow-md">
+        <div class="bg-red-50 p-6 rounded-md shadow-md">
             <h2 class="text-xl font-bold mb-4">Select Payment Method</h2>
             <div class="space-y-4">
                 <div class="flex items-center justify-between">

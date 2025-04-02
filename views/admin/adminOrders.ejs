@@ -69,6 +69,7 @@
                         <th>Order Status</th>
                         <th>Product Name</th>
                         <th>Product Order Status</th>
+                        <th>Requests</th>
                         <th>Price</th>
                         <th>View</th>
                     </tr>
@@ -97,7 +98,7 @@
             <li>
                 <form action="/admin/order/<%= order._id %>/toggle-block" method="POST">
                     <input type="hidden" name="productId" value="<%= product.productId._id %>">
-                    <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+                    <!-- <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
                         <option value="Pending" <%= product.productstatus=== 'Pending' ? 'selected' : '' %> 
                             <%= product.productstatus === 'Delivered' || product.productstatus === 'Cancelled' || product.productstatus === 'Returned' ? 'disabled' : '' %>>Pending</option>
                         <option value="Confirmed" <%= product.productstatus === 'Confirmed' ? 'selected' : '' %> 
@@ -110,9 +111,54 @@
                             <%= product.productstatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
                         <option value="Shipped" <%= product.productstatus === 'Shipped' ? 'selected' : '' %> 
                             <%= product.productstatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                    </select> -->
+                    <select name="productstatus" onchange="this.form.submit()" class="bg-white border border-red-900 rounded px-2 py-1">
+
+                        <option value="Pending" <%= product.productstatus === 'Pending' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' || product.productstatus === 'Returned' || product.productstatus === 'Confirmed'||product.productstatus === 'Shipped'||product.productstatus === 'Delivered' ? 'disabled' : '' %>>
+                            Pending
+                        </option>
+                    
+                    
+                        <option value="Confirmed" <%= product.productstatus === 'Confirmed' ? 'selected' : '' %> 
+                            <%= ['Cancelled', 'Returned','Shipped','Delivered'].includes(product.productstatus) ? 'disabled' : '' %>>
+                            Confirmed
+                        </option>
+                    
+                 
+                        <option value="Delivered" <%= product.productstatus === 'Delivered' ? 'selected' : '' %> 
+                            <%= ['Cancelled', 'Returned','Shipped'].includes(product.productstatus) ? 'disabled' : '' %>>
+                            Delivered
+                        </option>
+                    
+                    
+                        <option value="Returned" <%= product.productstatus === 'Returned' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' ||product.productstatus === 'Shipped'? 'disabled' : '' %>>
+                            Returned
+                        </option>
+                    
+                     
+                        <option value="Cancelled" <%= product.productstatus === 'Cancelled' ? 'selected' : '' %> 
+                            <%= product.productstatus === 'Cancelled' || product.productstatus === 'Returned'? 'disabled' : '' %>>
+                            Cancelled
+                        </option>
+                    
+                 
+                        <option value="Shipped" <%= product.productstatus === 'Shipped' ? 'selected' : '' %> 
+                            <%= ['Cancelled', 'Returned'].includes(product.productstatus) ? 'disabled' : '' %>>
+                            Shipped
+                        </option>
                     </select>
+                    
                 </form>
             </li>
+        <% } %>
+    </ul>
+</td>
+<td>
+    <ul>
+        <% for(let product of order.products){%>
+            <li><%= product.request%>-<%=product.returnProductReason %></li>
         <% } %>
     </ul>
 </td>
@@ -153,7 +199,7 @@
                         "autoWidth": false,    
                         "order": [[0, "desc"]], 
                         "columnDefs": [
-                            { "orderable": false, "targets": [6, 7] } 
+                            { "orderable": false, "targets": [7, 8] } 
                         ]
                     });
                 });

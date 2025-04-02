@@ -72,7 +72,15 @@
                         <tr>
                             <td class="px-8"><%= i + 1 %></td>
                             <td class="px-8"><%= message[i].offerName %></td>
-                            <td class="px-8"><%= message[i].offerType.categoryName %></td>
+                            <!-- <td class="px-8"><%= message[i].offerType.categoryName %></td> -->
+                            <td class="px-8">
+                                <% if (message[i].offerType === 'category') { %>
+                                    <%= message[i].categoryId.categoryName %>
+                                <% } else if (message[i].offerType === 'product') { %>
+                                    <%= message[i].productId.productName %>
+                                <% } %>
+                            </td>
+                            
                             <td class="px-8"><%= message[i].discountPercentage %></td>
                           
                             <td class="px-8">

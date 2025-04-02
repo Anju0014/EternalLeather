@@ -116,11 +116,14 @@
                                     <% } %>
                                     <% } %>
                                     <% if (product.productstatus === 'Delivered') { %>
+                                       <% if(product.request!=='Return'){ %>
+
                                         <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
                                         data-order-id="<%= order._id %>"
                                         data-product-id="<%= product.productId._id %>"
                                         onclick="returnProduct(this)">Return</button>
                                     <% } %>
+                                    <%} %>
                                     <!-- <%= product.productstatus %> -->
                                     
                                    
@@ -512,7 +515,8 @@ async function submitReturn() {
             // alert('Return request submitted successfully.');
             await Swal.fire({ 
                 icon: "success",
-                title: "Return Successfully Completed.",
+                title: "Return Request Submitted.",
+                text:"Wait for Pelle Eterno's Confirmation"
                 // text: "Select one"
             }).then(() => {
                 window.location.reload();  

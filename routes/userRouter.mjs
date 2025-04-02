@@ -88,13 +88,11 @@ user_router.post('/user/wishList/delete/:productId',checkUser,wishListDelete)
 
 // user_router.get('/user/cartWish',checkUser,wishCartAdd)
 
-
-
-
 user_router.get('/auth/google',googleauth);
 
 user_router.get('/auth/google/callback',googleAuthCallback)
 user_router.get('/user/logout',userlogout)
+user_router.get("/*",userlanding);
 
 
 export default user_router

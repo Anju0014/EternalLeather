@@ -166,6 +166,7 @@
                 <th>Sl.No</th>
                 <th>Product Name</th>
                 <th>Price</th>
+                <th>Discount</th>
                 <th>Stock</th>
                 <th>Category</th>
                 <th colspan="2">Actions</th>
@@ -178,6 +179,7 @@
                         <td class="px-2"><%= i + 1 %></td>
                         <td class="px-8"><%= message[i].productName %></td>
                         <td class="px-8"><%= message[i].productPrice %></td>
+                        <td class="px-8"><%= message[i].productDiscount.toFixed(1)%></td>
                         <td class="px-8"><%= message[i].productQuantity %></td>
                         <td class="px-8"><%= message[i].productCategory ? message[i].productCategory.categoryName : 'N/A' %></td>
                         <td class="px-10">
@@ -221,7 +223,7 @@
             "autoWidth": false,   
             "order": [[ 0, "asc" ]],  
             "columnDefs": [
-                { "orderable": false, "targets": [5, 6] }  
+                { "orderable": false, "targets": [6, 7] }  
             ]
         });
     });

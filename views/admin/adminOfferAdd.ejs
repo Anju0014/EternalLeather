@@ -51,16 +51,16 @@
 
  </script>    
 
-<form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
+<!-- <form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
     <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-        <!-- Offer Name -->
+        
         <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Offer Name</label>
             <input type="text" id="offerName" name="offerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Offer Name" >
             <span id="offerNameError" class="text-red-600 text-sm"></span>
         </div>
 
-        <!-- Offer Field -->
+        
         <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Offer Type</label>
             <select name="offerType" id="offerType" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" >
@@ -77,7 +77,7 @@
     </div>
 
     <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
-        <!-- Discount Value -->
+
         <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Discount Value</label>
             <input type="number" id="discountValue" name="discountValue" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Discount Value" >
@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <!-- Submit Button -->
+    
     <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Offer</button>
 </form>
 </div>
@@ -93,7 +93,7 @@
     function validateForm() {
         let isValid = true;
 
-        // Clear previous error messages
+        
         document.getElementById('offerNameError').textContent = '';
         document.getElementById('offerTypeError').textContent = '';
         document.getElementById('discountValueError').textContent = '';
@@ -121,7 +121,138 @@
 
         return isValid;
     }
+</script> -->
+
+
+<form id="offerForm" class="space-y-4 bg-white p-3" action="/admin/offer/add" method="post" onsubmit="return validateForm()">
+    <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Offer Name</label>
+            <input type="text" id="offerName" name="offerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Offer Name">
+            <span id="offerNameError" class="text-red-600 text-sm"></span>
+        </div>
+
+       
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Offer Type</label>
+            <select name="offerType" id="offerType" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="toggleOfferTarget()">
+                <option value="" selected disabled>Select Offer Type</option>
+                <option value="category">Category-Based</option>
+                <option value="product">Product-Based</option>
+            </select>
+            <span id="offerTypeError" class="text-red-600 text-sm"></span>
+        </div>
+    </div>
+
+    <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+   
+        <div class="space-y-2" id="categorySelection" style="display: none;">
+            <label class="block text-sm font-medium text-gray-700">Select Category</label>
+            <select name="categoryId" id="categoryId" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="" selected disabled>Select a category</option>
+                <% productCollection.forEach((category) => { %>
+                    <option value="<%= category._id %>">
+                        <%= category.categoryName %>
+                    </option>
+                <% }) %>
+            </select>
+            <span id="categoryError" class="text-red-600 text-sm"></span>
+        </div>
+
+    
+        <div class="space-y-2" id="productSelection" style="display: none;">
+            <label class="block text-sm font-medium text-gray-700">Select Product</label>
+            <select name="productId" id="productId" class="w-full px-4 py-2 rounded-lg text-black border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="" selected disabled>Select a product</option>
+                <% productList.forEach((product) => { %>
+                    <option value="<%= product._id %>">
+                        <%= product.productName %>
+                    </option>
+                <% }) %>
+            </select>
+            <span id="productError" class="text-red-600 text-sm"></span>
+        </div>
+    </div>
+
+    <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6">
+ 
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Discount Value (%)</label>
+            <input type="number" id="discountValue" name="discountValue" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter Discount Value">
+            <span id="discountValueError" class="text-red-600 text-sm"></span>
+        </div>
+    </div>
+
+  
+    <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add Offer</button>
+</form>
+
+<script>
+    function toggleOfferTarget() {
+        const offerType = document.getElementById("offerType").value;
+        const categorySelection = document.getElementById("categorySelection");
+        const productSelection = document.getElementById("productSelection");
+
+        if (offerType === "category") {
+            categorySelection.style.display = "block";
+            productSelection.style.display = "none";
+        } else if (offerType === "product") {
+            categorySelection.style.display = "none";
+            productSelection.style.display = "block";
+        } else {
+            categorySelection.style.display = "none";
+            productSelection.style.display = "none";
+        }
+    }
 </script>
+<script>
+    function validateForm() {
+        let isValid = true;
+
+        document.getElementById('offerNameError').textContent = '';
+        document.getElementById('offerTypeError').textContent = '';
+        document.getElementById('discountValueError').textContent = '';
+        document.getElementById('categoryError').textContent = '';
+        document.getElementById('productError').textContent = '';
+
+        const offerName = document.getElementById('offerName').value.trim();
+        if (offerName.length < 5) {
+            document.getElementById('offerNameError').textContent = 'Offer name must be at least 5 characters long';
+            isValid = false;
+        }
+
+        const offerType = document.getElementById('offerType').value;
+        if (!offerType) {
+            document.getElementById('offerTypeError').textContent = 'Please select an offer type';
+            isValid = false;
+        }
+
+        if (offerType === "category") {
+            const categoryId = document.getElementById('categoryId').value;
+            if (!categoryId) {
+                document.getElementById('categoryError').textContent = 'Please select a category';
+                isValid = false;
+            }
+        } else if (offerType === "product") {
+            const productId = document.getElementById('productId').value;
+            if (!productId) {
+                document.getElementById('productError').textContent = 'Please select a product';
+                isValid = false;
+            }
+        }
+
+        const discountValue = document.getElementById('discountValue').value;
+        if (discountValue <= 0 || discountValue > 20) {
+            document.getElementById('discountValueError').textContent = 'Percentage discount must be between 1 and 20';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
+
+
 
 </body>
 </html>

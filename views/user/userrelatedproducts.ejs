@@ -16,6 +16,12 @@
                 Rs. <%= product.productPrice %>
             </h3>
         <% } %>
+        <% if(product.productQuantity<=0){ %>
+         
+          <p class="text-red-500">Out of Stock</p>
+     <% } else { %>
+           <p class= "text-green-700 text-xs font-medium">In Stock</p>
+     <% }  %>
     </div>
     </div>
   <% }); %>

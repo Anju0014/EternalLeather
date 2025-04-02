@@ -8,7 +8,10 @@ export const userproductdetail = async (req, res,next) => {
         const product = await Product.findById(id).populate('productCategory'); 
         
         if (!product) {
-            return res.status(404).send('Product not found');
+            // return res.status(404).send('Product not found');
+            const error = new Error('Product not found');
+            error.status = 404;
+            next(error)
         }
 
         const relateproduct = await Product.find({

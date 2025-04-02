@@ -59,7 +59,10 @@ const orderSchema = new mongoose.Schema({
         couponDiscount:{
             type:Number,
             default:0
-        }
+        },
+        request:{
+            type:String,
+        },
     }],
     totalQuantity: {
         type: Number
@@ -128,6 +131,7 @@ const orderSchema = new mongoose.Schema({
         enum:['Paid','Unpaid'],
         default:'Unpaid'
     },
+   
 },{timestamps:true})
 
 

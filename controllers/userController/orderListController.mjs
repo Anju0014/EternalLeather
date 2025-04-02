@@ -386,10 +386,10 @@ export const userProductReturn = async (req, res, next) => {
           await productDetails.save();
       }
 
-
-      product.productstatus = 'Returned';
+      product.request="Return"
+    //   product.productstatus = 'Returned';
       product.returnProductReason = reason;
-      product.returnedDate = Date.now();
+    //   product.returnedDate = Date.now();
 
       
       await order.save();
